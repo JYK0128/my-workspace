@@ -1,5 +1,5 @@
 import { emitter, Queue } from '#core/bridge.ts';
-import { Channel } from '#core/db.js';
+import { Channel, ChannelParticipant } from '#core/db.js';
 import { buildGroupClause, buildOrderClause, buildPage, buildSelectAggregateClause, buildSelectGroupClause, buildWhereFilterClause, loggingWith, withDelete, withInsert, withUpdate } from '#core/kysely.ts';
 import { protectedProcedure, publicProcedure, router } from '#core/trpc.ts';
 import { Table } from '#core/types.js';
@@ -19,7 +19,6 @@ const API = {
     baseURL: process.env.APP_OPEN_ROUTER_API,
   },
 };
-
 
 /**
  * OPEN API 메시지 정의
@@ -76,7 +75,7 @@ export const channelRouter = router({
 
   // 채널 페이지(커서)
   getChannelCursor: publicProcedure
-    .input(CursorRequest<Table<Channel>>())
+    .input(CursorRequest<Table<Channel & ChannelParticipant>>())
     .query(({ ctx: { user, db }, input }) => {
       const { cursor, orders, filters } = input;
 
@@ -84,12 +83,15 @@ export const channelRouter = router({
       return db.transaction().execute(async (trx) => {
         const content = await trx
           .selectFrom('channel')
-          .selectAll()
+          .leftJoin('channel_participant', 'channel_participant.channel_id', 'channel.id')
+          .selectAll('channel')
+          .select((eb) => eb.fn.count('channel_participant.id').as('count'))
           .where(({ eb }) => eb.and([
             buildWhereFilterClause(eb, filters),
-            eb('deleted_at', 'is', null),
-            eb('id', sign, `${cursor.index}`),
+            eb('channel.deleted_at', 'is', null),
+            eb('channel.id', sign, `${cursor.index}`),
           ]))
+          .groupBy('channel.id')
           .$call((qb) => buildOrderClause(qb, orders))
           .limit(cursor.size)
           .execute();
