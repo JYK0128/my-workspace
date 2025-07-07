@@ -133,7 +133,7 @@ export function DataTools<T>({ table, form }: Props<T>) {
             <FormSelectSingle
               control={form.control as unknown as Control<FieldValues>}
               name="category.value"
-              items={data.category.items as never}
+              items={data.category.items}
             />
           )}
           {data.search && (
@@ -141,7 +141,7 @@ export function DataTools<T>({ table, form }: Props<T>) {
               <FormSelectSingle
                 control={form.control as unknown as Control<FieldValues>}
                 name="search.id"
-                items={data.search.items as never}
+                items={data.search.items}
               />
               <FormInput
                 control={form.control as unknown as Control<FieldValues>}
