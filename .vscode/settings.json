@@ -1,0 +1,13 @@
+{
+  "typescript.tsdk": "node_modules/typescript/lib",
+  "liveServer.settings.root": "packages/ui/storybook-static",
+  "exportall.config.folderListener": [
+    "/packages/ui/lib/customs/components"
+  ],
+  "tailwindCSS.experimental.configFile": "packages/ui/lib/index.css",
+  "exportall.config.exclude": [
+    ".test.",
+    ".spec.",
+    ".stories.ts"
+  ]
+}

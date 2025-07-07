@@ -1,0 +1,12 @@
+@import "tailwindcss";
+@import "@packages/ui/index.css";
+
+@import "./assets/fonts.css";
+body {
+  font-family: 'Pretendard Variable', sans-serif;
+}
+
+.monaco-editor * {
+  max-width: none !important;
+  max-height: none !important;
+}

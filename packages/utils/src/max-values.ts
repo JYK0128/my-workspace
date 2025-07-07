@@ -1,0 +1,3 @@
+export const MAX_BIGINT = '9223372036854775807';
+export const MAX_NUMBER = 2147483647;
+export const MAX_DATE = new Date(8640000000000000);

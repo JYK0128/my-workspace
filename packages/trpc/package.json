@@ -1,0 +1,55 @@
+{
+  "$schema": "https://json.schemastore.org/package",
+  "name": "@packages/trpc",
+  "type": "module",
+  "private": true,
+  "imports": {
+    "#*": [
+      "./src/*"
+    ]
+  },
+  "exports": {
+    "node": "./src/server/index.ts",
+    "browser": "./src/browser/index.ts",
+    "default": "./src/index.ts"
+  },
+  "scripts": {
+    "pull:dev": "dotenvx run -f .env.development -- kysely-codegen --include-pattern 'public.*' --dialect 'postgres' --out-file ./src/core/db.d.ts",
+    "pull:stg": "dotenvx run -f .env.staging -- kysely-codegen --include-pattern 'public.*' --dialect 'postgres' --out-file ./src/core/db.d.ts",
+    "pull:prd": "dotenvx run -f .env.production -- kysely-codegen --include-pattern 'public.*' --dialect 'postgres' --out-file ./src/core/db.d.ts"
+  },
+  "dependencies": {
+    "@packages/utils": "workspace:^",
+    "@tanstack/react-query": "^5.81.5",
+    "@tanstack/react-query-devtools": "^5.81.5",
+    "@trpc/client": "11.3.1",
+    "@trpc/server": "11.3.1",
+    "@trpc/tanstack-react-query": "11.3.1",
+    "@types/ws": "^8.18.1",
+    "bcryptjs": "^3.0.2",
+    "date-fns": "^4.1.0",
+    "jose": "^6.0.11",
+    "kysely": "^0.28.2",
+    "nodemailer": "^7.0.3",
+    "openai": "^5.8.2",
+    "pg": "^8.16.3",
+    "react": "^19.1.0",
+    "react-dom": "^19.1.0",
+    "superjson": "^2.2.2",
+    "zod": "^3.25.67",
+    "zod-form-data": "2.0.7"
+  },
+  "devDependencies": {
+    "@packages/eslint-config": "workspace:^",
+    "@packages/typescript-config": "workspace:^",
+    "@types/express": "^5.0.3",
+    "@types/nodemailer": "^6.4.17",
+    "@types/pg": "^8.15.4",
+    "@types/react": "^19.1.8",
+    "@types/react-dom": "^19.1.6",
+    "kysely-codegen": "^0.18.5",
+    "trpc-ui": "^1.0.15",
+    "typescript": "^5.8.3"
+  },
+  "packageManager": "yarn@4.5.3"
+}

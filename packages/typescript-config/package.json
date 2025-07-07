@@ -1,0 +1,12 @@
+{
+  "$schema": "https://json.schemastore.org/package",
+  "name": "@packages/typescript-config",
+  "type": "module",
+  "private": true,
+  "files": [
+    "base.json",
+    "node.json",
+    "react.json"
+  ],
+  "packageManager": "yarn@4.5.3"
+}

@@ -1,0 +1,46 @@
+{
+  "$schema": "https://json.schemastore.org/package",
+  "name": "@apps/server",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "preview": "node ./dist/index.cjs",
+    "build:dev": "dotenvx run -f .env.development -- node ./esbuild.config.js",
+    "build:stg": "dotenvx run -f .env.staging -- node ./esbuild.config.js",
+    "build:prd": "dotenvx run -f .env.production -- node ./esbuild.config.js",
+    "dev": "yarn build:dev && dotenvx run -f .env.development -- concurrently \"node ./esbuild.config.js --watch\" \"nodemon --inspect --watch ./dist ./dist/index.cjs\"",
+    "stg": "yarn build:stg && dotenvx run -f .env.staging -- concurrently \"node ./esbuild.config.js --watch\" \"nodemon --inspect --watch ./dist ./dist/index.cjs\"",
+    "prd": "yarn build:prd && dotenvx run -f .env.production -- concurrently \"node ./esbuild.config.js --watch\" \"nodemon --watch ./dist ./dist/index.cjs\""
+  },
+  "dependencies": {
+    "@packages/trpc": "workspace:^",
+    "cookie-parser": "^1.4.7",
+    "cors": "^2.8.5",
+    "express": "^5.1.0",
+    "helmet": "^8.1.0",
+    "http-status-codes": "^2.3.0",
+    "jose": "^6.0.11",
+    "morgan": "^1.10.0",
+    "swagger-ui-express": "^5.0.1",
+    "ws": "^8.18.3"
+  },
+  "devDependencies": {
+    "@packages/eslint-config": "workspace:^",
+    "@packages/typescript-config": "workspace:^",
+    "@types/cookie-parser": "^1.4.9",
+    "@types/cors": "^2.8.19",
+    "@types/express": "^5.0.3",
+    "@types/morgan": "^1.9.10",
+    "@types/node": "^22.15.34",
+    "@types/ws": "^8.18.1",
+    "concurrently": "^9.2.0",
+    "cross-env": "^7.0.3",
+    "dotenv-flow": "^4.1.0",
+    "esbuild": "^0.25.5",
+    "esbuild-plugin-node-externals": "^1.0.1",
+    "eslint": "^9.30.0",
+    "nodemon": "^3.1.10",
+    "typescript": "^5.8.3"
+  },
+  "packageManager": "yarn@4.5.3"
+}

@@ -1,0 +1,22 @@
+{
+  "$schema": "https://json.schemastore.org/package",
+  "name": "@packages/utils",
+  "private": true,
+  "type": "module",
+  "main": "src/index.ts",
+  "imports": {
+    "#*": [
+      "./src/*"
+    ]
+  },
+  "devDependencies": {
+    "@packages/eslint-config": "workspace:^",
+    "@packages/typescript-config": "workspace:^",
+    "eslint": "^9.30.0",
+    "typescript": "~5.8.3"
+  },
+  "peerDependencies": {
+    "date-fns": "^4",
+    "zod": "^3.25.0"
+  }
+}

@@ -1,0 +1,10 @@
+#storybook-docs {
+  overflow: auto;
+  height: 100%;
+}
+
+#storybook-root {
+  overflow: hidden;
+  width: 100%;
+  height: 100%;
+}
