@@ -307,7 +307,8 @@ export function DataTable<T>(props: Props<T>) {
         <Table
           ref={tableRef}
           scrollRef={tableScrollRef}
-          style={{ width: table.getCenterTotalSize() }}
+          // style={{ width: table.getTotalSize()})` }}
+          style={{ width: `clamp(100%, 100%, ${table.getTotalSize()})` }}
           className={cn(
             'tw:table-fixed',
             'tw:border-separate tw:border-spacing-0',
