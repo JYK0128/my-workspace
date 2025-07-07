@@ -32,11 +32,11 @@ export function useIntersections(
   }, []);
 
   const setRef = useCallback((el: Element | null) => {
-    if (el && observerRef.current) {
-      observerRef.current.observe(el);
-    }
-    else if (el && !observerRef.current) {
+    if (el) {
       elementsRef.current.add(el);
+      if (observerRef.current) {
+        observerRef.current.observe(el);
+      }
     }
   }, []);
 
