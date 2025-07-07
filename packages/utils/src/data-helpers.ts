@@ -6,7 +6,7 @@ export function safeParse<T = unknown>(data: unknown): T | null | undefined {
     return JSON.parse(data as string) as T;
   }
   catch {
-    return data === 'undefined' ? undefined : null;
+    return data === 'undefined' ? undefined : data as T;
   }
 }
 
