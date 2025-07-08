@@ -1,13 +1,13 @@
 import { emitter, Queue } from '#core/bridge.ts';
-import { Channel, ChannelParticipant } from '#core/db.js';
-import { buildGroupClause, buildOrderClause, buildPage, buildSelectAggregateClause, buildSelectGroupClause, buildWhereFilterClause, loggingWith, withDelete, withInsert, withUpdate } from '#core/kysely.ts';
+import { DB } from '#core/db.js';
+import { buildGroupClause, buildOrderClause, buildPagination, buildSelectAggregateClause, buildSelectGroupClause, buildWhereFilterClause, loggingWith, withDelete, withInsert, withUpdate } from '#core/kysely.ts';
+import { AggRequest, CursorRequest, PageRequest } from '#core/kysely.zod.helpers.ts';
 import { protectedProcedure, publicProcedure, router } from '#core/trpc.ts';
-import { Table } from '#core/types.js';
-import { AggRequest, CursorRequest, MAX_DATE, PageRequest } from '@packages/utils';
+import { MAX_DATE } from '@packages/utils';
 import bcrypt from 'bcryptjs';
+import { sql } from 'kysely';
 import OpenAI from 'openai';
 import { z } from 'zod';
-
 
 const API = {
   GOOGLE: {
@@ -51,7 +51,7 @@ export const channelRouter = router({
 
   // 채널 통계
   getChannelSummary: publicProcedure
-    .input(AggRequest<Table<Channel>>())
+    .input(AggRequest<DB, 'channel'>())
     .query(({ ctx: { user, db }, input }) => {
       const { groups, having, filters, fns } = input;
 
@@ -66,26 +66,25 @@ export const channelRouter = router({
           ...buildSelectGroupClause(eb, groups),
         ]))
         .$call((qb) => buildGroupClause(qb, groups, having))
-        .execute() as Promise<
-        Array<Partial<
-          Postfix<Table<Channel>, 'count' | 'sum' | 'avg' | 'min' | 'max'>
-          & Table<Channel>
-        >>>;
+        .execute();
     }),
 
   // 채널 페이지(커서)
   getChannelCursor: publicProcedure
-    .input(CursorRequest<Table<Channel & ChannelParticipant>>())
+    .input(CursorRequest<DB, 'channel' | 'channel_participant'>())
     .query(({ ctx: { user, db }, input }) => {
       const { cursor, orders, filters } = input;
 
-      const sign = cursor.index !== -1 && orders?.find((v) => v.field === 'id')?.sort === 'desc' ? '<' : '>';
+      const sign = cursor.index !== -1 && orders?.find((v) => v.default)?.sort === 'desc' ? '<' : '>';
       return db.transaction().execute(async (trx) => {
         const content = await trx
           .selectFrom('channel')
           .leftJoin('channel_participant', 'channel_participant.channel_id', 'channel.id')
           .selectAll('channel')
-          .select((eb) => eb.fn.count('channel_participant.id').as('count'))
+          .select((eb) => ([
+            eb.fn.count('channel_participant.id').as('count'),
+            sql<boolean>`channel.password_encrypted <> ''`.as('is_secret'),
+          ]))
           .where(({ eb }) => eb.and([
             buildWhereFilterClause(eb, filters),
             eb('channel.deleted_at', 'is', null),
@@ -98,20 +97,21 @@ export const channelRouter = router({
 
         const page = await trx
           .selectFrom('channel')
+          .leftJoin('channel_participant', 'channel_participant.channel_id', 'channel.id')
+          .select(({ eb }) => buildPagination(eb, { content, orders, info: cursor }))
           .where(({ eb }) => eb.and([
             buildWhereFilterClause(eb, filters),
-            eb('deleted_at', 'is', null),
+            eb('channel.deleted_at', 'is', null),
           ]))
-          .select(({ eb }) => buildPage(eb, { content, orders, info: cursor }))
-          .executeTakeFirstOrThrow();
+          .executeTakeFirst();
 
-        return { ...page.data, content };
+        return { ...page?.data, content };
       });
     }),
 
   // 채널 페이지(페이징)
   getChannelPage: publicProcedure
-    .input(PageRequest<Table<Channel>>())
+    .input(PageRequest<DB, 'channel'>())
     .query(({ ctx: { user, db }, input }) => {
       const { page, orders, filters } = input;
 
@@ -134,7 +134,7 @@ export const channelRouter = router({
             buildWhereFilterClause(eb, filters),
             eb('deleted_at', 'is', null),
           ]))
-          .select(({ eb }) => buildPage(eb, { content, orders, info: page }))
+          .select(({ eb }) => buildPagination(eb, { content, orders, info: page }))
           .executeTakeFirstOrThrow();
 
         return { ...pager.data, content };

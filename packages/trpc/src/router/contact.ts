@@ -1,10 +1,9 @@
-import { Guestbook } from '#core/db.js';
+import { DB } from '#core/db.js';
 import { withInsert, withUpdate } from '#core/kysely.audit.helpers.ts';
-import { buildOrderClause, buildPage, buildWhereFilterClause } from '#core/kysely.ts';
+import { buildOrderClause, buildPagination, buildWhereFilterClause } from '#core/kysely.ts';
+import { CursorRequest } from '#core/kysely.zod.helpers.ts';
 import { mailer } from '#core/mailer.ts';
 import { publicProcedure, router } from '#core/trpc.ts';
-import { Table } from '#core/types.js';
-import { CursorRequest } from '@packages/utils';
 import { Readable } from 'stream';
 import { z } from 'zod';
 import { zfd } from 'zod-form-data';
@@ -33,7 +32,7 @@ export const contactRouter = router({
     }),
 
   getComments: publicProcedure
-    .input(CursorRequest<Table<Guestbook>>())
+    .input(CursorRequest<DB, 'guestbook'>())
     .query(async ({ ctx: { db }, input }) => {
       const { cursor, orders, filters } = input;
 
@@ -57,7 +56,7 @@ export const contactRouter = router({
             buildWhereFilterClause(eb, filters),
             eb('deleted_at', 'is', null),
           ]))
-          .select(({ eb }) => buildPage(eb, { content, orders, info: cursor }))
+          .select(({ eb }) => buildPagination(eb, { content, orders, info: cursor }))
           .executeTakeFirstOrThrow();
 
         return { ...page.data, content };
