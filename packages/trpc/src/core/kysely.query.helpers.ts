@@ -1,24 +1,24 @@
-import { db } from '#core/kysely.ts';
-import { AggOperator, AggQuery, Cursor, FilterQuery, GroupQuery, HavingQuery, OrderQuery, Pagination } from '@packages/utils';
-import { ExpressionBuilder, ExpressionWrapper, SelectQueryBuilder, sql, SqlBool } from 'kysely';
+import { AggOperator, AggQuery, Cursor, FilterQuery, GroupQuery, HavingQuery, OrderQuery, Pagination } from '#core/kysely.zod.helpers.ts';
+import { ExpressionBuilder, ExpressionWrapper, SelectQueryBuilder, sql, SqlBool, StringReference } from 'kysely';
 import { jsonBuildObject } from 'kysely/helpers/postgres';
 
 type WhereClause<
   DB,
   TB extends keyof DB,
-  Field extends Extract<keyof DB[TB], string> = Extract<keyof DB[TB], string>,
+  RE extends StringReference<DB, TB> = StringReference<DB, TB>,
 > = {
   eb: ExpressionBuilder<DB, TB>
-  field: Field
+  field: RE
   op?: AggOperator
-  value: unknown
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  value: any
 };
 
 export const WhereEQ = <
   DB,
   TB extends keyof DB,
 >({ eb, field, value, op }: WhereClause<DB, TB>) => {
-  const ref = db.dynamic.ref(field);
+  const ref = eb.ref(field);
   if (op) {
     return eb(eb.fn(op, [ref]), '=', value);
   }
@@ -31,7 +31,7 @@ export const WhereNEQ = <
   DB,
   TB extends keyof DB,
 >({ eb, field, value, op }: WhereClause<DB, TB>) => {
-  const ref = db.dynamic.ref(field);
+  const ref = eb.ref(field);
   if (op) {
     return eb(eb.fn(op, [ref]), '!=', value);
   }
@@ -44,7 +44,7 @@ export const WhereLT = <
   DB,
   TB extends keyof DB,
 >({ eb, field, value, op }: WhereClause<DB, TB>) => {
-  const ref = db.dynamic.ref(field);
+  const ref = eb.ref(field);
   if (op) {
     return eb(eb.fn(op, [ref]), '<', value);
   }
@@ -57,7 +57,7 @@ export const WhereLTE = <
   DB,
   TB extends keyof DB,
 >({ eb, field, value, op }: WhereClause<DB, TB>) => {
-  const ref = db.dynamic.ref(field);
+  const ref = eb.ref(field);
   if (op) {
     return eb(eb.fn(op, [ref]), '<=', value);
   }
@@ -70,7 +70,7 @@ export const WhereGT = <
   DB,
   TB extends keyof DB,
 >({ eb, field, value, op }: WhereClause<DB, TB>) => {
-  const ref = db.dynamic.ref(field);
+  const ref = eb.ref(field);
   if (op) {
     return eb(eb.fn(op, [ref]), '>', value);
   }
@@ -83,7 +83,7 @@ export const WhereGTE = <
   DB,
   TB extends keyof DB,
 >({ eb, field, value, op }: WhereClause<DB, TB>) => {
-  const ref = db.dynamic.ref(field);
+  const ref = eb.ref(field);
   if (op) {
     return eb(eb.fn(op, [ref]), '>=', value);
   }
@@ -96,7 +96,7 @@ export const WhereContains = <
   DB,
   TB extends keyof DB,
 >({ eb, field, value, op }: WhereClause<DB, TB>) => {
-  const ref = db.dynamic.ref(field);
+  const ref = eb.ref(field);
   if (op) {
     return eb(eb.cast(eb.fn(op, [ref]), 'text'), 'like', `%${value}%`);
   }
@@ -109,7 +109,7 @@ export const WhereIn = <
   DB,
   TB extends keyof DB,
 >({ eb, field, value, op }: WhereClause<DB, TB>) => {
-  const ref = db.dynamic.ref(field);
+  const ref = eb.ref(field);
   if (op) {
     return eb(eb.fn(op, [ref]), 'in', value);
   }
@@ -117,17 +117,17 @@ export const WhereIn = <
     return eb(ref, 'in', value);
   }
 };
-
 export const WhereBetween = <
   DB,
   TB extends keyof DB,
 >({ eb, field, value, op }: WhereClause<DB, TB>) => {
-  const ref = db.dynamic.ref(field);
+  const ref = eb.ref(field);
+  const [start, end] = value;
   if (op) {
-    return eb.between(eb.fn(op, [ref]), ...(value as [unknown, unknown]));
+    return eb.between(eb.fn(op, [ref]), start, end);
   }
   else {
-    return eb.between(ref, ...(value as [unknown, unknown]));
+    return eb.between(ref, start, end);
   }
 };
 
@@ -149,7 +149,7 @@ export function buildWhereFilterClause<
   TB extends keyof DB,
 >(
   eb: ExpressionBuilder<DB, TB>,
-  info: FilterQuery<DB[TB]> | undefined,
+  info: FilterQuery<DB, TB> | undefined,
 ) {
   if (!info) return eb.and([]);
   const expressions = info.search.map((search): ExpressionWrapper<DB, TB, SqlBool> | undefined => {
@@ -161,8 +161,8 @@ export function buildWhereFilterClause<
       const fn = conditionMap[condition];
 
       if (!fn) throw new Error(`Unsupported condition: ${condition}`);
-      if (field && value) {
-        return fn({ eb, field, value: value });
+      if (field && value !== undefined) {
+        return fn({ eb, field, value });
       }
     }
   }).filter((expr) => !!expr);
@@ -177,7 +177,7 @@ export function buildSelectAggregateClause<
   TB extends keyof DB,
 >(
   eb: ExpressionBuilder<DB, TB>,
-  info: AggQuery<DB[TB]>[] | undefined,
+  info: AggQuery<DB, TB>[] | undefined,
 ) {
   if (!info) return [];
   return info.map((agg) => {
@@ -194,7 +194,7 @@ export function buildSelectGroupClause<
   TB extends keyof DB,
 >(
   eb: ExpressionBuilder<DB, TB>,
-  info: GroupQuery<DB[TB]>[] | undefined,
+  info: GroupQuery<DB, TB>[] | undefined,
 ) {
   if (!info) return [];
   return info.map((group) => {
@@ -219,8 +219,8 @@ export function buildGroupClause<
   T,
 >(
   qb: SelectQueryBuilder<DB, TB, T>,
-  groups: GroupQuery<DB[TB]>[] | undefined,
-  having: HavingQuery<DB[TB]> | undefined,
+  groups: GroupQuery<DB, TB>[] | undefined,
+  having: HavingQuery<DB, TB> | undefined,
 ) {
   if (!groups) return qb;
 
@@ -234,7 +234,7 @@ export function buildPartialGroupClause<
   TB extends keyof DB,
 >(
   eb: ExpressionBuilder<DB, TB>,
-  info: GroupQuery<DB[TB]>[] | undefined,
+  info: GroupQuery<DB, TB>[] | undefined,
 ) {
   if (!info) return [];
   return info.map((group) => {
@@ -258,7 +258,7 @@ export function buildPartialHavingClause<
   TB extends keyof DB,
 >(
   eb: ExpressionBuilder<DB, TB>,
-  info: HavingQuery<DB[TB]> | undefined,
+  info: HavingQuery<DB, TB> | undefined,
 ) {
   if (!info) return eb.and([]);
   const expressions = info.search.map((search): ExpressionWrapper<DB, TB, SqlBool> | undefined => {
@@ -288,7 +288,7 @@ export function buildOrderClause<
   T,
 >(
   qb: SelectQueryBuilder<DB, TB, T>,
-  info?: OrderQuery<DB[TB]>[],
+  info?: OrderQuery<DB, TB>[],
 ) {
   if (!info) return qb;
   info.forEach(({ field, sort }) => {
@@ -300,7 +300,7 @@ export function buildOrderClause<
 }
 
 
-export function buildPage<
+export function buildPagination<
   DB,
   TB extends keyof DB,
   T,
@@ -308,11 +308,14 @@ export function buildPage<
   eb: ExpressionBuilder<DB, TB>,
   { content, orders, info }: {
     content: T[]
-    orders?: OrderQuery<T>[]
+    orders?: OrderQuery<DB, TB>[]
     info: Pagination | Cursor
   },
 ) {
-  const totalElements = eb.cast<number>(eb.fn.countAll(), 'bigint');
+  const defaultOrder = orders?.find((v) => v.default);
+  if (!defaultOrder?.field) throw Error('Missing base sort condition.');
+  const base = eb.ref(defaultOrder.field);
+  const totalElements = eb.cast<number>(eb.fn.count(sql`DISTINCT ${base}`), 'bigint');
   const index = eb.cast<number>(eb.val(info.index), 'bigint');
   const size = eb.cast<number>(eb.val(info.size), 'bigint');
   const numberOfElements = eb.cast<number>(eb.val(content.length), 'bigint');
