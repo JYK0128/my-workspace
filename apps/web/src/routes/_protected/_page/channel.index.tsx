@@ -4,6 +4,7 @@ import { Output, useInfiniteQuery, useTRPC } from '@packages/trpc';
 import { Button, DataTable, DataTools, HoverCard, HoverCardContent, HoverCardTrigger, StepModal, ToolOptions } from '@packages/ui';
 import { createFileRoute } from '@tanstack/react-router';
 import { ColumnDef, ColumnFiltersState } from '@tanstack/react-table';
+import { endOfDay, startOfDay, subMonths } from 'date-fns';
 import { useMemo, useState } from 'react';
 import { useForm } from 'react-hook-form';
 
@@ -24,7 +25,7 @@ const columns: ColumnDef<Output<'getChannelCursor'>>[] = [
   {
     accessorKey: 'name',
     header: '제목',
-    size: 300,
+    size: 200,
     cell: ({ row }) => (
       <HoverCard>
         <HoverCardTrigger asChild>
@@ -41,15 +42,43 @@ const columns: ColumnDef<Output<'getChannelCursor'>>[] = [
     ),
   },
   {
+    accessorKey: 'is_secret',
+    header: '공개여부',
+    size: 80,
+    cell: ({ row }) => row.original.is_secret ? '비공개' : '공개',
+  },
+  {
     accessorKey: 'count',
     header: '유저수',
     size: 60,
   },
+  {
+    accessorKey: 'created_at',
+    header: '생성일',
+    size: 100,
+    cell: ({ row }) => new Intl.DateTimeFormat('ko-KR', {
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit',
+      hour: '2-digit',
+      minute: '2-digit',
+      hour12: false,
+    }).format(row.original.created_at),
+  },
 ];
 
 const toolOptions: ToolOptions<Output<'getChannelCursor'>> = {
+  dateRange: {
+    id: 'created_at',
+    value: [startOfDay(subMonths(new Date(), 1)), endOfDay(new Date())],
+  },
+  status: {
+    id: 'is_secret',
+    label: '비공개 채팅방만',
+    value: false,
+  },
   search: {
-    id: null,
+    id: 'name',
     value: '',
     items: [
       { label: '제목', value: 'name' },
@@ -68,10 +97,15 @@ function RouteComponent() {
   const { data, fetchNextPage, refetch, hasNextPage, isFetchingNextPage } = useInfiniteQuery(
     trpc.getChannelCursor.infiniteQueryOptions({
       cursor: { index: -1, size: 10 },
-      orders: [{ field: 'id', sort: 'desc' }],
+      orders: [{ field: 'channel.id', sort: 'desc', default: true }],
       filters: {
         logic: 'and',
-        search: filterState.map((v) => ({ condition: 'contains', field: v.id as any, value: v.value })),
+        search: filterState.map((v) => ({
+          name: { condition: 'contains', field: 'channel.name', value: v.value } as const,
+          description: { condition: 'contains', field: 'channel.description', value: v.value } as const,
+          is_secret: { condition: 'neq', field: 'channel.password_encrypted', value: v.value ? '' : undefined } as const,
+          created_at: { condition: 'between', field: 'channel.created_at', value: v.value } as const,
+        }[v.id])).filter((v) => !!v),
       },
     },
     {
@@ -99,6 +133,10 @@ function RouteComponent() {
     return data ? data.pages.flatMap((d) => d.content) : [];
   }, [data]);
 
+  const onChangeFilters = (filters: ColumnFiltersState) => {
+    setFilterState(filters);
+  };
+
   return (
     <div>
       {/* 생성 */}
@@ -113,16 +151,14 @@ function RouteComponent() {
         <DataTable
           data={allRows}
           columns={columns}
-          rowCount={allRows.length}
+          rowCount={data?.pages.at(-1)?.totalElements ?? 0}
           onReachLastRow={() => {
             if (hasNextPage && !isFetchingNextPage) fetchNextPage();
           }}
           renderTools={({ table }) => (
             <DataTools {...{ table, form }} />
           )}
-          onColumnFilters={(s) => {
-            setFilterState(s);
-          }}
+          onColumnFilters={onChangeFilters}
         />
       </div>
     </div>
