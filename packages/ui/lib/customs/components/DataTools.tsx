@@ -109,7 +109,8 @@ export function DataTools<T>({ table, form }: Props<T>) {
 
   useEffect(() => {
     handleSearch(form.getValues());
-  }, [form, handleSearch]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
 
   return (

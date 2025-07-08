@@ -98,6 +98,9 @@ export function DataTable<T>(props: Props<T>) {
     // TODO: feat) grouping
     grouping: initialState?.grouping ?? [],
   });
+  useEffect(() => {
+    onChangeState?.(state);
+  }, [onChangeState, state]);
 
   const [data, setData] = useState<T[]>(initialData);
   useEffect(() => {
@@ -109,7 +112,7 @@ export function DataTable<T>(props: Props<T>) {
     data,
     columns,
     state,
-    onStateChange: handleStateChange(setState, onChangeState),
+    onStateChange: setState,
 
     // core model
     getCoreRowModel: getCoreRowModel(),
