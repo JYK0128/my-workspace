@@ -84,7 +84,7 @@ export function FormDatetimePicker<T extends FieldValues>(props: Props<T>) {
             <Popover open={open} onOpenChange={setOpen}>
               <FormControl>
                 <PopoverTrigger asChild>
-                  <Button variant="outline" className="tw:w-52">
+                  <Button variant="outline" className="tw:w-60">
                     <CalendarClockIcon />
                     <span className="tw:flex-1">
                       {selection && `${format(selection, dateFormat)}`}

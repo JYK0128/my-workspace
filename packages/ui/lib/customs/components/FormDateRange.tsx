@@ -76,7 +76,7 @@ export function FormDateRange<T extends FieldValues>(props: Props<T>) {
             <Popover open={open} onOpenChange={setOpen}>
               <FormControl>
                 <PopoverTrigger asChild>
-                  <Button variant="outline" className="tw:w-52">
+                  <Button variant="outline" className="tw:w-60">
                     <CalendarIcon />
                     <span className="tw:flex-1">
                       {selection?.[0] && `${format(selection[0], dateFormat)}`}

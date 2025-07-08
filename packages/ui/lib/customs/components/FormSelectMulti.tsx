@@ -92,7 +92,7 @@ export function FormSelectMulti<
                     size="default"
                     role="combobox"
                     className={cn(
-                      'tw:w-52',
+                      'tw:w-60',
                       'tw:flex tw:justify-between',
                       !field.value.length && 'tw:text-muted-foreground',
                     )}
