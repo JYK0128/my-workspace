@@ -1,9 +1,9 @@
 import { withMenu } from '#/routes/_protected/-layout/with-menu';
 import { ChannelCreate } from '#/routes/_protected/-modal/channel-create';
 import { Output, useInfiniteQuery, useTRPC } from '@packages/trpc';
-import { Button, DataTable, DataTools, HoverCard, HoverCardContent, HoverCardTrigger, StepModal, ToolOptions } from '@packages/ui';
-import { createFileRoute } from '@tanstack/react-router';
-import { ColumnDef, ColumnFiltersState } from '@tanstack/react-table';
+import { Button, DataTable, DataTools, HoverCard, HoverCardContent, HoverCardTrigger, Slot, StepModal, ToolOptions } from '@packages/ui';
+import { createFileRoute, useNavigate } from '@tanstack/react-router';
+import { ColumnDef, ColumnFiltersState, Row } from '@tanstack/react-table';
 import { endOfDay, startOfDay, subMonths } from 'date-fns';
 import { useMemo, useState } from 'react';
 import { useForm } from 'react-hook-form';
@@ -29,7 +29,7 @@ const columns: ColumnDef<Output<'getChannelCursor'>>[] = [
     cell: ({ row }) => (
       <HoverCard>
         <HoverCardTrigger asChild>
-          <div className="tw:size-full">
+          <div>
             {row.original.name}
           </div>
         </HoverCardTrigger>
@@ -88,6 +88,7 @@ const toolOptions: ToolOptions<Output<'getChannelCursor'>> = {
 };
 
 function RouteComponent() {
+  const navigate = useNavigate();
   const form = useForm({
     defaultValues: toolOptions,
   });
@@ -133,31 +134,51 @@ function RouteComponent() {
     return data ? data.pages.flatMap((d) => d.content) : [];
   }, [data]);
 
+  const handleClickRow = <T,>(row: Row<T>) => {
+    return () => navigate({ to: '/channel/$id', params: row });
+  };
+
   const onChangeFilters = (filters: ColumnFiltersState) => {
     setFilterState(filters);
   };
+  const onReachLastRow = () => {
+    if (hasNextPage && !isFetchingNextPage) {
+      fetchNextPage();
+    }
+  };
 
   return (
-    <div>
+    <div className="tw:size-full tw:grid tw:grid-rows-[auto_1fr] tw:gap-2">
       {/* 생성 */}
-      <StepModal
-        callback={refetch}
-        render={[<ChannelCreate key="create" />]}
-      >
-        <Button>생성</Button>
-      </StepModal>
+      <div className="tw:flex tw:justify-end">
+        <StepModal
+          callback={refetch}
+          render={[<ChannelCreate key="create" />]}
+        >
+          <Button>생성</Button>
+        </StepModal>
+      </div>
 
-      <div className="tw:h-60">
+      <div>
         <DataTable
           data={allRows}
           columns={columns}
+          getRowId={(row) => row.id}
           rowCount={data?.pages.at(-1)?.totalElements ?? 0}
-          onReachLastRow={() => {
-            if (hasNextPage && !isFetchingNextPage) fetchNextPage();
-          }}
+
+          renderRow={({ row, children }) => (
+            <Slot
+              asChild
+              onClick={handleClickRow(row)}
+            >
+              {children}
+            </Slot>
+          )}
           renderTools={({ table }) => (
             <DataTools {...{ table, form }} />
           )}
+
+          onReachLastRow={onReachLastRow}
           onColumnFilters={onChangeFilters}
         />
       </div>
