@@ -32,6 +32,7 @@ export const getTRPCClient = () => createTRPCClient<MainRouter>({
     }),
     splitLink({
       condition: (op) => op.type === 'subscription',
+      // true: httpSubscriptionLink({}), // SSE 통신
       true: wsLink({
         client: socket,
         transformer: SuperJSON,
