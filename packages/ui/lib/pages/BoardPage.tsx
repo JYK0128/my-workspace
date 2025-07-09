@@ -244,7 +244,7 @@ export function BoardPage() {
             paginateExpandedRows={false}
             /* 1) Expandable Row Component */
             // getRowCanExpand={() => true}
-            // renderSubRow={({ row }) => (
+            // renderExpendedRow={({ row }) => (
             //   <div>{JSON.stringify(row.original.children)}</div>
             // )}
             /* 2) Subset Rows Component */

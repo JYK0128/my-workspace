@@ -27,7 +27,7 @@ type BaseProps<TData extends RowData> = TableCore<TData> & {
   onReachLastRow?: () => void
   onChangeRowSelection?: (selection: Row<TData>[]) => void
   renderRow?: (props: PropsWithChildren<{ row: Row<TData> }>) => ReactElement
-  renderSubRow?: (props: PropsWithChildren<{ row: Row<TData> }>) => ReactElement
+  renderExpendedRow?: (props: PropsWithChildren<{ row: Row<TData> }>) => ReactElement
   renderTools?: (props: { table: ReactTable<TData> }) => ReactElement
   renderPagination?: (props: { table: ReactTable<TData> }) => ReactElement
 };
@@ -62,7 +62,7 @@ export function DataTable<T>(props: Props<T>) {
     // 추가기능
     onChangeRowSelection,
     onReachFirstRow, onReachLastRow,
-    renderRow, renderSubRow, renderPagination, renderTools,
+    renderRow, renderExpendedRow, renderPagination, renderTools,
     client,
     data: initialData,
     ...options
@@ -385,26 +385,29 @@ export function DataTable<T>(props: Props<T>) {
                   {table.getCenterRows().map((row, idx, arr) => {
                     const RowWrapper = wrapping(renderRow);
                     return (
-                      <RowWrapper key={row.id} row={row}>
-                        <DataTableRow
-                          ref={(el) => {
-                            if (el && idx === 0) {
-                              firstRowObserverRef.current?.observe(el);
-                            }
-                            else if (el && idx === arr.length - 1) {
-                              lastRowObserverRef.current?.observe(el);
-                            }
-                          }}
-                          {...{ row, state }}
-                        />
-                        {row.getIsExpanded() && renderSubRow && (
+                      <Fragment key={row.id}>
+                        <RowWrapper row={row}>
+                          <DataTableRow
+                            ref={(el) => {
+                              if (el && idx === 0) {
+                                firstRowObserverRef.current?.observe(el);
+                              }
+                              else if (el && idx === arr.length - 1) {
+                                lastRowObserverRef.current?.observe(el);
+                              }
+                            }}
+                            {...{ row, state }}
+                          />
+                        </RowWrapper>
+
+                        {row.getIsExpanded() && renderExpendedRow && (
                           <TableRow>
-                            <TableCell colSpan={row.getVisibleCells().length}>
-                              {renderSubRow({ row })}
+                            <TableCell colSpan={row.getAllCells().length}>
+                              {renderExpendedRow({ row })}
                             </TableCell>
                           </TableRow>
                         )}
-                      </RowWrapper>
+                      </Fragment>
                     );
                   })}
                 </SortableContext>
