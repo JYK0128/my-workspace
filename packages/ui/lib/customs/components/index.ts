@@ -30,6 +30,7 @@ export * from './Message';
 export * from './MuteLayout';
 export * from './ProgressCircle';
 export * from './SidebarLayout';
+export * from './Slot';
 export * from './StepModal';
 export * from './TreeItem';
 export * from './TreeItemEditor';

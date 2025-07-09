@@ -1,3 +1,4 @@
+import { Slot as RawSlot } from '#customs/components/Slot.tsx';
 import { Children, ComponentProps, Fragment, isValidElement, ReactNode } from 'react';
 
 type Props<T extends string> = {
@@ -14,12 +15,9 @@ type Props<T extends string> = {
  * @returns
  */
 export function useTemplate<T extends string>(slots: readonly T[]) {
-  function Slot({ name, children, asChild, ...props }: Props<T>) {
-    const Component = asChild ? Fragment : 'div';
+  function Slot({ ...props }: Props<T>) {
     return (
-      <Component {...props}>
-        {children}
-      </Component>
+      <RawSlot {...props} />
     );
   }
 
