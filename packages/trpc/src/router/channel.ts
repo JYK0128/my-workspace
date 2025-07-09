@@ -463,8 +463,18 @@ export const channelRouter = router({
     .input(z.object({
       content: z.string(),
     }))
-    .mutation(({ input }) => {
+    .mutation(async ({ input }) => {
       emitter.emit('message', input);
+      if (input.content.startsWith('/ask')) {
+        const completion = await openai.chat.completions.create({
+          model: 'gemma-3-12b-it',
+          messages: [
+            { role: 'user', ...input },
+          ],
+        });
+
+        emitter.emit('message', { content: completion.choices[0].message.content || '' });
+      }
     }),
 
   // 메시지 수신
