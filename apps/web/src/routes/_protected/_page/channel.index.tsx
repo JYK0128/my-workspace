@@ -1,5 +1,6 @@
 import { withMenu } from '#/routes/_protected/-layout/with-menu';
 import { ChannelCreate } from '#/routes/_protected/-modal/channel-create';
+import { ChannelJoin } from '#/routes/_protected/-modal/channel-join';
 import { Output, useInfiniteQuery, useMutation, useTRPC } from '@packages/trpc';
 import { Button, DataTable, DataTools, HoverCard, HoverCardContent, HoverCardTrigger, Slot, StepModal, ToolOptions } from '@packages/ui';
 import { createFileRoute, useNavigate } from '@tanstack/react-router';
@@ -88,13 +89,14 @@ const toolOptions: ToolOptions<Output<'getChannelCursor'>> = {
 };
 
 function RouteComponent() {
+  const trpc = useTRPC();
   const navigate = useNavigate();
+
   const form = useForm({
     defaultValues: toolOptions,
   });
   const [filterState, setFilterState] = useState<ColumnFiltersState>([]);
 
-  const trpc = useTRPC();
   const { data, fetchNextPage, refetch, hasNextPage, isFetchingNextPage } = useInfiniteQuery(
     trpc.getChannelCursor.infiniteQueryOptions({
       cursor: { index: -1, size: 10 },
@@ -144,10 +146,12 @@ function RouteComponent() {
   };
 
   const { mutateAsync: joinChannel } = useMutation(trpc.joinChannel.mutationOptions());
-  const handleClickRow = <T,>(row: Row<T>) => {
+  const handleClickRow = (row: Row<Output<'getChannelCursor'>>) => {
     return async () => {
-      await joinChannel({ channelId: row.id, password: '' });
-      navigate({ to: '/channel/$id', params: row });
+      if (!row.original.password_encrypted) {
+        await joinChannel({ channelId: row.id, password: '' });
+        navigate({ to: '/channel/$id', params: row });
+      }
     };
   };
 
@@ -172,12 +176,20 @@ function RouteComponent() {
           rowCount={data?.pages.at(-1)?.totalElements ?? 0}
 
           renderRow={({ row, children }) => (
-            <Slot
-              asChild
-              onClick={handleClickRow(row)}
-            >
-              {children}
-            </Slot>
+            row.original.password_encrypted
+              ? (
+                <StepModal
+                  key={row.original.id}
+                  render={[<ChannelJoin key="join" channelId={row.original.id} />]}
+                >
+                  {children}
+                </StepModal>
+              )
+              : (
+                <Slot onClick={handleClickRow(row)} asChild>
+                  {children}
+                </Slot>
+              )
           )}
           renderTools={({ table }) => (
             <DataTools {...{ table, form }} />
