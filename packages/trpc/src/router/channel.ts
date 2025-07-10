@@ -249,8 +249,11 @@ export const channelRouter = router({
             .selectAll()
             .executeTakeFirstOrThrow();
 
-          const isValidPw = bcrypt.compareSync(input.password, channel.password_encrypted);
-          if (!isValidPw) throw Error('invalid password');
+          let isValidPw = !channel.password_encrypted;
+          if (channel.password_encrypted) {
+            isValidPw = bcrypt.compareSync(input.password, channel.password_encrypted);
+            if (!isValidPw) throw Error('invalid password');
+          }
 
           const participant = await trx.insertInto('channel_participant')
             .values(withInsert({
