@@ -1,12 +1,13 @@
 import { withMenu } from '#/routes/_protected/-layout/with-menu';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useMutation, useQuery, useTRPC } from '@packages/trpc';
-import { Button, Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle, FormController, FormRicharea } from '@packages/ui';
+import { Button, Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle, cn, FormController, FormRicharea, Skeleton } from '@packages/ui';
 import { createFileRoute, notFound } from '@tanstack/react-router';
 import { uniqueId } from 'lodash-es';
-import { Send } from 'lucide-react';
+import { CornerDownRight, Heart, Send } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { SubmitHandler, useForm } from 'react-hook-form';
+import { useAuth } from 'react-oidc-context';
 import { z } from 'zod';
 
 export const Route = createFileRoute('/_protected/_page/channel/$id')({
@@ -31,6 +32,7 @@ type FieldValues = z.infer<typeof fields>;
 
 function RouteComponent() {
   const trpc = useTRPC();
+  const { user } = useAuth();
   const params = Route.useParams();
   const { data: channel } = useQuery(trpc.getChannel.queryOptions({ channelId: params.id }));
 
@@ -42,12 +44,12 @@ function RouteComponent() {
   useEffect(() => {
     if (channel?.id) {
       form.reset(
-        { ...form.getValues(), channelId: channel.id },
+        { ...fields._def.defaultValue(), channelId: channel.id },
       );
     }
   }, [channel, form]);
 
-  const [messages, setMessages] = useState<(FieldValues & { userId: string })[]>([]);
+  const [messages, setMessages] = useState<(FieldValues & { userId: string, nickname: string })[]>([]);
   const { mutateAsync: sendMessage } = useMutation(trpc.sendMessage.mutationOptions());
 
   useEffect(() => {
@@ -69,6 +71,7 @@ function RouteComponent() {
     switch (submitter.name) {
       case 'submit': {
         sendMessage(payload);
+        form.reset();
         return;
       }
       default: {
@@ -83,14 +86,18 @@ function RouteComponent() {
         <CardTitle>{channel?.name}</CardTitle>
         <CardDescription>{channel?.description}</CardDescription>
       </CardHeader>
-      <CardContent>
+      <CardContent className="tw:overflow-y-auto">
         {messages.map((msg) => (
-          <div key={uniqueId()}>
-            <div>{msg.userId}</div>
-            <div>{msg.content}</div>
-          </div>
-        ),
-        )}
+          <Message
+            key={uniqueId()}
+            {...{
+              type: msg.userId === user?.profile.sub ? 'sent' : 'received',
+              nickname: msg.nickname,
+              message: msg.content,
+              createdAt: new Date(),
+            }}
+          />
+        ))}
       </CardContent>
       <CardFooter>
         <FormController
@@ -103,7 +110,7 @@ function RouteComponent() {
             name="content"
             control={form.control}
             orientation="horizontal"
-            className="tw:pr-20"
+            className="tw:pr-20 tw:h-25"
             size="full"
             onKeyDown={(e) => {
               if (!(e.altKey || e.shiftKey) && e.key === 'Enter') {
@@ -126,5 +133,143 @@ function RouteComponent() {
         </FormController>
       </CardFooter>
     </Card>
+  );
+}
+
+type MsgProps = {
+  type: 'system' | 'sent' | 'receiving' | 'received'
+  nickname: string
+  message: string
+  createdAt: Date
+};
+
+function Message(props: MsgProps) {
+  switch (props.type) {
+    case 'system':
+      return <SystemMessage {...props} />;
+    case 'sent':
+    case 'receiving':
+    case 'received':
+      return <UserMessage {...props} />;
+  }
+}
+
+/** 유저 메시지 */
+function UserMessage(props: MsgProps) {
+  const { type, nickname } = props;
+
+  return (
+    <div
+      className={cn(
+        'tw:group',
+        'tw:flex tw:gap-1 tw:w-full tw:my-2',
+        {
+          sent: 'tw:self-end tw:flex-row-reverse',
+          receiving: 'tw:self-start tw:flex-row',
+          received: 'tw:self-start tw:flex-row',
+          system: '',
+        }[type],
+      )}
+    >
+      {/* 아바타 영역 */}
+      {type === 'receiving'
+        ? (
+          <Skeleton
+            className={cn(
+              'tw:size-10',
+              'tw:border tw:border-solid tw:border-gray-300 tw:rounded-full!',
+            )}
+          />
+        )
+        : (
+          <div
+            className={cn(
+              'tw:size-10',
+              'tw:border tw:border-solid tw:border-gray-300 tw:rounded-full',
+            )}
+          />
+        )}
+
+      {/* 메시지 */}
+      <div
+        className={cn(
+          'tw:text-sm',
+          'tw:w-fit tw:max-w-[60%] tw:px-5 tw:py-2',
+          'tw:border tw:border-solid tw:border-gray-300 tw:rounded-lg',
+          {
+            sent: 'tw:bg-yellow-200',
+            receiving: 'tw:bg-white tw:w-[60%]',
+            received: 'tw:bg-white',
+            system: '',
+          }[type],
+        )}
+      >
+        <div className="tw:font-bold">{nickname}</div>
+        {type !== 'receiving'
+          ? (
+            props.message
+          )
+          : (
+            <>
+              <Skeleton className="tw:h-4 tw:w-full tw:mb-2" />
+              <Skeleton className="tw:h-4 tw:w-[80%] tw:mb-2" />
+              <Skeleton className="tw:h-4 tw:w-[80%] tw:mb-2" />
+            </>
+          )}
+      </div>
+
+      {/* 시간 */}
+      {type !== 'receiving' && (
+        <div
+          className={cn(
+            'tw:text-xs',
+            'tw:block tw:group-hover:hidden',
+            'tw:self-end',
+          )}
+        >
+          {props.createdAt.toLocaleTimeString([], {
+            hour: '2-digit', minute: '2-digit',
+          })}
+        </div>
+      )}
+      {/* 메뉴 */}
+      {type !== 'receiving' && (
+        <div
+          className={cn(
+            'tw:text-xs',
+            'tw:hidden tw:group-hover:block',
+            'tw:self-end',
+          )}
+        >
+          <Button size="icon" variant="outline">
+            <CornerDownRight />
+          </Button>
+          <Button size="icon" variant="outline">
+            <Heart />
+          </Button>
+        </div>
+      )}
+    </div>
+  );
+}
+
+/** 시스템 메시지 */
+function SystemMessage(props: MsgProps) {
+  const { type } = props;
+
+  return (
+    type === 'system' && (
+      <div
+        className={cn(
+          'tw:self-center',
+          'tw:w-fit tw:max-w-[60%] tw:px-5 tw:py-2',
+          'tw:bg-gray-600',
+          'tw:text-white tw:text-xs',
+          'tw:rounded-lg tw:border tw:border-solid tw:border-gray-300',
+        )}
+      >
+        {props.message}
+      </div>
+    )
   );
 }
