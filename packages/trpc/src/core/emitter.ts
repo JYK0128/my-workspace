@@ -4,7 +4,7 @@ export { on };
 
 /* 이벤트 정의 */
 export type EmitterMap = {
-  message: [{ channelId: string, userId: string, content: string }]
+  message: [{ channelId: string, userId: string, nickname: string, content: string }]
 };
 export const emitter = new EventEmitter<EmitterMap>();
 

@@ -468,7 +468,8 @@ export const channelRouter = router({
       content: z.string(),
     }))
     .mutation(async ({ ctx: { user }, input }) => {
-      emitter.emit('message', { ...input, userId: user.instanceId });
+      emitter.emit('message', { ...input, userId: user.instanceId, nickname: user.nickname });
+      return 'ok';
     }),
 
   // 메시지 수신

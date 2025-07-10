@@ -13,6 +13,7 @@ export const createContextInner = (user: {
   userIp: string
   accessToken?: string
   instanceId?: string
+  nickname?: string
 }) => {
   return { db, user, emitter };
 };
@@ -75,6 +76,7 @@ export const protectedProcedure = t.procedure.use(async ({ ctx, next }) => {
       user: {
         ...ctx.user,
         instanceId: payload.sub,
+        nickname: payload.nickname as string,
       },
     },
   });
