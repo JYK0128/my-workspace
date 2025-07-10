@@ -3,8 +3,8 @@ import { Button, FormControl, FormField, FormItem, FormLabel, FormMessage } from
 import { cn } from '#shadcn/lib/utils.ts';
 import { cva, VariantProps } from 'class-variance-authority';
 import { X } from 'lucide-react';
-import { ComponentPropsWithoutRef, CSSProperties, useRef, useState } from 'react';
-import { FieldPath, FieldValues, UseControllerProps } from 'react-hook-form';
+import { ComponentPropsWithoutRef, CSSProperties, useEffect, useRef, useState } from 'react';
+import { FieldPath, FieldValues, UseControllerProps, useWatch } from 'react-hook-form';
 
 const styles = cva('', {
   variants: {
@@ -39,12 +39,25 @@ export function FormRicharea<T extends FieldValues>(props: Props<T>) {
     showError = false, required = false, size,
     ...inputProps
   } = props;
-  const fileRef = useRef<HTMLInputElement>(null);
-  const areaRef = useRef<HTMLInputElement>(null);
   const { prevent, stop } = useEventUtils();
 
-  const [fileList, setFileList] = useState<File[]>([]);
+  /* 폼 입력 기능 */
+  const formValue = useWatch({ name });
+  const areaRef = useRef<HTMLParagraphElement>(null);
+  const [isComposing, setIsComposing] = useState(false);
+
+  useEffect(() => {
+    if (!areaRef.current || isComposing) return;
+    if (areaRef.current.innerHTML !== formValue) {
+      areaRef.current.innerHTML = formValue || '';
+    }
+  }, [areaRef, formValue, isComposing]);
+
+  /* 파일 기능 */
+  const fileRef = useRef<HTMLInputElement>(null);
   const transferRef = useRef(new DataTransfer());
+  const [fileList, setFileList] = useState<File[]>([]);
+
   const addFiles = (files: (File | null)[]) => {
     for (const file of files) {
       if (!file) throw Error('it is not readable file');
@@ -107,10 +120,19 @@ export function FormRicharea<T extends FieldValues>(props: Props<T>) {
             </div>
             <p
               {...inputProps}
+              ref={areaRef}
               contentEditable
-              onInput={(e) => {
-                inputProps.onInput?.(e);
+              suppressContentEditableWarning={true}
+              onCompositionStart={() => setIsComposing(true)}
+              onCompositionEnd={(e) => {
+                setIsComposing(false);
                 field.onChange(e.currentTarget.innerHTML);
+              }}
+              onInput={(e) => {
+                if (!isComposing) {
+                  inputProps.onInput?.(e);
+                  field.onChange(e.currentTarget.innerHTML);
+                }
               }}
               onBlur={(e) => {
                 inputProps.onBlur?.(e);
@@ -144,7 +166,6 @@ export function FormRicharea<T extends FieldValues>(props: Props<T>) {
             <FormControl>
               <input
                 {...field}
-                ref={areaRef}
                 type="text"
                 hidden
               />
