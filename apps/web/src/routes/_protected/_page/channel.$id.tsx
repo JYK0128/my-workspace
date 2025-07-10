@@ -21,8 +21,10 @@ export const Route = createFileRoute('/_protected/_page/channel/$id')({
 });
 
 const fields = z.object({
+  channelId: z.string().min(1),
   content: z.string().min(1),
 }).default({
+  channelId: '',
   content: '',
 });
 type FieldValues = z.infer<typeof fields>;
@@ -37,30 +39,41 @@ function RouteComponent() {
     defaultValues: fields._def.defaultValue(),
   });
 
-  const [messages, setMessages] = useState<string[]>([]);
-  const { mutateAsync: sendMessage } = useMutation(trpc.sendMessage.mutationOptions());
   useEffect(() => {
-    const subscription = trpc.receiveMessage.subscriptionOptions().subscribe({
+    if (channel?.id) {
+      form.reset(
+        { ...form.getValues(), channelId: channel.id },
+      );
+    }
+  }, [channel, form]);
+
+  const [messages, setMessages] = useState<(FieldValues & { userId: string })[]>([]);
+  const { mutateAsync: sendMessage } = useMutation(trpc.sendMessage.mutationOptions());
+
+  useEffect(() => {
+    if (!channel) return;
+    const subscription = trpc.receiveMessage.subscriptionOptions({ channelId: channel.id }).subscribe({
       onData: (data) => {
-        setMessages((prev) => [...prev, data.content]);
+        setMessages((prev) => [...prev, data]);
       },
     });
     return () => {
       subscription.unsubscribe();
     };
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [channel]);
 
   const handleSubmit: SubmitHandler<FieldValues> = (payload, evt) => {
     const { submitter } = (evt?.nativeEvent ?? {}) as SubmitEvent;
     if (!(submitter instanceof HTMLButtonElement)) return;
     switch (submitter.name) {
-      case 'submit':
+      case 'submit': {
         sendMessage(payload);
-        form.reset();
         return;
-      default:
+      }
+      default: {
         throw new Error('unexpected error');
+      }
     }
   };
 
@@ -72,13 +85,18 @@ function RouteComponent() {
       </CardHeader>
       <CardContent>
         {messages.map((msg) => (
-          <div key={uniqueId()}>{msg}</div>),
+          <div key={uniqueId()}>
+            <div>{msg.userId}</div>
+            <div>{msg.content}</div>
+          </div>
+        ),
         )}
       </CardContent>
       <CardFooter>
         <FormController
           form={form}
           onSubmit={handleSubmit}
+          onError={(err) => console.error(err)}
           className="tw:relative tw:flex tw:justify-end tw:items-center tw:size-full"
         >
           <FormRicharea

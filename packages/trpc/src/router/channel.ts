@@ -1,5 +1,5 @@
-import { emitter, Queue } from '#core/bridge.ts';
 import { DB } from '#core/db.js';
+import { emitter, EmitterMap, on } from '#core/emitter.ts';
 import { buildGroupClause, buildOrderClause, buildPagination, buildSelectAggregateClause, buildSelectGroupClause, buildWhereFilterClause, loggingWith, withDelete, withInsert, withUpdate } from '#core/kysely.ts';
 import { AggRequest, CursorRequest, PageRequest } from '#core/kysely.zod.helpers.ts';
 import { protectedProcedure, publicProcedure, router } from '#core/trpc.ts';
@@ -461,40 +461,24 @@ export const channelRouter = router({
   // 메시지 발신
   sendMessage: protectedProcedure
     .input(z.object({
+      channelId: z.string(),
       content: z.string(),
     }))
-    .mutation(async ({ input }) => {
-      emitter.emit('message', input);
-      if (input.content.startsWith('/ask')) {
-        const completion = await openai.chat.completions.create({
-          model: 'gemma-3-12b-it',
-          messages: [
-            { role: 'user', ...input },
-          ],
-        });
-
-        emitter.emit('message', { content: completion.choices[0].message.content || '' });
-      }
+    .mutation(async ({ ctx: { user }, input }) => {
+      emitter.emit('message', { ...input, userId: user.instanceId });
     }),
 
   // 메시지 수신
   receiveMessage: protectedProcedure
-    .subscription(async function* () {
-      const queue = new Queue<{ content: string }>();
-
-      const handler = (data: { content: string }) => {
-        queue.enqueue(data);
-      };
-      emitter.on('message', handler);
-
-      try {
-        while (true) {
-          const data = await queue.dequeue();
-          yield data;
+    .input(z.object({
+      channelId: z.string(),
+    }))
+    .subscription(async function* ({ ctx: { user }, input, signal }) {
+      for await (const [data] of on(emitter, 'message', { signal: signal })) {
+        const message = data as EmitterMap['message'][number];
+        if (message.channelId === input.channelId) {
+          yield message;
         }
-      }
-      finally {
-        emitter.off('message', handler);
       }
     }),
 
@@ -512,14 +496,5 @@ export const channelRouter = router({
         ],
         // stream: true,
       });
-    }),
-
-  // 예시 - 1초 메시지
-  time: protectedProcedure
-    .subscription(async function* () {
-      while (true) {
-        yield new Date().toISOString();
-        await new Promise((resolve) => setTimeout(resolve, 1000));
-      }
     }),
 });
