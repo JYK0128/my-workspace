@@ -1,6 +1,6 @@
 import { withMenu } from '#/routes/_protected/-layout/with-menu';
 import { ChannelCreate } from '#/routes/_protected/-modal/channel-create';
-import { Output, useInfiniteQuery, useTRPC } from '@packages/trpc';
+import { Output, useInfiniteQuery, useMutation, useTRPC } from '@packages/trpc';
 import { Button, DataTable, DataTools, HoverCard, HoverCardContent, HoverCardTrigger, Slot, StepModal, ToolOptions } from '@packages/ui';
 import { createFileRoute, useNavigate } from '@tanstack/react-router';
 import { ColumnDef, ColumnFiltersState, Row } from '@tanstack/react-table';
@@ -134,10 +134,6 @@ function RouteComponent() {
     return data ? data.pages.flatMap((d) => d.content) : [];
   }, [data]);
 
-  const handleClickRow = <T,>(row: Row<T>) => {
-    return () => navigate({ to: '/channel/$id', params: row });
-  };
-
   const onChangeFilters = (filters: ColumnFiltersState) => {
     setFilterState(filters);
   };
@@ -146,6 +142,15 @@ function RouteComponent() {
       fetchNextPage();
     }
   };
+
+  const { mutateAsync: joinChannel } = useMutation(trpc.joinChannel.mutationOptions());
+  const handleClickRow = <T,>(row: Row<T>) => {
+    return async () => {
+      await joinChannel({ channelId: row.id, password: '' });
+      navigate({ to: '/channel/$id', params: row });
+    };
+  };
+
 
   return (
     <div className="tw:size-full tw:grid tw:grid-rows-[auto_1fr] tw:gap-2">
