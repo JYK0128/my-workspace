@@ -1,11 +1,12 @@
-import { EventEmitter } from 'events';
+import { EventEmitter, on } from 'events';
+export { on };
 
 
 /* 이벤트 정의 */
-type EventMap = {
-  message: [{ content: string }]
+export type EmitterMap = {
+  message: [{ channelId: string, userId: string, content: string }]
 };
-export const emitter = new EventEmitter<EventMap>();
+export const emitter = new EventEmitter<EmitterMap>();
 
 /* 이벤트 관리 */
 export class Queue<T> {

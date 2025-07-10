@@ -1,4 +1,4 @@
-import { emitter } from '#core/bridge.ts';
+import { emitter } from '#core/emitter.ts';
 import { db } from '#core/kysely.ts';
 import { ExpressContext } from '#server/express.ts';
 import { SocketContext } from '#server/socket.ts';
