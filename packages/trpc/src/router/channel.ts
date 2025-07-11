@@ -7,6 +7,7 @@ import { MAX_DATE } from '@packages/utils';
 import bcrypt from 'bcryptjs';
 import { sql } from 'kysely';
 import OpenAI from 'openai';
+import type { ChatCompletionChunk } from 'openai/resources/index.mjs';
 import { z } from 'zod';
 
 const API = {
@@ -41,31 +42,6 @@ export const channelRouter = router({
           eb('deleted_at', 'is', null),
         ]))
         .selectAll()
-        .execute();
-    }),
-
-  test: publicProcedure
-    .query(() => {
-      return '';
-    }),
-
-  // 채널 통계
-  getChannelSummary: publicProcedure
-    .input(AggRequest<DB, 'channel'>())
-    .query(({ ctx: { user, db }, input }) => {
-      const { groups, having, filters, fns } = input;
-
-      return db
-        .selectFrom('channel')
-        .where(({ eb }) => eb.and([
-          buildWhereFilterClause(eb, filters),
-          eb('deleted_at', 'is', null),
-        ]))
-        .select((eb) => ([
-          ...buildSelectAggregateClause(eb, fns),
-          ...buildSelectGroupClause(eb, groups),
-        ]))
-        .$call((qb) => buildGroupClause(qb, groups, having))
         .execute();
     }),
 
@@ -109,51 +85,7 @@ export const channelRouter = router({
       });
     }),
 
-  // 채널 페이지(페이징)
-  getChannelPage: publicProcedure
-    .input(PageRequest<DB, 'channel'>())
-    .query(({ ctx: { user, db }, input }) => {
-      const { page, orders, filters } = input;
-
-      return db.transaction().execute(async (trx) => {
-        const content = await trx
-          .selectFrom('channel')
-          .selectAll()
-          .where(({ eb }) => eb.and([
-            buildWhereFilterClause(eb, filters),
-            eb('deleted_at', 'is', null),
-          ]))
-          .$call((qb) => buildOrderClause(qb, orders))
-          .offset((page.index) * page.size)
-          .limit(page.size)
-          .execute();
-
-        const pager = await trx
-          .selectFrom('channel')
-          .where(({ eb }) => eb.and([
-            buildWhereFilterClause(eb, filters),
-            eb('deleted_at', 'is', null),
-          ]))
-          .select(({ eb }) => buildPagination(eb, { content, orders, info: page }))
-          .executeTakeFirstOrThrow();
-
-        return { ...pager.data, content };
-      });
-    }),
-
-  // 채널 상세
-  getChannel: protectedProcedure
-    .input(z.object({
-      channelId: z.string(),
-    }))
-    .query(({ ctx: { user, db }, input }) => {
-      return db
-        .selectFrom('channel')
-        .where('id', '=', input.channelId)
-        .selectAll()
-        .executeTakeFirstOrThrow();
-    }),
-
+  /* 채널 관리 */
   // 채널 생성
   createChannel: protectedProcedure
     .input(z.object({
@@ -190,6 +122,19 @@ export const channelRouter = router({
       );
     }),
 
+  // 채널 상세
+  getChannel: protectedProcedure
+    .input(z.object({
+      channelId: z.string(),
+    }))
+    .query(({ ctx: { user, db }, input }) => {
+      return db
+        .selectFrom('channel')
+        .where('id', '=', input.channelId)
+        .selectAll()
+        .executeTakeFirstOrThrow();
+    }),
+
   // 채널 설정 변경
   modifyChannel: protectedProcedure
     .input(z.object({
@@ -212,6 +157,10 @@ export const channelRouter = router({
       );
     }),
 
+  // 채널 삭제?
+
+
+  /* 채널 진입/탈퇴 */
   // 참여자 확인
   isParticipant: protectedProcedure
     .input(z.object({
@@ -347,6 +296,7 @@ export const channelRouter = router({
       );
     }),
 
+  /* 채널 상세 관리 */
   // 참가자 목록
   getParticipants: protectedProcedure
     .input(z.object({
@@ -364,6 +314,7 @@ export const channelRouter = router({
           ]),
         ]));
     }),
+
   // 권한 위임
   delegateMaster: protectedProcedure
     .input(z.object({
@@ -461,6 +412,7 @@ export const channelRouter = router({
       );
     }),
 
+  /* 채팅 기능 */
   // 메시지 발신
   sendMessage: protectedProcedure
     .input(z.object({
@@ -468,7 +420,12 @@ export const channelRouter = router({
       content: z.string(),
     }))
     .mutation(async ({ ctx: { user }, input }) => {
-      emitter.emit('message', { ...input, userId: user.instanceId, nickname: user.nickname });
+      if (input.content.startsWith('@ask ')) {
+        emitter.emit('question', { ...input, userId: user.instanceId, nickname: user.nickname });
+      }
+      else {
+        emitter.emit('message', { ...input, userId: user.instanceId, nickname: user.nickname });
+      }
       return 'ok';
     }),
 
@@ -487,18 +444,90 @@ export const channelRouter = router({
     }),
 
   // LLM 질의
-  sendQuestion: protectedProcedure
+  receiveAnswer: protectedProcedure
     .input(z.object({
-      content: z.string(),
+      channelId: z.string(),
     }))
-    .mutation(({ input }) => {
-      // TODO: langChain 또는 langGraph 변경
-      return openai.chat.completions.create({
-        model: 'gemma-3-12b-it',
-        messages: [
-          { role: 'user', ...input },
-        ],
-        // stream: true,
+    .subscription(async function* ({ ctx: { user }, input, signal }) {
+      for await (const [data] of on(emitter, 'question', { signal: signal })) {
+        const message = data as EmitterMap['question'][number];
+        if (message.channelId === input.channelId) {
+          const answer = await openai.chat.completions.create({
+            model: 'gemma-3-12b-it',
+            messages: [
+              { role: 'user', content: 'You must respond answer only in Korean.' },
+              { role: 'user', ...data },
+            ],
+            stream: true,
+          });
+
+          const responses: Array<ChatCompletionChunk> = [];
+          for await (const chunk of answer) {
+            yield {
+              seq: responses.length,
+              channelId: input.channelId,
+              userId: chunk.id,
+              nickname: '챗봇',
+              content: chunk.choices[0]?.delta.content,
+            };
+            responses.push(chunk);
+          }
+          const res = responses.map((v) => v.choices[0].delta.content).join('');
+          console.log(res);
+        }
+      }
+    }),
+
+  /* 미사용 */
+  // 채널 통계
+  getChannelSummary: publicProcedure
+    .input(AggRequest<DB, 'channel'>())
+    .query(({ ctx: { user, db }, input }) => {
+      const { groups, having, filters, fns } = input;
+
+      return db
+        .selectFrom('channel')
+        .where(({ eb }) => eb.and([
+          buildWhereFilterClause(eb, filters),
+          eb('deleted_at', 'is', null),
+        ]))
+        .select((eb) => ([
+          ...buildSelectAggregateClause(eb, fns),
+          ...buildSelectGroupClause(eb, groups),
+        ]))
+        .$call((qb) => buildGroupClause(qb, groups, having))
+        .execute();
+    }),
+
+  // 채널 페이지(페이징)
+  getChannelPage: publicProcedure
+    .input(PageRequest<DB, 'channel'>())
+    .query(({ ctx: { user, db }, input }) => {
+      const { page, orders, filters } = input;
+
+      return db.transaction().execute(async (trx) => {
+        const content = await trx
+          .selectFrom('channel')
+          .selectAll()
+          .where(({ eb }) => eb.and([
+            buildWhereFilterClause(eb, filters),
+            eb('deleted_at', 'is', null),
+          ]))
+          .$call((qb) => buildOrderClause(qb, orders))
+          .offset((page.index) * page.size)
+          .limit(page.size)
+          .execute();
+
+        const pager = await trx
+          .selectFrom('channel')
+          .where(({ eb }) => eb.and([
+            buildWhereFilterClause(eb, filters),
+            eb('deleted_at', 'is', null),
+          ]))
+          .select(({ eb }) => buildPagination(eb, { content, orders, info: page }))
+          .executeTakeFirstOrThrow();
+
+        return { ...pager.data, content };
       });
     }),
 });
