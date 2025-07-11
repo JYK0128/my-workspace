@@ -6,7 +6,7 @@ import { createFileRoute, notFound } from '@tanstack/react-router';
 import { uniqueId } from 'lodash-es';
 import { CornerDownRight, Heart, Send } from 'lucide-react';
 import { useEffect, useState } from 'react';
-import { SubmitHandler, useForm } from 'react-hook-form';
+import { useForm, type SubmitHandler } from 'react-hook-form';
 import { useAuth } from 'react-oidc-context';
 import { z } from 'zod';
 
@@ -49,7 +49,7 @@ function RouteComponent() {
     }
   }, [channel, form]);
 
-  const [messages, setMessages] = useState<(FieldValues & { userId: string, nickname: string })[]>([]);
+  const [messages, setMessages] = useState<(FieldValues & { seq?: number, userId: string, nickname: string })[]>([]);
   const { mutateAsync: sendMessage } = useMutation(trpc.sendMessage.mutationOptions());
 
   useEffect(() => {
@@ -64,6 +64,44 @@ function RouteComponent() {
     };
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [channel]);
+
+  useEffect(() => {
+    if (!channel) return;
+    const subscription = trpc.receiveAnswer.subscriptionOptions({ channelId: channel.id }).subscribe({
+      onData: (data) => {
+        setMessages((old) => {
+          const idx = old.findIndex((v) => v.userId === data.userId);
+          if (idx === -1 && data.content) {
+            console.log('cond 01: ', idx, data.content);
+            old.push({
+              ...data,
+              content: data.content ?? '',
+            });
+            return [...old];
+          }
+          else if (idx !== -1 && data.content) {
+            if (old[idx].seq !== data.seq) {
+              old[idx] = {
+                ...old[idx],
+                content: [old[idx].content, data.content].join(''),
+              };
+              return [...old];
+            }
+            else {
+              return old;
+            }
+          }
+          else {
+            console.log('cond 03: ', idx, data.content);
+            return old;
+          }
+        });
+      },
+    });
+    return () => {
+      subscription.unsubscribe();
+    };
+  }, [channel, trpc.receiveAnswer]);
 
   const handleSubmit: SubmitHandler<FieldValues> = (payload, evt) => {
     const { submitter } = (evt?.nativeEvent ?? {}) as SubmitEvent;
@@ -162,7 +200,7 @@ function UserMessage(props: MsgProps) {
     <div
       className={cn(
         'tw:group',
-        'tw:flex tw:gap-1 tw:w-full tw:my-2',
+        'tw:flex tw:gap-1 tw:w-full tw:my-2 tw:max-h-none',
         {
           sent: 'tw:self-end tw:flex-row-reverse',
           receiving: 'tw:self-start tw:flex-row',
