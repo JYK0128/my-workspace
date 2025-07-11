@@ -148,6 +148,7 @@ create table if not EXISTS channel_participant (
   metadata            jsonb,
 
   PRIMARY KEY(id),
+  UNIQUE(channel_id, user_id),
   FOREIGN KEY(channel_id) REFERENCES channel(id),
   FOREIGN KEY(user_id) REFERENCES app_user(id)
 );
