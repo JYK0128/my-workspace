@@ -21,11 +21,17 @@ export const withMenu = <T extends object>(Component: React.ComponentType<T>) =>
         </Button>
       )
       : (
-        <Button
-          onClick={() => signoutRedirect({ state: user })}
-        >
-          로그아웃
-        </Button>
+        <div className="tw:flex tw:flex-row tw:items-center tw:gap-2">
+          <div>
+            <span className="tw:font-bold">{`${user?.profile.nickname} 님, `}</span>
+            <span>안녕하세요.</span>
+          </div>
+          <Button
+            onClick={() => signoutRedirect({ state: user })}
+          >
+            로그아웃
+          </Button>
+        </div>
       );
   }
 
