@@ -30,48 +30,34 @@ const API = {
 const openai = new OpenAI(API['GOOGLE']);
 
 export const channelRouter = router({
-  // 채널 목록
-  getChannels: protectedProcedure
-    .input(z.object({
-
-    }))
-    .query(({ ctx: { user, db }, input }) => {
-      return db
-        .selectFrom('channel')
-        .where((eb) => eb.and([
-          eb('deleted_at', 'is', null),
-        ]))
-        .selectAll()
-        .execute();
-    }),
-
   // 채널 페이지(커서)
   getChannelCursor: publicProcedure
     .input(CursorRequest<DB, 'channel' | 'channel_participant'>())
     .query(({ ctx: { user, db }, input }) => {
       const { cursor, orders, filters } = input;
-
       const sign = cursor.index !== -1 && orders?.find((v) => v.default)?.sort === 'desc' ? '<' : '>';
+
       return db.transaction().execute(async (trx) => {
         const content = await trx
           .selectFrom('channel')
           .leftJoin('channel_participant', 'channel_participant.channel_id', 'channel.id')
-          .selectAll('channel')
-          .select((eb) => ([
-            eb.fn.count('channel_participant.id').as('count'),
-            sql<boolean>`channel.password_encrypted <> ''`.as('is_secret'),
-          ]))
           .where(({ eb }) => eb.and([
             buildWhereFilterClause(eb, filters),
             eb('channel.deleted_at', 'is', null),
             eb('channel.id', sign, `${cursor.index}`),
+            eb('channel_participant.deleted_at', 'is', null),
+          ]))
+          .selectAll('channel')
+          .select((eb) => ([
+            eb.fn.count('channel_participant.id').as('count'),
+            sql<boolean>`channel.password_encrypted <> ''`.as('is_secret'),
           ]))
           .groupBy('channel.id')
           .$call((qb) => buildOrderClause(qb, orders))
           .limit(cursor.size)
           .execute();
 
-        const page = await trx
+        const pagination = await trx
           .selectFrom('channel')
           .leftJoin('channel_participant', 'channel_participant.channel_id', 'channel.id')
           .select(({ eb }) => buildPagination(eb, { content, orders, info: cursor }))
@@ -81,7 +67,7 @@ export const channelRouter = router({
           ]))
           .executeTakeFirst();
 
-        return { ...page?.data, content };
+        return { ...pagination?.data, content };
       });
     }),
 
@@ -136,33 +122,53 @@ export const channelRouter = router({
     }),
 
   // 채널 설정 변경
-  modifyChannel: protectedProcedure
+  updateChannel: protectedProcedure
     .input(z.object({
-      channelId: z.string(),
+      id: z.string(),
       name: z.string().min(1),
       description: z.string(),
       password: z.string(),
+      newPassword: z.string(),
+      passwordConfirm: z.string(),
     }))
     .mutation(({ ctx: { user }, input }) => {
-      const { channelId, password, ...values } = input;
+      const { id, password, passwordConfirm, newPassword, ...values } = input;
 
-      return loggingWith(user, 'modify_channel', (db) => db
-        .updateTable('channel')
-        .set(withUpdate({
-          ...values,
-          password_encrypted: password && bcrypt.hashSync(password),
-        }))
-        .returningAll()
-        .executeTakeFirstOrThrow(),
-      );
+      return loggingWith(user, 'modify_channel', (db) => db.transaction().execute(async (trx) => {
+        if (newPassword !== passwordConfirm) throw Error('invalid password');
+
+        const channel = await trx
+          .selectFrom('channel')
+          .where('id', '=', id)
+          .selectAll()
+          .executeTakeFirstOrThrow();
+
+        let isValidPw = !channel.password_encrypted;
+        if (channel.password_encrypted) {
+          isValidPw = bcrypt.compareSync(input.password, channel.password_encrypted);
+          if (!isValidPw) throw Error('invalid password');
+        }
+
+        const updated = await trx
+          .updateTable('channel')
+          .set(withUpdate({
+            ...values,
+            password_encrypted: newPassword && bcrypt.hashSync(newPassword),
+          }))
+          .where('id', '=', id)
+          .returningAll()
+          .executeTakeFirstOrThrow();
+
+        return updated;
+      }));
     }),
 
   // 채널 삭제?
 
 
-  /* 채널 진입/탈퇴 */
-  // 참여자 확인
-  isParticipant: protectedProcedure
+  /* 참여자 관리 */
+  // 채널참여자 개인정보
+  getParticipantInfo: protectedProcedure
     .input(z.object({
       channelId: z.string(),
     }))
@@ -183,6 +189,7 @@ export const channelRouter = router({
       );
     }),
 
+  /* 채널 탈퇴 / 나가기 */
   // 채널 들어가기
   joinChannel: protectedProcedure
     .input(z.object({
@@ -211,7 +218,7 @@ export const channelRouter = router({
               is_master: false,
             }))
             .onConflict((oc) => oc
-              .column('id')
+              .columns(['channel_id', 'user_id'])
               .doUpdateSet(withUpdate({
                 banned_until: null,
                 deleted_at: null,
@@ -298,21 +305,48 @@ export const channelRouter = router({
 
   /* 채널 상세 관리 */
   // 참가자 목록
-  getParticipants: protectedProcedure
-    .input(z.object({
-      channelId: z.string(),
-    }))
-    .mutation(({ ctx: { user, db }, input }) => {
-      return db
-        .selectFrom('channel_participant')
-        .where((eb) => eb.and([
-          eb('channel_id', '=', input.channelId),
-          eb('deleted_at', 'is', null),
-          eb.or([
-            eb('banned_until', 'is', null),
-            eb('banned_until', '<', new Date()),
-          ]),
-        ]));
+  getParticipantCursor: protectedProcedure
+    .input(CursorRequest<DB, 'channel_participant' | 'app_user'>())
+    .query(({ ctx: { user, db }, input }) => {
+      const { cursor, orders, filters } = input;
+      const sign = cursor.index !== -1 && orders?.find((v) => v.default)?.sort === 'desc' ? '<' : '>';
+
+      return db.transaction().execute(async (trx) => {
+        const content = await trx
+          .selectFrom('channel_participant')
+          .leftJoin('app_user', 'app_user.id', 'channel_participant.user_id')
+          .where((eb) => eb.and([
+            buildWhereFilterClause(eb, filters),
+            eb('channel_participant.id', sign, `${cursor.index}`),
+            eb('channel_participant.deleted_at', 'is', null),
+            eb.or([
+              eb('channel_participant.banned_until', 'is', null),
+              eb('channel_participant.banned_until', '<', new Date()),
+            ]),
+          ]))
+          .selectAll('channel_participant')
+          .select(['app_user.email', 'app_user.nickname'])
+          .$call((qb) => buildOrderClause(qb, orders))
+          .limit(cursor.size)
+          .execute();
+
+        const pagination = await trx
+          .selectFrom('channel_participant')
+          .leftJoin('app_user', 'app_user.id', 'channel_participant.user_id')
+          .select(({ eb }) => buildPagination(eb, { content, orders, info: cursor }))
+          .where(({ eb }) => eb.and([
+            buildWhereFilterClause(eb, filters),
+            eb('channel_participant.id', sign, `${cursor.index}`),
+            eb('channel_participant.deleted_at', 'is', null),
+            eb.or([
+              eb('channel_participant.banned_until', 'is', null),
+              eb('channel_participant.banned_until', '<', new Date()),
+            ]),
+          ]))
+          .executeTakeFirst();
+
+        return { ...pagination?.data, content };
+      });
     }),
 
   // 권한 위임
