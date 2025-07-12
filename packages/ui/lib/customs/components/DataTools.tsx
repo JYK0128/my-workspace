@@ -117,58 +117,62 @@ export function DataTools<T>({ table, form }: Props<T>) {
     <Form {...form}>
       <form
         onSubmit={form.handleSubmit(handleSubmit)}
-        className="tw:grid tw:grid-cols-2 tw:gap-2"
       >
-        <div className="tw:justify-self-start tw:flex tw:gap-0.5">
-          {data.dateRange && (
-            <FormDateRange
-              control={form.control as unknown as Control<FieldValues>}
-              name="dateRange.value"
-              onBlur={handleBlurDateRange}
-            />
-          )}
-        </div>
+        <div className="tw:flex tw:flex-wrap tw:flex-row tw:justify-between">
+          <div className="tw:flex tw:gap-0.5">
+            {data.dateRange && (
+              <FormDateRange
+                control={form.control as unknown as Control<FieldValues>}
+                name="dateRange.value"
+                onBlur={handleBlurDateRange}
+              />
+            )}
+          </div>
 
-        <div className="tw:justify-self-end tw:flex tw:gap-0.5">
-          {data.category && (
-            <FormSelectSingle
-              control={form.control as unknown as Control<FieldValues>}
-              name="category.value"
-              items={data.category.items}
-            />
-          )}
-          {data.search && (
-            <>
+          <div className="tw:flex tw:flex-wrap tw:gap-0.5">
+            {data.category && (
               <FormSelectSingle
                 control={form.control as unknown as Control<FieldValues>}
-                name="search.id"
-                items={data.search.items}
+                name="category.value"
+                items={data.category.items}
               />
-              <FormInput
-                control={form.control as unknown as Control<FieldValues>}
-                name="search.value"
-              />
-            </>
-          )}
-          <Button type="submit" name="search">검색</Button>
-        </div>
-        <div className="tw:col-span-full tw:flex tw:justify-between">
-          <div>
-            {`총 ${table.getRowCount()} 개`}
-            /
-            {`선택 ${table.getFilteredSelectedRowModel().rows.length} 개`}
+            )}
+            {data.search && (
+              <>
+                <FormSelectSingle
+                  control={form.control as unknown as Control<FieldValues>}
+                  name="search.id"
+                  items={data.search.items}
+                />
+                <FormInput
+                  control={form.control as unknown as Control<FieldValues>}
+                  name="search.value"
+                />
+              </>
+            )}
+            <Button type="submit" name="search">검색</Button>
           </div>
-          {
-            data.status && (
-              <FormCheckbox
-                optional
-                falsely={null}
-                control={form.control as unknown as Control<FieldValues>}
-                name="status.value"
-                label={data.status.label}
-              />
-            )
-          }
+        </div>
+
+        <div className="tw:flex tw:flex-wrap tw:flex-row tw:justify-between">
+          <div>
+            <span>{`총 ${table.getRowCount()} 개`}</span>
+            <span> / </span>
+            <span>{`선택 ${table.getFilteredSelectedRowModel().rows.length} 개`}</span>
+          </div>
+          <div>
+            {
+              data.status && (
+                <FormCheckbox
+                  optional
+                  falsely={null}
+                  control={form.control as unknown as Control<FieldValues>}
+                  name="status.value"
+                  label={data.status.label}
+                />
+              )
+            }
+          </div>
         </div>
       </form>
     </Form>
