@@ -40,13 +40,13 @@ type Search<T> = {
   [K in keyof T]: T[K] extends string ?
     {
       id: Nullable<Extract<{
-        [K in keyof T]: T[K] extends Literal<T[K]> ? never : T[K] extends string ? K : never
+        [K in keyof T]: T[K] extends Literal<T[K]> ? never : Extract<T[K], string> extends never ? never : K
       }[keyof T], string>>
       value: string
       items: {
         label: string
         value: Nullable<Extract<{
-          [K in keyof T]: T[K] extends Literal<T[K]> ? never : T[K] extends string ? K : never
+          [K in keyof T]: T[K] extends Literal<T[K]> ? never : Extract<T[K], string> extends never ? never : K
         }[keyof T], string>>
       }[]
     }
