@@ -76,10 +76,12 @@ export interface AppUser {
   blocked_until: Timestamp | null;
   created_at: Timestamp;
   deleted_at: Timestamp | null;
+  email: string;
   id: string;
   last_login_at: Timestamp | null;
   last_logout_at: Timestamp | null;
   metadata: Json | null;
+  nickname: string;
   updated_at: Timestamp;
 }
 

@@ -17,6 +17,8 @@ CREATE TABLE if NOT EXISTS guestbook (
 -- 유저
 CREATE TABLE IF NOT EXISTS app_user (
   id                  UUID        NOT NULL,
+  email               TEXT        NOT NULL,
+  nickname            TEXT        NOT NULL,
   blocked_until       TIMESTAMP,
   last_login_at       TIMESTAMP,
   last_logout_at      TIMESTAMP,

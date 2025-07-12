@@ -13,9 +13,10 @@ export const createContextInner = (user: {
   userIp: string
   accessToken?: string
   instanceId?: string
+  email?: string
   nickname?: string
 }) => {
-  return { db, user, emitter };
+  return { user, db, emitter };
 };
 export type Context = SocketContext | ExpressContext;
 const t = initTRPC.meta<TRPCPanelMeta>().context<Context>().create({
@@ -66,7 +67,11 @@ export const protectedProcedure = t.procedure.use(async ({ ctx, next }) => {
   });
 
   // CASE03 - OIDC client 없음
-  if (payload.azp !== 'my-client' || !payload.sub) {
+  if (payload.azp !== 'my-client'
+    || !payload.sub
+    || !payload.email
+    || !payload.nickname
+  ) {
     throw InvalidTokenError;
   }
 
@@ -75,7 +80,8 @@ export const protectedProcedure = t.procedure.use(async ({ ctx, next }) => {
       ...ctx,
       user: {
         ...ctx.user,
-        instanceId: payload.sub,
+        instanceId: payload.sub as string,
+        email: payload.email as string,
         nickname: payload.nickname as string,
       },
     },
