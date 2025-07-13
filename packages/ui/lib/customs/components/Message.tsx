@@ -1,5 +1,4 @@
-import { MessageContext, MessageProvider } from '#customs/contexts/index.ts';
-import { useMessage } from '#customs/hooks/index.ts';
+import { MessageContext, useMessage } from '#customs/hooks/index.ts';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '#shadcn/components/ui/index.ts';
 import { useState } from 'react';
 
@@ -8,7 +7,7 @@ export function Message() {
   const { messages } = useMessage();
 
   return (
-    <MessageProvider value={options}>
+    <MessageContext.Provider value={options}>
       {messages.map(({ id, type, title, description, open, toggle, cancel, confirm }) => (
         <AlertDialog key={id} open={open} onOpenChange={toggle}>
           <AlertDialogContent>
@@ -37,6 +36,6 @@ export function Message() {
           </AlertDialogContent>
         </AlertDialog>
       ))}
-    </MessageProvider>
+    </MessageContext.Provider>
   );
 }

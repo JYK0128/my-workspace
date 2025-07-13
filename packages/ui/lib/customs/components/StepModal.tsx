@@ -1,5 +1,4 @@
-import { StepModalContext } from '#customs/contexts/index.ts';
-import { useMessage } from '#customs/hooks/index.ts';
+import { StepModalContext, useMessage } from '#customs/hooks/index.ts';
 import { Dialog, DialogTrigger } from '#shadcn/components/ui/index.ts';
 import { cn } from '#shadcn/lib/utils.ts';
 import { ComponentPropsWithoutRef, MouseEventHandler, PropsWithChildren, ReactNode, useCallback, useMemo, useState } from 'react';
@@ -12,6 +11,7 @@ type Props = ComponentPropsWithoutRef<'button'> & {
 };
 
 /** 모달창 */
+// TODO: 깜빡임 이슈
 export function StepModal<CACHE, DATA>({ children, render, closable, callback, ...props }: PropsWithChildren<Props>) {
   const [page, setPage] = useState(0);
   const [caches, setCaches] = useState<StepModalContext<CACHE, DATA>['cache'][]>([]);
