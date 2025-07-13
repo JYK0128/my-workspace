@@ -8,6 +8,7 @@ import { ColumnDef, ColumnFiltersState, Row } from '@tanstack/react-table';
 import { endOfDay, startOfDay, subMonths } from 'date-fns';
 import { useMemo, useState } from 'react';
 import { useForm } from 'react-hook-form';
+import { useAuth } from 'react-oidc-context';
 
 export const Route = createFileRoute('/_protected/_page/channel/')({
   component: withMenu(RouteComponent),
@@ -74,9 +75,18 @@ const toolOptions: ToolOptions<Output<'getChannelCursor'>> = {
     value: [startOfDay(subMonths(new Date(), 1)), endOfDay(new Date())],
   },
   status: {
-    id: 'is_secret',
-    label: '비공개 채팅방만',
+    id: 'is_participant',
+    label: '참여중인 채팅방만',
     value: false,
+  },
+  category: {
+    id: 'is_secret',
+    value: null,
+    items: [
+      { label: '전체', value: null },
+      { label: '공개', value: true },
+      { label: '비공개', value: false },
+    ],
   },
   search: {
     id: 'name',
@@ -91,6 +101,7 @@ const toolOptions: ToolOptions<Output<'getChannelCursor'>> = {
 function RouteComponent() {
   const trpc = useTRPC();
   const navigate = useNavigate();
+  const { user } = useAuth();
 
   const form = useForm({
     defaultValues: toolOptions,
@@ -107,6 +118,7 @@ function RouteComponent() {
           name: { condition: 'contains', field: 'channel.name', value: v.value } as const,
           description: { condition: 'contains', field: 'channel.description', value: v.value } as const,
           is_secret: { condition: 'neq', field: 'channel.password_encrypted', value: v.value ? '' : undefined } as const,
+          is_participant: { condition: 'eq', field: 'channel_participant.user_id', value: v.value ? user?.profile.sub : undefined } as const,
           created_at: { condition: 'between', field: 'channel.created_at', value: v.value } as const,
         }[v.id])).filter((v) => !!v),
       },
