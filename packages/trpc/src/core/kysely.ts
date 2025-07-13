@@ -30,3 +30,13 @@ export const db = new Kysely<DB>({
     }
   },
 });
+
+const shutdown = async () => {
+  console.log('Shutting down DB connection...');
+  await db.destroy();
+  console.log('DB connection closed.');
+  process.exit(0);
+};
+
+process.on('SIGINT', shutdown);
+process.on('SIGTERM', shutdown);
