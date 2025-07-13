@@ -43,8 +43,8 @@ export const channelRouter = router({
           .leftJoin('channel_participant', 'channel_participant.channel_id', 'channel.id')
           .where(({ eb }) => eb.and([
             buildWhereFilterClause(eb, filters),
-            eb('channel.deleted_at', 'is', null),
             eb('channel.id', sign, `${cursor.index}`),
+            eb('channel.deleted_at', 'is', null),
             eb('channel_participant.deleted_at', 'is', null),
           ]))
           .selectAll('channel')
@@ -65,6 +65,7 @@ export const channelRouter = router({
           .where(({ eb }) => eb.and([
             buildWhereFilterClause(eb, filters),
             eb('channel.deleted_at', 'is', null),
+            eb('channel_participant.deleted_at', 'is', null),
           ]))
           .executeTakeFirst();
 
