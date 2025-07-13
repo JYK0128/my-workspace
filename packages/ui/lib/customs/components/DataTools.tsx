@@ -16,7 +16,7 @@ type DateRange<T> = {
 }[Extract<keyof T, string>];
 
 type Category<T> = {
-  [K in keyof T]: T[K] extends Literal<T[K]> ?
+  [K in keyof T]: T[K] extends Literal<T[K]> | boolean ?
     {
       id: K
       label?: string
