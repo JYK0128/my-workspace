@@ -50,7 +50,8 @@ export const channelRouter = router({
           .selectAll('channel')
           .select((eb) => ([
             eb.fn.count('channel_participant.id').as('count'),
-            sql<boolean>`channel.password_encrypted <> ''`.as('is_secret'),
+            sql<boolean>`${eb.ref('channel.password_encrypted')} <> ''`.as('is_secret'),
+            sql<boolean>`BOOL_OR(${eb.ref('channel_participant.user_id')} = ${user.instanceId})`.as('is_participant'),
           ]))
           .groupBy('channel.id')
           .$call((qb) => buildOrderClause(qb, orders))
@@ -345,7 +346,14 @@ export const channelRouter = router({
           ]))
           .executeTakeFirst();
 
-        return { ...pagination?.data, content };
+        return {
+          ...pagination?.data,
+          content: content.map((v) => {
+            const email = v.email?.replace(/^(.{2})(.*)(?=@)/,
+              (_, p1, p2) => p1 + '*'.repeat(p2.length));
+            return { ...v, email };
+          }),
+        };
       });
     }),
 
