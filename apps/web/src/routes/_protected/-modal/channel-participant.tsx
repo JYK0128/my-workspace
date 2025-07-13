@@ -1,5 +1,5 @@
 import { useInfiniteQuery, useTRPC, type Output } from '@packages/trpc';
-import { Button, DataTable, DataTools, DialogContent, DialogDescription, DialogHeader, DialogTitle, useStepModal, type ToolOptions } from '@packages/ui';
+import { Button, DataTable, DataTools, DialogContent, DialogDescription, DialogHeader, DialogTitle, type ToolOptions } from '@packages/ui';
 import type { ColumnDef, ColumnFiltersState } from '@tanstack/react-table';
 import { Ban, GraduationCap, MicOff } from 'lucide-react';
 import { useMemo, useState, type PropsWithChildren } from 'react';
@@ -48,8 +48,6 @@ interface Props {
   channel: Pick<Output<'getParticipantCursor'>, 'id'>
 };
 export function ChannelParticipant({ channel }: PropsWithChildren<Props>) {
-  const { cancel } = useStepModal();
-
   const form = useForm({
     defaultValues: toolOptions,
   });
