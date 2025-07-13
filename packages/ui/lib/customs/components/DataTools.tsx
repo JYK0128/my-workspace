@@ -157,8 +157,12 @@ export function DataTools<T>({ table, form }: Props<T>) {
         <div className="tw:flex tw:flex-wrap tw:flex-row tw:justify-between">
           <div>
             <span>{`총 ${table.getRowCount()} 개`}</span>
-            <span> / </span>
-            <span>{`선택 ${table.getFilteredSelectedRowModel().rows.length} 개`}</span>
+            {(table.options.enableRowSelection || table.options.enableMultiRowSelection) && (
+              <>
+                <span> / </span>
+                <span>{`선택 ${table.getFilteredSelectedRowModel().rows.length} 개`}</span>
+              </>
+            )}
           </div>
           <div>
             {
