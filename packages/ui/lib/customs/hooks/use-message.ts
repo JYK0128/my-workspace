@@ -1,5 +1,4 @@
-import { MESSAGE } from '#customs/contexts/index.ts';
-import { useEffect, useState } from 'react';
+import { createContext, useEffect, useState } from 'react';
 
 let count = 0;
 function genId() {
@@ -7,11 +6,18 @@ function genId() {
   return count.toString();
 }
 
-interface Message {
-  type: MESSAGE
+export const MsgType = {
+  ALERT: 'alert',
+  CONFIRM: 'confirm',
+  ERROR: 'error',
+} as const;
+export type MsgType = typeof MsgType[keyof typeof MsgType];
+
+type Message = {
+  type: MsgType
   title?: string
   description: string
-}
+};
 
 type MessageWithId = Message & {
   id: string
@@ -20,6 +26,10 @@ type MessageWithId = Message & {
   cancel: () => void
   confirm: () => void
 };
+
+export type MessageContext = object;
+export const MessageContext = createContext<Nullable<MessageContext>>(null);
+
 
 type State = {
   messages: MessageWithId[]
