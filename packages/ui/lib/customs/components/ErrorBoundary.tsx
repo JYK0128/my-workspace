@@ -1,3 +1,4 @@
+import { isNil } from 'lodash-es';
 import { cloneElement, Component, isValidElement, PropsWithChildren, ReactElement, ReactNode, useEffect } from 'react';
 
 interface Props {
@@ -59,11 +60,12 @@ class RenderErrorBoundary extends Component<Props, State> {
 function RuntimeErrorBoundary({ children, logger }: PropsWithChildren<Pick<Props, 'logger'>>) {
   useEffect(() => {
     window.onerror = (_message, _source, _lineno, _colno, error) => {
-      if (!error?.stack?.includes('renderWithHooks')) {
-        logger?.(error);
-      }
       if (import.meta.env.MODE === 'production') {
         return true;
+      }
+      if (isNil(error)) return;
+      if (!error?.stack?.includes('renderWithHooks')) {
+        logger?.(error);
       }
     };
     window.onunhandledrejection = (event) => {
