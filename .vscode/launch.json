@@ -32,7 +32,7 @@
             "name": "Chrome(Storybook)",
             "request": "launch",
             "type": "chrome",
-            "url": "http://localhost:5173",
+            "url": "http://localhost:6006",
             "webRoot": "${workspaceFolder}/packages/ui",
             "runtimeArgs": [
                 "--disable-web-security",
