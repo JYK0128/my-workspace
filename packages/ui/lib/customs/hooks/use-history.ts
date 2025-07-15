@@ -10,9 +10,6 @@ export function useHistory<T, K extends HTMLElement = HTMLElement>(initialState:
   const [future, setFuture] = useState<T[]>([]);
   const snapRef = useRef<Nullable<T>>(null);
 
-  useEffect(() => console.log({ past }), [past]);
-  useEffect(() => console.log({ future }), [future]);
-
   const canUndo = past.length > +options.skipFirst;
   const canRedo = future.length > 0;
 
