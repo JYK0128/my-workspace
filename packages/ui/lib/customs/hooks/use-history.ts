@@ -2,7 +2,7 @@ import { useCallbackRef } from '#customs/hooks/use-callback-ref.ts';
 import { debounce } from 'lodash-es';
 import { useCallback, useEffect, useRef, useState, type SetStateAction } from 'react';
 
-export function useHistory<T, K extends HTMLElement = HTMLElement>(initialState: T, options = { skipFirst: false }) {
+export function useHistory<T, K extends HTMLElement = HTMLElement>(initialState: T, options?: { skipFirst?: boolean, shortcut?: boolean }) {
   const [ref, setRef] = useCallbackRef<K>();
 
   const [state, setState] = useState(initialState);
@@ -10,12 +10,23 @@ export function useHistory<T, K extends HTMLElement = HTMLElement>(initialState:
   const [future, setFuture] = useState<T[]>([]);
   const snapRef = useRef<Nullable<T>>(null);
 
-  const canUndo = past.length > +options.skipFirst;
+  useEffect(() => console.log({ state }), [state]);
+  useEffect(() => console.log({ past }), [past]);
+  useEffect(() => console.log({ future }), [future]);
+
+  const canUndo = past.length > +!!options?.skipFirst;
   const canRedo = future.length > 0;
 
 
   const commit = useCallback(() => {
-    setPast((prev) => [...prev, snapRef.current as T]);
+    setPast((prev) => {
+      if (snapRef.current) {
+        return [...prev, snapRef.current];
+      }
+      else {
+        return prev;
+      }
+    });
     setFuture([]);
     snapRef.current = null;
   }, []);
@@ -63,23 +74,25 @@ export function useHistory<T, K extends HTMLElement = HTMLElement>(initialState:
   }, [canRedo, state]);
 
   useEffect(() => {
-    const target = ref.current ?? window;
-    const handleKeyDown = (e: Event) => {
-      if (!(e instanceof KeyboardEvent)) return;
+    if (options?.shortcut) {
+      const target = ref.current ?? window;
+      const handleKeyDown = (e: Event) => {
+        if (!(e instanceof KeyboardEvent)) return;
 
-      if (e.ctrlKey && e.key.toLowerCase() === 'z') {
-        e.preventDefault();
-        if (canUndo) undo();
-      }
-      else if (e.ctrlKey && e.key.toLowerCase() === 'y') {
-        e.preventDefault();
-        if (canRedo) redo();
-      }
-    };
+        if (e.ctrlKey && e.key.toLowerCase() === 'z') {
+          e.preventDefault();
+          if (canUndo) undo();
+        }
+        else if (e.ctrlKey && e.key.toLowerCase() === 'y') {
+          e.preventDefault();
+          if (canRedo) redo();
+        }
+      };
 
-    target.addEventListener('keydown', handleKeyDown);
-    return () => target.removeEventListener('keydown', handleKeyDown);
-  }, [ref, canRedo, canUndo, redo, undo]);
+      target.addEventListener('keydown', handleKeyDown);
+      return () => target.removeEventListener('keydown', handleKeyDown);
+    }
+  }, [ref, canRedo, canUndo, redo, undo, options?.shortcut]);
 
 
   return [
