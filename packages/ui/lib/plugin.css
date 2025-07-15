@@ -46,3 +46,7 @@
 .react-flow .react-flow__edges {
   position: static !important;
 }
+
+.react-flow .react-flow__attribution {
+  display: none !important;
+}
