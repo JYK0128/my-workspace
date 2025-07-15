@@ -1,5 +1,5 @@
 @import 'suneditor/dist/css/suneditor.min.css';
-
+@import '@xyflow/react/dist/style.css';
 .sun-editor {
   height: 100%;
   display: flex;
@@ -42,4 +42,7 @@
     min-height: unset;
     max-height: unset;
   }
+}
+.react-flow .react-flow__edges {
+  position: static !important;
 }
