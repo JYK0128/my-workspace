@@ -55,6 +55,7 @@ function FlowPageInner() {
     });
   };
 
+  /* 히스토리 기능 */
   const undo = useCallback(() => {
     if (history.past.length) {
       setHistory((history) => {
@@ -93,11 +94,58 @@ function FlowPageInner() {
     }
   }, [flow, history.future.length]);
 
+  /* 복사 + 붙여넣기 기능 */
+  const clipCount = useRef<number>(0);
+  const clipboard = useRef<Nullable<Node[]>>(null);
+  const copy = useCallback(() => {
+    const selectedNodes = getNodes().filter((node) => node.selected);
+    clipboard.current = structuredClone(selectedNodes);
+    clipCount.current = 0;
+  }, [getNodes]);
+
+  const cut = useCallback(() => {
+    const selectedNodes = getNodes().filter((node) => node.selected);
+    clipboard.current = structuredClone(selectedNodes);
+    clipCount.current = 0;
+    setFlowWithHistory((flow) => ({
+      ...flow,
+      nodes: flow.nodes.filter((node) => !node.selected),
+      edges: flow.edges.filter(
+        (edge) =>
+          !selectedNodes.find((node) => node.id === edge.source || node.id === edge.target),
+      ),
+    }));
+  }, [getNodes]);
+
+  const paste = useCallback(() => {
+    if (clipboard.current) {
+      clipCount.current = clipCount.current + 1;
+      const pastedNodes = clipboard.current.map((v) => ({
+        ...v,
+        id: getId(),
+        position: {
+          x: v.position.x + 10 * clipCount.current,
+          y: v.position.y + 10 * clipCount.current,
+        },
+        selected: true,
+      }));
+
+      setFlowWithHistory((flow) => ({
+        edges: flow.edges,
+        nodes: flow.nodes
+          .map((v) => ({ ...v, selected: false }))
+          .concat(pastedNodes),
+      }));
+    }
+  }, []);
+
+  /* 단축키 설정 */
   useEffect(() => {
     const target = window;
     const handleKeyDown = (e: Event) => {
       if (!(e instanceof KeyboardEvent)) return;
 
+      // undo - redo
       if (e.ctrlKey && e.key.toLowerCase() === 'z') {
         e.preventDefault();
         if (history.past.length) undo();
@@ -106,15 +154,25 @@ function FlowPageInner() {
         e.preventDefault();
         if (history.future.length) redo();
       }
+      else if (e.ctrlKey && e.key.toLowerCase() === 'c') {
+        e.preventDefault();
+        copy();
+      }
+      else if (e.ctrlKey && e.key.toLowerCase() === 'v') {
+        e.preventDefault();
+        paste();
+      }
+      else if (e.ctrlKey && e.key.toLowerCase() === 'x') {
+        e.preventDefault();
+        cut();
+      }
     };
 
     target.addEventListener('keydown', handleKeyDown);
     return () => target.removeEventListener('keydown', handleKeyDown);
-  }, [history, redo, undo]);
+  }, [copy, cut, history, paste, redo, undo]);
 
-  useEffect(() => console.log({ history }), [history]);
-  useEffect(() => console.log({ flow }), [flow]);
-
+  /* 노드, 엣지 상태관리 */
   const onNodesChange: OnNodesChange = (changes) => {
     if (changes.every((v) => v.type === 'select')) {
       setFlowWithHistory((flow) => ({
@@ -143,6 +201,23 @@ function FlowPageInner() {
       edges: addEdge(connection, flow.edges),
     }));
   };
+
+  useEffect(() => {
+    const { nodes, edges } = flow;
+    nodes.forEach((n) => {
+      const el = document.querySelector(`[data-id="${n.id}"]`);
+      if (el instanceof HTMLElement) {
+        el[n.selected ? 'focus' : 'blur']();
+      }
+    });
+    edges.forEach((eg) => {
+      const el = document.querySelector(`[data-id="${eg.id}"]`);
+      if (el instanceof HTMLElement) {
+        el[eg.selected ? 'focus' : 'blur']();
+      }
+    });
+  }, [flow]);
+
 
   /** Add Node On Edge Drop */
   const onConnectEnd: OnConnectEnd = (event, connectionState) => {
@@ -231,8 +306,6 @@ function FlowPageInner() {
       nodes: flow.nodes.map((n) => n.id === node.id ? node : n),
     }));
   }, []);
-
-  // TODO: Context Menu - Duplicate Node...
 
   /** Preventing Cycles */
   const isValidConnection = useCallback<IsValidConnection>(
