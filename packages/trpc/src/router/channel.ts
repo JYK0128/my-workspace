@@ -247,6 +247,7 @@ export const channelRouter = router({
     .mutation(({ ctx: { user }, input }) => {
       return loggingWith(user, 'leave_channel', (db) => db
         .transaction().execute(async (trx) => {
+          // TODO: 참여자 없을 때, 방 삭제조건 확인
           const statusOld = await trx
             .selectFrom('channel_participant')
             .where((eb) => eb.and([
