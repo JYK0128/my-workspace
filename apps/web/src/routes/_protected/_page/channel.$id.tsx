@@ -3,11 +3,11 @@ import { ChannelParticipant } from '#/routes/_protected/-modal/channel-participa
 import { ChannelSetting } from '#/routes/_protected/-modal/channel-setting';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useMutation, useQuery, useTRPC } from '@packages/trpc';
-import { Button, Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle, cn, FormController, FormRicharea, Skeleton, StepModal } from '@packages/ui';
+import { Button, Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle, cn, FormController, FormRicharea, Skeleton, StepModal, useCallbackRef } from '@packages/ui';
 import { createFileRoute, notFound, useRouter } from '@tanstack/react-router';
 import { uniqueId } from 'lodash-es';
 import { CornerDownRight, Heart, MoveLeft, Send, Settings, UserSearch } from 'lucide-react';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, type Ref } from 'react';
 import { useForm, type SubmitHandler } from 'react-hook-form';
 import { useAuth } from 'react-oidc-context';
 import { z } from 'zod';
@@ -53,6 +53,11 @@ function RouteComponent() {
 
   const [messages, setMessages] = useState<(FieldValues & { seq?: number, userId: string, nickname: string })[]>([]);
   const { mutateAsync: sendMessage } = useMutation(trpc.sendMessage.mutationOptions());
+  const [lastMsgRef, setLastMsgRef] = useCallbackRef<HTMLDivElement>();
+
+  useEffect(() => {
+    lastMsgRef.current?.scrollIntoView({ behavior: 'smooth' });
+  }, [lastMsgRef, messages]);
 
   useEffect(() => {
     if (!channelId) return;
@@ -169,8 +174,11 @@ function RouteComponent() {
           <CardDescription>{channel?.description}</CardDescription>
         </CardHeader>
         <CardContent className="tw:overflow-y-auto">
-          {messages.map((msg) => (
+          {messages.map((msg, idx, list) => (
             <Message
+              ref={(node) => {
+                if (idx === list.length - 1) setLastMsgRef(node);
+              }}
               key={uniqueId()}
               {...{
                 type: msg.userId === user?.profile.sub ? 'sent' : 'received',
@@ -220,6 +228,7 @@ function RouteComponent() {
 }
 
 type MsgProps = {
+  ref?: Ref<HTMLDivElement>
   type: 'system' | 'sent' | 'receiving' | 'received'
   nickname: string
   message: string
@@ -239,10 +248,11 @@ function Message(props: MsgProps) {
 
 /** 유저 메시지 */
 function UserMessage(props: MsgProps) {
-  const { type, nickname } = props;
+  const { type, nickname, ref } = props;
 
   return (
     <div
+      ref={ref}
       className={cn(
         'tw:group',
         'tw:flex tw:gap-1 tw:w-full tw:my-2 tw:max-h-none',
@@ -338,11 +348,12 @@ function UserMessage(props: MsgProps) {
 
 /** 시스템 메시지 */
 function SystemMessage(props: MsgProps) {
-  const { type } = props;
+  const { type, ref } = props;
 
   return (
     type === 'system' && (
       <div
+        ref={ref}
         className={cn(
           'tw:self-center',
           'tw:w-fit tw:max-w-[60%] tw:px-5 tw:py-2',
