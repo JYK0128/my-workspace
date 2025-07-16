@@ -28,6 +28,7 @@ export function ListPage() {
     },
   });
 
+  // TODO: Fix Bug
   const isSticky = (index: number) => !(index % 10);
 
   const isActiveSticky = (index: number) => {

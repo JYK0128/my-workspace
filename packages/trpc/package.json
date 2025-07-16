@@ -28,6 +28,7 @@
     "@types/ws": "^8.18.1",
     "bcryptjs": "^3.0.2",
     "date-fns": "^4.1.0",
+    "event-source-polyfill": "^1.0.31",
     "jose": "^6.0.11",
     "kysely": "^0.28.2",
     "lodash-es": "^4.17.21",
@@ -43,6 +44,7 @@
   "devDependencies": {
     "@packages/eslint-config": "workspace:^",
     "@packages/typescript-config": "workspace:^",
+    "@types/event-source-polyfill": "^1",
     "@types/express": "^5.0.3",
     "@types/lodash-es": "^4.17.12",
     "@types/nodemailer": "^6.4.17",

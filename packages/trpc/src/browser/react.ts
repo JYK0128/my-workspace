@@ -1,8 +1,9 @@
 import { MainRouter } from '#router/index.ts';
 import { QueryClient, QueryClientConfig } from '@tanstack/react-query';
-import { createTRPCClient, createWSClient, httpBatchLink, httpBatchStreamLink, httpLink, isNonJsonSerializable, loggerLink, splitLink, wsLink } from '@trpc/client';
+import { createTRPCClient, createWSClient, httpBatchLink, httpBatchStreamLink, httpLink, httpSubscriptionLink, isNonJsonSerializable, loggerLink, splitLink } from '@trpc/client';
 import { defaultTransformer } from '@trpc/server/unstable-core-do-not-import';
 import { createTRPCContext } from '@trpc/tanstack-react-query';
+import { EventSourcePolyfill } from 'event-source-polyfill';
 import SuperJSON from 'superjson';
 
 
@@ -32,10 +33,23 @@ export const getTRPCClient = () => createTRPCClient<MainRouter>({
     }),
     splitLink({
       condition: (op) => op.type === 'subscription',
-      // true: httpSubscriptionLink({}), // SSE 통신
-      true: wsLink({
-        client: socket,
+      /* WS 통신 */
+      // true: wsLink({
+      //   client: socket,
+      //   transformer: SuperJSON,
+      // }),
+      /* SSE 통신 */
+      true: httpSubscriptionLink({
+        url: `${baseURL}/trpc`,
         transformer: SuperJSON,
+        EventSource: EventSourcePolyfill,
+        eventSourceOptions: async ({ op }) => {
+          return {
+            headers: {
+              Authorization: (token && `Bearer ${token}`) as string,
+            },
+          };
+        },
       }),
       false: splitLink({
         condition: (op) => op.context.stream,
