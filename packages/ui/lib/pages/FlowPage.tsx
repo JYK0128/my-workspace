@@ -1,5 +1,4 @@
-import { addEdge, applyEdgeChanges, applyNodeChanges, Background, Controls, getConnectedEdges, getIncomers, getOutgoers, MiniMap, ReactFlow, ReactFlowProvider, reconnectEdge, SelectionMode, useReactFlow, type DefaultEdgeOptions, type Edge, type FitViewOptions, type IsValidConnection, type Node, type OnConnect, type OnConnectEnd, type OnEdgesChange, type OnNodesChange, type OnNodesDelete, type OnReconnect, type OnSelectionChangeFunc, type ReactFlowProps } from '@xyflow/react';
-import { debounce } from 'lodash-es';
+import { addEdge, applyEdgeChanges, applyNodeChanges, Background, Controls, getConnectedEdges, getIncomers, getOutgoers, MiniMap, ReactFlow, ReactFlowProvider, reconnectEdge, SelectionMode, useReactFlow, type DefaultEdgeOptions, type Edge, type FitViewOptions, type IsValidConnection, type Node, type OnConnect, type OnConnectEnd, type OnEdgesChange, type OnNodesChange, type OnNodesDelete, type OnReconnect, type ReactFlowProps } from '@xyflow/react';
 import { useCallback, useEffect, useRef, useState, type Dispatch, type SetStateAction } from 'react';
 
 type HistoryState = { past: FlowState[], future: FlowState[] };
@@ -29,7 +28,6 @@ function FlowPageInner() {
   const { screenToFlowPosition, getNodes, getEdges } = useReactFlow();
 
   const setFlowWithHistory: Dispatch<SetStateAction<FlowState>> = (updater) => {
-    console.trace();
     setFlow((flow) => {
       setHistory((hist) => ({ past: hist.past.concat(flow), future: [] }));
       return typeof updater === 'function' ? updater(flow) : updater;
@@ -97,10 +95,18 @@ function FlowPageInner() {
   useEffect(() => console.log({ flow }), [flow]);
 
   const onNodesChange: OnNodesChange = (changes) => {
-    setFlow((flow) => ({
-      ...flow,
-      nodes: applyNodeChanges(changes, flow.nodes),
-    }));
+    if (changes.every((v) => v.type === 'select')) {
+      setFlowWithHistory((flow) => ({
+        ...flow,
+        nodes: applyNodeChanges(changes, flow.nodes),
+      }));
+    }
+    else {
+      setFlow((flow) => ({
+        ...flow,
+        nodes: applyNodeChanges(changes, flow.nodes),
+      }));
+    }
   };
 
   const onEdgesChange: OnEdgesChange = (changes) => {
@@ -174,17 +180,6 @@ function FlowPageInner() {
     }));
   }, [flow]);
 
-  /** Selection */
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  const debounceFn = useCallback(debounce((fn) => fn(), 300, { leading: false, trailing: true }), []);
-  const onSelectionChange = useCallback<OnSelectionChangeFunc>(({ nodes }) => {
-    debounceFn(() => {
-      setFlowWithHistory((flow) => ({
-        ...flow,
-      }));
-    });
-  }, [debounceFn]);
-
   /** Reconnect Edge */
   const edgeReconnectSuccessful = useRef(true);
   const onReconnect = useCallback<OnReconnect>((oldEdge, newConnection) => {
@@ -216,7 +211,6 @@ function FlowPageInner() {
     }));
   }, []);
 
-  // TODO: keyboard Move Node...
   // TODO: Context Menu - Duplicate Node...
   // TODO: Drag And Drop - Node...
 
@@ -251,7 +245,6 @@ function FlowPageInner() {
       onNodesChange={onNodesChange}
       onNodesDelete={onNodesDelete}
       onEdgesChange={onEdgesChange}
-      onSelectionChange={onSelectionChange}
       onConnect={onConnect}
       // onConnectEnd={onConnectEnd}
       onReconnect={onReconnect}
