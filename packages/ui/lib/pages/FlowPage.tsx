@@ -1,4 +1,8 @@
+import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from '#shadcn/components/ui/sheet.tsx';
+import { closestCorners, DndContext, PointerSensor, useDndMonitor, useDraggable, useDroppable, useSensor, useSensors } from '@dnd-kit/core';
+import { CSS } from '@dnd-kit/utilities';
 import { addEdge, applyEdgeChanges, applyNodeChanges, Background, Controls, getConnectedEdges, getIncomers, getOutgoers, MiniMap, ReactFlow, ReactFlowProvider, reconnectEdge, SelectionMode, useReactFlow, type DefaultEdgeOptions, type Edge, type FitViewOptions, type IsValidConnection, type Node, type OnConnect, type OnConnectEnd, type OnEdgesChange, type OnNodesChange, type OnNodesDelete, type OnReconnect, type ReactFlowProps } from '@xyflow/react';
+import { Plus } from 'lucide-react';
 import { useCallback, useEffect, useRef, useState, type Dispatch, type SetStateAction } from 'react';
 
 type HistoryState = { past: FlowState[], future: FlowState[] };
@@ -21,6 +25,23 @@ const fitViewOptions: FitViewOptions = {
 const defaultEdgeOptions: DefaultEdgeOptions = {
   animated: true, // 실선 - 점선
 };
+
+function NodeTemplate() {
+  const { setNodeRef, attributes, listeners, transform } = useDraggable({
+    id: 'node-template',
+  });
+
+  return (
+    <div
+      style={{ transform: CSS.Translate.toString(transform) }}
+      ref={setNodeRef}
+      {...listeners}
+      {...attributes}
+    >
+      sample
+    </div>
+  );
+}
 
 function FlowPageInner() {
   const [history, setHistory] = useState<HistoryState>({ past: [], future: [] });
@@ -212,7 +233,6 @@ function FlowPageInner() {
   }, []);
 
   // TODO: Context Menu - Duplicate Node...
-  // TODO: Drag And Drop - Node...
 
   /** Preventing Cycles */
   const isValidConnection = useCallback<IsValidConnection>(
@@ -237,46 +257,104 @@ function FlowPageInner() {
     [getNodes, getEdges],
   );
 
+  const { setNodeRef: setSidebarRef } = useDroppable({ id: 'node-sidebar' });
+  const { setNodeRef } = useDroppable({ id: 'node-canvas' });
+  useDndMonitor({
+    onDragEnd(event) {
+      const { active, over } = event;
+      if (!active || !over || over.id === 'node-sidebar') return;
+
+      const position = screenToFlowPosition({
+        x: active.rect.current.translated?.left ?? 0,
+        y: active.rect.current.translated?.top ?? 0,
+      });
+
+      const newNode: Node = {
+        id: getId(),
+        position,
+        data: { label: 'node' },
+      };
+
+      setFlowWithHistory((flow) => ({
+        ...flow,
+        nodes: flow.nodes.concat(newNode),
+      }));
+    },
+  });
+
+
   return (
-    <ReactFlow
-      nodes={flow.nodes}
-      edges={flow.edges}
-      isValidConnection={isValidConnection}
-      onNodesChange={onNodesChange}
-      onNodesDelete={onNodesDelete}
-      onEdgesChange={onEdgesChange}
-      onConnect={onConnect}
-      // onConnectEnd={onConnectEnd}
-      onReconnect={onReconnect}
-      onReconnectStart={onReconnectStart}
-      onReconnectEnd={onReconnectEnd}
-      onNodeDragStart={onNodeDragStart}
-      panOnScroll
-      panOnDrag={[1, 2]}
-      selectionOnDrag
-      selectionMode={SelectionMode.Full}
-      fitView
-      fitViewOptions={fitViewOptions}
-      defaultEdgeOptions={defaultEdgeOptions}
-    >
-      <Background />
-      <Controls />
-      <MiniMap
-        nodeColor={(node) => ({
-          input: '#6ede87',
-          output: '#3B82F6',
-        }[node.type ?? ''] ?? '#64748B')}
-        zoomable
-        pannable
-      />
-    </ReactFlow>
+    <div className="tw:size-full tw:flex">
+      <ReactFlow
+        ref={setNodeRef}
+        nodes={flow.nodes}
+        edges={flow.edges}
+        isValidConnection={isValidConnection}
+        onNodesChange={onNodesChange}
+        onNodesDelete={onNodesDelete}
+        onEdgesChange={onEdgesChange}
+        onConnect={onConnect}
+        // onConnectEnd={onConnectEnd}
+        onReconnect={onReconnect}
+        onReconnectStart={onReconnectStart}
+        onReconnectEnd={onReconnectEnd}
+        onNodeDragStart={onNodeDragStart}
+        panOnScroll
+        panOnDrag={[1, 2]}
+        selectionOnDrag
+        selectionMode={SelectionMode.Full}
+        fitView
+        fitViewOptions={fitViewOptions}
+        defaultEdgeOptions={defaultEdgeOptions}
+      >
+        <Background />
+        <Controls />
+        <MiniMap
+          nodeColor={(node) => ({
+            input: '#6ede87',
+            output: '#3B82F6',
+          }[node.type ?? ''] ?? '#64748B')}
+          zoomable
+          pannable
+        />
+      </ReactFlow>
+      <Sheet modal={false}>
+        <SheetTrigger className="tw:flex tw:flex-col tw:justify-center tw:items-center">
+          <Plus />
+          추가
+        </SheetTrigger>
+        <SheetContent ref={setSidebarRef}>
+          <SheetHeader>
+            <SheetTitle>노드 생성</SheetTitle>
+            <SheetDescription />
+          </SheetHeader>
+          <div className="tw:px-4">
+            <NodeTemplate />
+          </div>
+        </SheetContent>
+      </Sheet>
+    </div>
   );
 }
 
 export function FlowPage() {
+  const sensors = useSensors(
+    useSensor(PointerSensor, {
+      activationConstraint: {
+        delay: 150,
+        tolerance: 0,
+      },
+    }),
+  );
+
   return (
     <ReactFlowProvider>
-      <FlowPageInner />
+      <DndContext
+        collisionDetection={closestCorners}
+        sensors={sensors}
+      >
+        <FlowPageInner />
+      </DndContext>
     </ReactFlowProvider>
   );
 }
