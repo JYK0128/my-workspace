@@ -24,7 +24,6 @@
     "@packages/eslint-config": "workspace:^",
     "@packages/typescript-config": "workspace:^",
     "@storybook/addon-docs": "9.0.14",
-    "@storybook/addon-onboarding": "9.0.14",
     "@storybook/addon-themes": "^9.0.14",
     "@storybook/react-vite": "9.0.14",
     "@types/lodash-es": "^4.17.12",
