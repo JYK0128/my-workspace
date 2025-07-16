@@ -11,6 +11,7 @@ export const authRouter = router({
     })
     .mutation(({ ctx: { user } }) => {
       const values = {
+        id: user.instanceId,
         email: user.email,
         nickname: user.nickname,
         last_login_at: new Date(),
@@ -18,7 +19,7 @@ export const authRouter = router({
 
       return loggingWith(user, 'login', (db) => db
         .insertInto('app_user')
-        .values(withInsert({ id: user.instanceId, ...values }))
+        .values(withInsert({ ...values }))
         .onConflict((oc) => oc
           .column('id')
           .doUpdateSet(withUpdate({ ...values })))
@@ -36,11 +37,9 @@ export const authRouter = router({
       };
 
       return loggingWith(user, 'logout', (db) => db
-        .insertInto('app_user')
-        .values(withInsert({ id: user.instanceId, ...values }))
-        .onConflict((oc) => oc
-          .column('id')
-          .doUpdateSet(withUpdate({ ...values })))
+        .updateTable('app_user')
+        .set(withUpdate(values))
+        .where('app_user.id', '=', user.instanceId)
         .returningAll()
         .executeTakeFirstOrThrow(),
       );
