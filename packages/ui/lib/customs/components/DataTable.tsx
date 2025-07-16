@@ -107,9 +107,6 @@ export function DataTable<T>(props: Props<T>) {
     if (!client) setData(initialData);
   }, [client, initialData]);
 
-  console.log(options.enableRowSelection);
-  console.log(options.enableMultiRowSelection);
-
   const table = useReactTable({
     ...options,
     enableRowSelection: options.enableRowSelection || false,
