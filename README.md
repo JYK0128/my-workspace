@@ -41,8 +41,9 @@ yarn workspace @packages/ui storybook
 
 ```bash
 # build 후 pm2 restart으로 갱신!
-yarn workspace @apps/web build:{env}
-# build만으로 갱신!
 yarn workspace @apps/server build:{env}
+# build만으로 갱신!
+yarn workspace @apps/web build:{env}
+# 빌드 결과물로 운영 시 package.json 수정 필요!
 yarn workspace @packages/ui build-storybook
 ```
