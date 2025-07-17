@@ -159,12 +159,12 @@ function RouteComponent() {
                 <TableRow>
                   <TableCell>메디링스</TableCell>
                   <TableCell className="tw:whitespace-pre-line">
-                    {`서비스: PgSql, NestJS(Prisma/GraphQL), React16(React Router/Redux)
-                    이미지분석: OpenCV, Tesseract
+                    {`서비스: PgSql, NestJS(Prisma/GraphQL/Apollo), React16(React Router/Redux)
+                    이미지분석: Ptyhon, OpenCV, Tesseract
                     레거시서비스: MySQL, Express, EJS`}
                   </TableCell>
                   <TableCell>
-                    <a href="#page02">클릭</a>
+                    <a href="#page02">이동</a>
                   </TableCell>
                 </TableRow>
                 <TableRow>
@@ -175,7 +175,7 @@ function RouteComponent() {
                       그외: K8S, NGINX, JENKINS, ArgoCD, AWS OpenSearch`}
                   </TableCell>
                   <TableCell>
-                    <a href="#page03">클릭</a>
+                    <a href="#page03">이동</a>
                   </TableCell>
                 </TableRow>
                 <TableRow>
@@ -186,7 +186,7 @@ function RouteComponent() {
                       그외: Docker, Nginx`}
                   </TableCell>
                   <TableCell>
-                    <a href="#page04">클릭</a>
+                    <a href="#page04">이동</a>
                   </TableCell>
                 </TableRow>
                 <TableRow>
@@ -196,7 +196,7 @@ function RouteComponent() {
                       그외: GitLab CI`}
                   </TableCell>
                   <TableCell>
-                    <a href="#page05">클릭</a>
+                    <a href="#page05">이동</a>
                   </TableCell>
                 </TableRow>
                 <TableRow>
@@ -206,7 +206,7 @@ function RouteComponent() {
                       그외: GitLab CI`}
                   </TableCell>
                   <TableCell>
-                    <a href="#page06">클릭</a>
+                    <a href="#page06">이동</a>
                   </TableCell>
                 </TableRow>
               </TableBody>
