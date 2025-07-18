@@ -5,7 +5,6 @@ declare global {
     interface ProcessEnv {
       NODE_ENV: string
 
-      APP_NAME: string
       APP_HOST: string
       APP_PORT: string
       APP_AUTH_URL: string

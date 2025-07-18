@@ -47,3 +47,11 @@ yarn workspace @apps/web build:{env}
 # 빌드 결과물로 운영 시 package.json 수정 필요!
 yarn workspace @packages/ui build-storybook
 ```
+
+## 환경변수 암호화
+
+```bash
+# 파일
+dotenvx encrypt -f .env*
+dotenvx set HELLO "production (encrypted)" -f .env.production
+```
