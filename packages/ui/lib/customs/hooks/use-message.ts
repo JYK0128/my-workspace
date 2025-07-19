@@ -1,4 +1,4 @@
-import { createContext, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 
 let count = 0;
 function genId() {
@@ -27,10 +27,6 @@ type MessageWithId = Message & {
   confirm: () => void
 };
 
-export type MessageContext = object;
-export const MessageContext = createContext<Nullable<MessageContext>>(null);
-
-
 type State = {
   messages: MessageWithId[]
 };
@@ -52,7 +48,7 @@ type Action =
     payload: Pick<MessageWithId, 'id'>
   };
 
-export const reducer = (state: State, action: Action): State => {
+function reducer(state: State, action: Action): State {
   switch (action.type) {
     case 'OPEN': {
       return {
@@ -97,7 +93,6 @@ const message = (props: Message) => {
   const type = props.type;
   let resolver: (bool: boolean) => void;
   const result = new Promise<boolean>((resolve) => resolver = resolve);
-
 
   function toggle(open: boolean) {
     dispatch({
