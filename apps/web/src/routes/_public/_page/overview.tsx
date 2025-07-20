@@ -1,4 +1,4 @@
-import { CodeForm, CodeModal, CodeMsg, CodeTable } from '#/assets';
+import { Github, Storybook } from '#/assets';
 import Overview01 from '#/assets/overview_01.png';
 import { cn, useIntersections, useRefs } from '@packages/ui';
 import { createFileRoute, useLocation } from '@tanstack/react-router';
@@ -119,17 +119,32 @@ function RouteComponent() {
             <h3 className="tw:font-semibold tw:mb-1">
               📋저장소
             </h3>
-            <ul className="tw:pl-6 tw:list-disc">
-              <li className="tw:whitespace-pre-line">
-                환경변수 정리 후 오픈 예정
-              </li>
-            </ul>
+            <div className={cn(
+              'tw:mt-10',
+              'tw:flex tw:justify-center tw:items-center tw:gap-10',
+            )}
+            >
+              <a
+                href="https://github.com/JYK0128/my-workspace"
+                className="tw:flex tw:items-center tw:gap-5"
+              >
+                <img src={Github} className="tw:size-4 tw:inline" />
+                Github
+              </a>
+              <a
+                href="/storybook"
+                className="tw:flex tw:items-center tw:gap-5"
+              >
+                <img src={Storybook} className="tw:size-4 tw:inline" />
+                Storybook
+              </a>
+            </div>
           </div>
         </div>
         <div
           id="page01_02"
           className={cn(
-            'tw:bg-red-100 tw:p-4',
+            'tw:p-4',
             'tw:flex-2/3 tw:h-full',
           )}
         >
@@ -153,21 +168,7 @@ function RouteComponent() {
             'tw:grid tw:grid-rows-[1fr_auto]',
           )}
         >
-          <div className="tw:grid tw:grid-cols-2 tw:gap-5">
-            <div className="tw:flex tw:items-center tw:justify-center"><img src={CodeTable} /></div>
-            <div className="tw:flex tw:items-center tw:justify-center"><img src={CodeForm} /></div>
-            <div className="tw:flex tw:items-center tw:justify-center"><img src={CodeModal} /></div>
-            <div className="tw:flex tw:items-center tw:justify-center"><img src={CodeMsg} /></div>
-          </div>
-          <a
-            href="/storybook"
-            className={cn(
-              'tw:mt-20',
-              'tw:text-right tw:pr-20 tw:font-extrabold tw:text-2xl tw:text-blue-800 tw:cursor-pointer',
-            )}
-          >
-            👉UI 컴포넌트 자세히 보기
-          </a>
+          <div>공사중</div>
         </div>
       </div>
     </div>
