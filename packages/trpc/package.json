@@ -30,7 +30,7 @@
     "date-fns": "^4.1.0",
     "event-source-polyfill": "^1.0.31",
     "jose": "^6.0.11",
-    "kysely": "^0.28.2",
+    "kysely": "0.27.6",
     "lodash-es": "^4.17.21",
     "nodemailer": "^7.0.3",
     "openai": "^5.8.2",
@@ -51,7 +51,7 @@
     "@types/pg": "^8.15.4",
     "@types/react": "^19.1.8",
     "@types/react-dom": "^19.1.6",
-    "kysely-codegen": "^0.18.5",
+    "kysely-codegen": "0.17.0",
     "trpc-ui": "^1.0.15",
     "typescript": "^5.8.3"
   },
