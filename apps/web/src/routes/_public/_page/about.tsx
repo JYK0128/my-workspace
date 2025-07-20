@@ -1,7 +1,6 @@
-import { Cosmax01, Health01, KB01, KB02, Medilinx01, Medilinx02, Medilinx03, Ottogi01, Ottogi02 } from '#/assets';
 import { cn, Table, TableBody, TableCell, TableHead, TableHeader, TableRow, useIntersections, useRefs } from '@packages/ui';
 import { execute } from '@packages/utils';
-import { createFileRoute, Link } from '@tanstack/react-router';
+import { createFileRoute } from '@tanstack/react-router';
 import { useEffect } from 'react';
 
 export const Route = createFileRoute('/_public/_page/about')({
@@ -68,7 +67,8 @@ function RouteComponent() {
           id="page01_01"
           className={cn(
             'tw:grid tw:grid-rows-[auto_1fr] tw:gap-5 tw:p-4',
-            'tw:flex-1/2 tw:basis-sm tw:h-full',
+            'tw:flex-1/2 tw:basis-xl tw:h-full',
+            'tw:scroll-y',
           )}
         >
           {/* 좌측 - 타이틀 */}
@@ -91,10 +91,6 @@ function RouteComponent() {
             >
               김진용
             </h2>
-
-            <div className="tw:mt-10 tw:text-center tw:text-2xl tw:font-bold">
-              견고한 서비스 구축을 목표로 하는 엔지니어
-            </div>
 
             <div className="tw:text-lg tw:mt-10">
               <Table>
@@ -143,10 +139,11 @@ function RouteComponent() {
           className={cn(
             'tw:bg-gray-100 tw:p-3',
             'tw:flex-1/2 tw:h-full',
+            'tw:scroll-y',
           )}
         >
           <div>
-            <h1 className="tw:font-bold tw:text-2xl">참여 프로젝트</h1>
+            <h1 className="tw:font-bold tw:text-xl">참여 프로젝트</h1>
             <Table>
               <TableHeader>
                 <TableRow>
@@ -164,7 +161,7 @@ function RouteComponent() {
                     레거시서비스: MySQL, Express, EJS`}
                   </TableCell>
                   <TableCell>
-                    <a href="#page02">이동</a>
+                    <a className="tw:text-blue-800 tw:font-bold" href="#page02">이동</a>
                   </TableCell>
                 </TableRow>
                 <TableRow>
@@ -175,7 +172,7 @@ function RouteComponent() {
                       그외: K8S, NGINX, JENKINS, ArgoCD, AWS OpenSearch`}
                   </TableCell>
                   <TableCell>
-                    <a href="#page03">이동</a>
+                    <a className="tw:text-blue-800 tw:font-bold" href="#page03">이동</a>
                   </TableCell>
                 </TableRow>
                 <TableRow>
@@ -186,7 +183,7 @@ function RouteComponent() {
                       그외: Docker, Nginx`}
                   </TableCell>
                   <TableCell>
-                    <a href="#page04">이동</a>
+                    <a className="tw:text-blue-800 tw:font-bold" href="#page04">이동</a>
                   </TableCell>
                 </TableRow>
                 <TableRow>
@@ -196,7 +193,7 @@ function RouteComponent() {
                       그외: GitLab CI`}
                   </TableCell>
                   <TableCell>
-                    <a href="#page05">이동</a>
+                    <a className="tw:text-blue-800 tw:font-bold" href="#page05">이동</a>
                   </TableCell>
                 </TableRow>
                 <TableRow>
@@ -206,7 +203,7 @@ function RouteComponent() {
                       그외: GitLab CI`}
                   </TableCell>
                   <TableCell>
-                    <a href="#page06">이동</a>
+                    <a className="tw:text-blue-800 tw:font-bold" href="#page06">이동</a>
                   </TableCell>
                 </TableRow>
               </TableBody>
@@ -214,8 +211,7 @@ function RouteComponent() {
           </div>
           <div>
             <div className="tw:flex tw:items-end">
-              <h1 className="tw:font-bold tw:text-2xl">주요 기술</h1>
-              <Link to="/overview">[상세정보 - 클릭]</Link>
+              <h1 className="tw:font-bold tw:text-xl">주요 기술</h1>
             </div>
 
             <Table>
@@ -239,7 +235,7 @@ function RouteComponent() {
                 <TableRow>
                   <TableCell>Backend</TableCell>
                   <TableCell>
-                    <div>NestJS, Express, tRPC</div>
+                    <div>Express, tRPC, NestJS, Prisma, Apollo Server</div>
                   </TableCell>
                 </TableRow>
                 <TableRow>
@@ -267,8 +263,9 @@ function RouteComponent() {
           ref={setObserver}
           id="page02_01"
           className={cn(
-            'tw:flex-1/2 tw:basis-sm tw:h-full',
+            'tw:flex-1/2 tw:basis-xl tw:h-full',
             'tw:flex tw:flex-col tw:gap-5 tw:p-4',
+            'tw:scroll-y',
           )}
         >
           {/* 좌측 - 타이틀 */}
@@ -332,14 +329,14 @@ function RouteComponent() {
                 {`사용기술: PGSQL + NestJS(Prisma / GraphQL) + React16
                 - 문진 항목 정의: 검진 별 기본 템플릿 구성
                 - 응답 구조 설계: JSON 기반의 표준 스키마 정의
-                - 질문 유형 분류: 객관식(단답/복수 선택), 주관식, 수치형 입력, 이미지보조 답변 유형 지원
-                - 조건 분기 로직 구현: 특정 응답에 따라 후속 문진 항목 분기 처리`}
+                - 질문 유형 분류: 객관식(단답/복수), 주관식, 수치, 이미지보조 질문
+                - 답변 분기조건 처리: 특정 응답에 따른 후속 문진`}
               </li>
             </ul>
           </div>
           <div className="tw:border-l-4 tw:border-blue-500 tw:pl-6">
             <h3 className="tw:font-semibold tw:mb-1">
-              📊질의 OCR / 응답 Marker 개발
+              📋질의 OCR / 응답 Marker 개발
             </h3>
             <ul className="tw:pl-6 tw:list-disc">
               <li className="tw:whitespace-pre-line">
@@ -351,7 +348,7 @@ function RouteComponent() {
           </div>
           <div className="tw:border-l-4 tw:border-green-500 tw:pl-6">
             <h3 className="tw:font-semibold tw:mb-1">
-              📊레거시 코드 운영
+              📋레거시 코드 운영
             </h3>
             <ul className="tw:pl-6 tw:list-disc">
               <li className="tw:whitespace-pre-line">
@@ -366,14 +363,48 @@ function RouteComponent() {
           ref={setObserver}
           id="page02_02"
           className={cn(
+            'tw:flex tw:flex-col tw:gap-2',
             'tw:bg-red-50 tw:p-3',
             'tw:flex-1/2 tw:h-full',
-            'tw:grid tw:grid-cols-2 tw:gap-2',
+            'tw:scroll-y',
           )}
         >
-          <img src={Medilinx01} className="tw:col-span-2" />
-          <img src={Medilinx02} className="tw:size-full tw:object-cover" />
-          <img src={Medilinx03} className="tw:size-full tw:object-cover" />
+          <div className="tw:text-xl tw:font-bold">아쉬웠던 점</div>
+          <div className="tw:whitespace-pre-line">
+            <span>issue 01 - 오류 처리</span>
+            <a className="tw:text-blue-800 tw:font-bold" href="https://github.com/JYK0128/my-workspace/blob/dev/packages/ui/lib/customs/components/ErrorBoundary.tsx">[링크]</a>
+            {`
+              원인: Client에서 잘못된 값의 참조 / API 통신 간 데이터 누수 발생
+              개선방향: 원인을 정확하게 파악할 수 있는 전역 에러관리 구조 필요
+              해결방안: 렌더링 / 런타임 오류 전역 에러관리 컴포넌트 구현
+            `}
+          </div>
+
+          <div className="tw:whitespace-pre-line">
+            <span>issue 02 - 전역상태관리</span>
+            <a className="tw:text-blue-800 tw:font-bold" href="https://github.com/JYK0128/my-workspace/blob/dev/apps/web/src/routes/_protected/_page/channel.index.tsx">[예시]</a>
+            {`
+              원인: 페이지 내 상태관리를 위해 Redux와 state함수를 혼용
+              개선방안: 페이지 단위의 상태관리 체계가 필요
+              해결방안:
+              - tanstack router와 같은 File-Based 라우팅 도구 사용
+              - tanstack query와 같은 API 중심의 상태관리도구 사용
+              - 데이터의 조합이 필요할 땐 Memorize 함수 사용
+            `}
+          </div>
+
+          <div className="tw:whitespace-pre-line">
+            <span>issue 03 - 운영도구 구축</span>
+            <a className="tw:text-blue-800 tw:font-bold" href="https://jyworld.kro.kr/storybook/?path=/story/complete-flowpage--index">[링크1]</a>
+            <a className="tw:text-blue-800 tw:font-bold" href="https://jyworld.kro.kr/storybook/?path=/docs/complete-treepage--docs">[링크2]</a>
+            {`
+              원인: 운영진에서 프로세스를 다루기 위해선 JSON 구조를 알아야 했음
+              개선방안: Tree & Graph 자료형태를 구조화하는 도구 필요
+              해결방안:
+              - React Flow를 사용한 프로세스 관리도구 구축
+              - Shadcn을 사용한 트리 관리도구 구축
+            `}
+          </div>
         </div>
       </div>
       {/* KB 금융비서 */}
@@ -389,7 +420,7 @@ function RouteComponent() {
           ref={setObserver}
           id="page03_01"
           className={cn(
-            'tw:flex-1/2 tw:basis-sm tw:h-full',
+            'tw:flex-1/2 tw:basis-xl tw:h-full',
             'tw:flex tw:flex-col tw:gap-5 tw:p-4',
           )}
         >
@@ -458,7 +489,7 @@ function RouteComponent() {
           </div>
           <div className="tw:border-l-4 tw:border-blue-500 tw:pl-6">
             <h3 className="tw:font-semibold tw:mb-1">
-              📊사용자 웹앱 구축 및 유지보수
+              📋사용자 웹앱 구축 및 유지보수
             </h3>
             <ul className="tw:pl-6 tw:list-disc">
               <li className="tw:whitespace-pre-line">
@@ -474,13 +505,30 @@ function RouteComponent() {
           ref={setObserver}
           id="page03_02"
           className={cn(
+            'tw:flex tw:flex-col tw:gap-2',
             'tw:bg-green-50 tw:p-3',
             'tw:flex-1/2 tw:h-full',
-            'tw:grid tw:grid-cols-2 tw:gap-2',
           )}
         >
-          <img src={KB01} />
-          <img src={KB02} />
+          <div className="tw:text-xl tw:font-bold">아쉬웠던 점</div>
+          <div className="tw:whitespace-pre-line">
+            <span>issue 01 - Props Drilling 이슈</span>
+            <a className="tw:text-blue-800 tw:font-bold" href="https://jyworld.kro.kr/storybook/?path=/story/complete-formpage--index">[링크]</a>
+            {`
+              원인: 잘게 쪼갠 컴포넌트에 의해 복잡성 증가
+              개선방안: 입력값을 Form으로 제어
+              해결방안: React Hook Form을 사용하여 입력값과 검증을 제어
+            `}
+          </div>
+
+          <div className="tw:whitespace-pre-line">
+            <span>issue 02 - 앱 Bridge 이슈</span>
+            {`
+                원인: Native에서 처리하는 API의 제어 이슈
+                개선방안: 메시지 관리체계 필요
+                해결방안: Debounce로 요청 제어, Queue로 응답 제어
+              `}
+          </div>
         </div>
       </div>
       {/* 광주서구청 Smart-HealthCare */}
@@ -496,7 +544,7 @@ function RouteComponent() {
           ref={setObserver}
           id="page04_01"
           className={cn(
-            'tw:flex-1/2 tw:basis-sm tw:h-full',
+            'tw:flex-1/2 tw:basis-xl tw:h-full',
             'tw:flex tw:flex-col tw:gap-5 tw:p-4',
           )}
         >
@@ -565,7 +613,7 @@ function RouteComponent() {
           </div>
           <div className="tw:border-l-4 tw:border-blue-500 tw:pl-6">
             <h3 className="tw:font-semibold tw:mb-1">
-              📊사용자 웹앱 구축 및 유지보수
+              📋사용자 웹앱 구축 및 유지보수
             </h3>
             <ul className="tw:pl-6 tw:list-disc">
               <li className="tw:whitespace-pre-line">
@@ -582,11 +630,30 @@ function RouteComponent() {
           ref={setObserver}
           id="page04_02"
           className={cn(
+            'tw:flex tw:flex-col tw:gap-2',
             'tw:bg-blue-50 tw:p-3',
             'tw:flex-1/2 tw:h-full',
           )}
         >
-          <img src={Health01} />
+          <div className="tw:text-xl tw:font-bold">아쉬웠던 점</div>
+          <div className="tw:whitespace-pre-line">
+            <span>issue 01 - 접근/권한 관리</span>
+            <a className="tw:text-blue-800 tw:font-bold" href="https://github.com/JYK0128/my-workspace/blob/dev/apps/web/src/routeTools.ts">[링크]</a>
+            {`
+              원인: 권한 구조를 만들 일정이 부족하여 N개의 앱을 구축
+              개선방안: 백엔드에서 권한정보를 관리하는 체계 필요
+              해결방안: Bootstrap 이전 Tanstack Router에서 Router를 추가하여 권한정보를 관리
+            `}
+          </div>
+          <div className="tw:whitespace-pre-line">
+            <span>issue 02 - 체계적인 개발방법 부재</span>
+            <a className="tw:text-blue-800 tw:font-bold" href="https://github.com/JYK0128/my-workspace/blob/dev/packages/ui/lib/pages/WelcomePage.stories.ts">[예시]</a>
+            {`
+              원인: 기획자 중심의 waterfall 프로잭트 진행으로 개발시간 부족 
+              개선방안: 프론트 레이어 단에서 빠른 프로토타입 구축이 필요
+              해결방안: 목업된 값과 핸들러를 사용하여 Storybook에서 프로토타입 구축
+            `}
+          </div>
         </div>
       </div>
       {/* 코스맥스 Teams AI App */}
@@ -602,7 +669,7 @@ function RouteComponent() {
           ref={setObserver}
           id="page05_01"
           className={cn(
-            'tw:flex-1/2 tw:basis-sm tw:h-full',
+            'tw:flex-1/2 tw:basis-xl tw:h-full',
             'tw:flex tw:flex-col tw:gap-5 tw:p-4',
           )}
         >
@@ -676,11 +743,20 @@ function RouteComponent() {
           ref={setObserver}
           id="page05_02"
           className={cn(
+            'tw:flex tw:flex-col tw:gap-2',
             'tw:bg-cyan-50 tw:p-3',
             'tw:flex-1/2 tw:h-full',
           )}
         >
-          <img src={Cosmax01} />
+          <div className="tw:text-xl tw:font-bold">아쉬웠던 점</div>
+          <div className="tw:whitespace-pre-line">
+            <span>issue 01 - 체계적인 개발방안 부재</span>
+            {`
+              원인: API 늦은 제공으로 개발시간 부족
+              개선방안: 목업 데이터를 사용한 프로토타입 구축 필요
+              해결방안: Zod를 사용하여 API 스키마 정의 및 목업 구축
+            `}
+          </div>
         </div>
       </div>
       {/* 오뚜기 O-balance */}
@@ -696,7 +772,7 @@ function RouteComponent() {
           ref={setObserver}
           id="page06_01"
           className={cn(
-            'tw:flex-1/2 tw:basis-sm tw:h-full',
+            'tw:flex-1/2 tw:basis-xl tw:h-full',
             'tw:flex tw:flex-col tw:gap-5 tw:p-4',
           )}
         >
@@ -766,7 +842,7 @@ function RouteComponent() {
           </div>
           <div className="tw:border-l-4 tw:border-blue-500 tw:pl-6">
             <h3 className="tw:font-semibold tw:mb-1">
-              📊사용자 웹앱 구축 및 유지보수
+              📋사용자 웹앱 구축 및 유지보수
             </h3>
             <ul className="tw:pl-6 tw:list-disc">
               <li className="tw:whitespace-pre-line">
@@ -784,13 +860,21 @@ function RouteComponent() {
           ref={setObserver}
           id="page06_02"
           className={cn(
+            'tw:flex tw:flex-col tw:gap-2',
             'tw:bg-yellow-50 tw:p-3',
             'tw:flex-1/2 tw:h-full',
-            'tw:grid tw:grid-cols-2 tw:gap-2',
           )}
         >
-          <img src={Ottogi01} />
-          <img src={Ottogi02} />
+          <div className="tw:text-xl tw:font-bold">아쉬웠던 점</div>
+          <div className="tw:whitespace-pre-line">
+            <span>issue 01 - 커스텀 데이터 테이블</span>
+            <a className="tw:text-blue-800 tw:font-bold" href="https://github.com/JYK0128/my-workspace/blob/dev/packages/ui/lib/pages/BoardPage.tsx">[예시]</a>
+            {`
+              원인: 요구사항을 충족하는 데이터 테이블을 구현하기 어려움 
+              개선방안: 다양한 기능을 삽입할 수 있는 커스텀 데이터 테이블이 필요
+              해결방안: Tanstack Table을 사용하여 정렬/필터링/페이징 기능 구현
+            `}
+          </div>
         </div>
       </div>
     </div>

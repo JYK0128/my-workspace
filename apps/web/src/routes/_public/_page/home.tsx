@@ -2,7 +2,7 @@ import { Cosmax01, Github, Health01, Health02, KB01, KB02, Medilinx01, Medilinx0
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useMutation, useTRPC } from '@packages/trpc';
 import { Button, cn, FormController, FormInput, FormRicharea, useMessage } from '@packages/ui';
-import { createFileRoute } from '@tanstack/react-router';
+import { createFileRoute, Link } from '@tanstack/react-router';
 import { useForm, type SubmitHandler } from 'react-hook-form';
 import { z } from 'zod';
 
@@ -187,6 +187,9 @@ function RouteComponent() {
             <li>➡️레거시 시스템 오류 문의 80% 감소</li>
             <li>➡️서비스 오픈 소요기간 80% 감소</li>
           </ul>
+          <div className="tw:flex tw:justify-end">
+            <Link to="/about" hash="page02">👉자세히 보기</Link>
+          </div>
         </div>
       </div>
       {/* KB 금융비서 */}
@@ -220,6 +223,9 @@ function RouteComponent() {
             <li>➡️관리자 서비스 딜리버리 100% 달성</li>
             <li>➡️모바일 Web App 오류 99.9% 처리</li>
           </ul>
+          <div className="tw:flex tw:justify-end">
+            <Link to="/about" hash="page03">👉자세히 보기</Link>
+          </div>
         </div>
       </div>
       {/* 광주서구청 스마트 돌봄 */}
@@ -253,6 +259,9 @@ function RouteComponent() {
             <li>➡️사용자 / 관리자 서비스 오류 99.9% 처리</li>
             <li>➡️사용자 / 관리자 서비스 딜리버리 100% 달성</li>
           </ul>
+          <div className="tw:flex tw:justify-end">
+            <Link to="/about" hash="page04">👉자세히 보기</Link>
+          </div>
         </div>
       </div>
       {' '}
@@ -285,6 +294,9 @@ function RouteComponent() {
           <ul>
             <li>➡️관리자 서비스 딜리버리 100% 달성</li>
           </ul>
+          <div className="tw:flex tw:justify-end">
+            <Link to="/about" hash="page05">👉자세히 보기</Link>
+          </div>
         </div>
       </div>
       {' '}
@@ -319,6 +331,9 @@ function RouteComponent() {
             <li>➡️사용자 서비스 오류 99.9% 처리</li>
             <li>➡️관리자 서비스 딜리버리 100% 달성</li>
           </ul>
+          <div className="tw:flex tw:justify-end">
+            <Link to="/about" hash="page06">👉자세히 보기</Link>
+          </div>
         </div>
       </div>
 
@@ -341,7 +356,7 @@ function RouteComponent() {
             <ul>
               <li>React</li>
               <li>Vue</li>
-              <li>Tanstack Stacks</li>
+              <li>Tanstack Skills</li>
             </ul>
           </div>
           <div className="tw:text-center">
