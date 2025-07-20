@@ -646,7 +646,7 @@ function RouteComponent() {
             `}
           </div>
           <div className="tw:whitespace-pre-line">
-            <span>issue 02 - 체계적인 개발방법 부재</span>
+            <span>issue 02 - 프로젝트 실행체계 미흡</span>
             <a className="tw:text-blue-800 tw:font-bold" href="https://github.com/JYK0128/my-workspace/blob/dev/packages/ui/lib/pages/WelcomePage.stories.ts">[예시]</a>
             {`
               원인: 기획자 중심의 waterfall 프로잭트 진행으로 개발시간 부족 
@@ -750,7 +750,7 @@ function RouteComponent() {
         >
           <div className="tw:text-xl tw:font-bold">아쉬웠던 점</div>
           <div className="tw:whitespace-pre-line">
-            <span>issue 01 - 체계적인 개발방안 부재</span>
+            <span>issue 01 - 개발자 리딩체계 미흡</span>
             {`
               원인: API 늦은 제공으로 개발시간 부족
               개선방안: 목업 데이터를 사용한 프로토타입 구축 필요
