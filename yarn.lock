@@ -94,7 +94,7 @@ __metadata:
     vite: "npm:^6.3.5"
     vite-plugin-dotenvx: "npm:^0.1.1"
     vite-tsconfig-paths: "npm:^5.1.4"
-    zod: "npm:<3.25.0"
+    zod: "npm:3.24.4"
   languageName: unknown
   linkType: soft
 
@@ -1720,7 +1720,7 @@ __metadata:
     superjson: "npm:^2.2.2"
     trpc-ui: "npm:^1.0.15"
     typescript: "npm:^5.8.3"
-    zod: "npm:<3.25.0"
+    zod: "npm:3.24.4"
     zod-form-data: "npm:2.0.7"
   languageName: unknown
   linkType: soft
@@ -1809,7 +1809,7 @@ __metadata:
     vite: "npm:^6.3.5"
     vite-plugin-dts: "npm:^4.5.4"
     vite-tsconfig-paths: "npm:^5.1.4"
-    zod: "npm:<3.25.0"
+    zod: "npm:3.24.4"
   peerDependencies:
     "@hookform/resolvers": ^5.1.0
     "@tanstack/react-table": ^8.21.3
@@ -13148,7 +13148,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"zod@npm:<3.25.0":
+"zod@npm:3.24.4":
   version: 3.24.4
   resolution: "zod@npm:3.24.4"
   checksum: 10c0/ab3112f017562180a41a0f83d870b333677f7d6b77f106696c56894567051b91154714a088149d8387a4f50806a2520efcb666f108cd384a35c236a191186d91
