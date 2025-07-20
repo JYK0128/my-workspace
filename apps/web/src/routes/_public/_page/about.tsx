@@ -750,11 +750,12 @@ function RouteComponent() {
         >
           <div className="tw:text-xl tw:font-bold">아쉬웠던 점</div>
           <div className="tw:whitespace-pre-line">
-            <span>issue 01 - 개발자 리딩체계 미흡</span>
+            <span>issue 01 - 커스텀 데이터 테이블</span>
+            <a className="tw:text-blue-800 tw:font-bold" href="https://github.com/JYK0128/my-workspace/blob/dev/packages/ui/lib/pages/BoardPage.tsx">[예시]</a>
             {`
-              원인: API 늦은 제공으로 개발시간 부족
-              개선방안: 목업 데이터를 사용한 프로토타입 구축 필요
-              해결방안: Zod를 사용하여 API 스키마 정의 및 목업 구축
+              원인: 요구사항을 충족하는 데이터 테이블을 구현하기 어려움 
+              개선방안: 다양한 기능을 삽입할 수 있는 커스텀 데이터 테이블이 필요
+              해결방안: Tanstack Table을 사용하여 정렬/필터링/페이징 기능 구현
             `}
           </div>
         </div>
@@ -867,12 +868,11 @@ function RouteComponent() {
         >
           <div className="tw:text-xl tw:font-bold">아쉬웠던 점</div>
           <div className="tw:whitespace-pre-line">
-            <span>issue 01 - 커스텀 데이터 테이블</span>
-            <a className="tw:text-blue-800 tw:font-bold" href="https://github.com/JYK0128/my-workspace/blob/dev/packages/ui/lib/pages/BoardPage.tsx">[예시]</a>
+            <span>issue 01 - 개발자 리딩체계 미흡</span>
             {`
-              원인: 요구사항을 충족하는 데이터 테이블을 구현하기 어려움 
-              개선방안: 다양한 기능을 삽입할 수 있는 커스텀 데이터 테이블이 필요
-              해결방안: Tanstack Table을 사용하여 정렬/필터링/페이징 기능 구현
+              원인: API 늦은 제공으로 개발시간 부족
+              개선방안: 목업 데이터를 사용한 프로토타입 구축 필요
+              해결방안: Zod를 사용하여 API 스키마 정의 및 목업 구축
             `}
           </div>
         </div>
