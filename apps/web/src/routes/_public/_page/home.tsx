@@ -151,9 +151,13 @@ function RouteComponent() {
           </ul>
         </div>
 
-        <div className="tw:basis-sm">
+        <div className="tw:basis-sm tw:h-full tw:flex tw:justify-center tw:items-center">
           <img src={Overview01} className="tw:w-200 tw:object-cover" />
+          <div className="tw:absolute tw:bottom-20 tw:right-20">
+            <Link to="/overview" hash="page01">👉자세히 보기</Link>
+          </div>
         </div>
+
       </div>
       {/* 메디링스 */}
       <div
