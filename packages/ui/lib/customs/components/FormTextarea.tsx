@@ -44,6 +44,7 @@ export function FormTextarea<T extends FieldValues>(props: Props<T>) {
         <FormItem
           className={cn(
             styles({ size }),
+            'tw:min-h-auto tw:min-w-auto',
             'tw:flex tw:flex-wrap',
             orientation === 'horizontal'
               ? 'tw:flex-row'

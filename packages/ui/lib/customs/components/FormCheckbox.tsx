@@ -36,6 +36,7 @@ export function FormCheckbox<T extends FieldValues>(props: Props<T>) {
       render={({ field }) => (
         <FormItem
           className={cn(
+            'tw:min-h-auto tw:min-w-auto',
             'tw:flex tw:flex-wrap',
             orientation === 'horizontal'
               ? 'tw:flex-row'
