@@ -44,27 +44,24 @@ export function ListPage() {
           position: 'relative',
         }}
         >
-          {virtualizer.getVirtualItems().map((item) => {
-            return (
-              <div
-                key={item.key}
-                ref={virtualizer.measureElement}
-                data-index={item.index}
-                className={cn(
-                  'tw:absolute tw:top-0 tw:left-0 tw:w-full',
-                  isSticky(item.index) ? 'tw:bg-yellow-300 tw:z-10' : '',
-                  isActiveSticky(item.index) ? 'tw:sticky tw:top-0' : '',
-                )}
-                style={{
-                  transform: !isActiveSticky(item.index) ? `translateY(${item.start}px)` : undefined,
-                }}
-              >
-                {`Row ${item.index}, ${item.key}, ${isActiveSticky(item.index)}, ${item.start}px`}
-                <Separator />
-              </div>
-            );
-          },
-          )}
+          {virtualizer.getVirtualItems().map((item) => (
+            <div
+              key={item.key}
+              ref={virtualizer.measureElement}
+              data-index={item.index}
+              className={cn(
+                'tw:absolute tw:top-0 tw:left-0 tw:w-full',
+                isSticky(item.index) ? 'tw:bg-yellow-300 tw:z-10' : '',
+                isActiveSticky(item.index) ? 'tw:sticky tw:top-0' : '',
+              )}
+              style={{
+                transform: !isActiveSticky(item.index) ? `translateY(${item.start}px)` : undefined,
+              }}
+            >
+              {`Row ${item.index}, ${item.key}, ${isActiveSticky(item.index)}, ${item.start}px`}
+              <Separator />
+            </div>
+          ))}
         </div>
       </div>
     </SidebarLayout>
