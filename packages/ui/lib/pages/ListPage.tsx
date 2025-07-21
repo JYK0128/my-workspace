@@ -32,23 +32,19 @@ export function ListPage() {
   const isSticky = (index: number) => !(index % 10);
 
   const isActiveSticky = (index: number) => {
-    if (index === 10) console.log(index, `ActiveSticky is ${activeStickyIndexRef.current}`);
     return activeStickyIndexRef.current === index;
   };
 
 
   return (
     <SidebarLayout>
-      <div ref={scrollRef} className="tw:size-full tw:scroll-y">
+      <div ref={scrollRef} className="tw:scroll-y">
         <div style={{
           height: `${virtualizer.getTotalSize()}px`,
           position: 'relative',
         }}
         >
           {virtualizer.getVirtualItems().map((item) => {
-            const { index } = item;
-            // index로 데이터 접근하기
-
             return (
               <div
                 key={item.key}
@@ -57,13 +53,13 @@ export function ListPage() {
                 className={cn(
                   'tw:absolute tw:top-0 tw:left-0 tw:w-full',
                   isSticky(item.index) ? 'tw:bg-yellow-300 tw:z-10' : '',
-                  isActiveSticky(item.index) ? 'tw:sticky' : '',
+                  isActiveSticky(item.index) ? 'tw:sticky tw:top-0' : '',
                 )}
                 style={{
-                  transform: !isActiveSticky(item.index) ? `translateY(${item.start}px)` : '',
+                  transform: !isActiveSticky(item.index) ? `translateY(${item.start}px)` : undefined,
                 }}
               >
-                {`Row ${item.index}, ${item.key}, ${isActiveSticky(item.index)}`}
+                {`Row ${item.index}, ${item.key}, ${isActiveSticky(item.index)}, ${item.start}px`}
                 <Separator />
               </div>
             );
