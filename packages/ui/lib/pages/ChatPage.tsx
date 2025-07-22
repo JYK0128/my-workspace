@@ -95,7 +95,6 @@ export function ChatPage() {
               control={form.control}
               orientation="horizontal"
               className="tw:pr-20"
-              size="full"
               onKeyDown={(e) => {
                 if (!(e.altKey || e.shiftKey) && e.key === 'Enter') {
                   e.preventDefault();

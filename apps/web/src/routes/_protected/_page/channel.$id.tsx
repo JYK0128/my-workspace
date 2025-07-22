@@ -201,7 +201,6 @@ function RouteComponent() {
               control={form.control}
               orientation="horizontal"
               className="tw:pr-20 tw:h-25"
-              size="full"
               onKeyDown={(e) => {
                 if (!(e.altKey || e.shiftKey) && e.key === 'Enter') {
                   e.preventDefault();
