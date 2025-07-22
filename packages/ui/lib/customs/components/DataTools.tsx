@@ -168,7 +168,6 @@ export function DataTools<T>({ table, form }: Props<T>) {
             {
               data.status && (
                 <FormCheckbox
-                  optional
                   falsely={null}
                   control={form.control as unknown as Control<FieldValues>}
                   name="status.value"

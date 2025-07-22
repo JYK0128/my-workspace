@@ -18,7 +18,7 @@ type Props<
     showError?: boolean
   }
   & {
-    falsely?: Nullish<false>
+    falsely?: { type: Nullish<false> }
   };
 
 
@@ -27,7 +27,7 @@ export function FormCheckbox<T extends FieldValues>(props: Props<T>) {
   const {
     control, name, disabled,
     label, labelWidth = 'auto', orientation = 'horizontal',
-    showError = false, required = false, falsely = false,
+    showError = false, required = false, falsely = { type: false },
   } = props;
 
   return (
@@ -49,7 +49,7 @@ export function FormCheckbox<T extends FieldValues>(props: Props<T>) {
             <FormControl>
               <Checkbox
                 checked={field.value}
-                onCheckedChange={(v) => field.onChange(v || falsely)}
+                onCheckedChange={(v) => field.onChange(v || falsely.type)}
               />
             </FormControl>
           </div>
