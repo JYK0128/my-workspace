@@ -6,9 +6,11 @@ import { FieldPath, FieldValues, UseControllerProps } from 'react-hook-form';
 type Props<
   TFieldValues extends FieldValues = FieldValues,
   TName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>,
-> = Omit<Mandatory<UseControllerProps<TFieldValues, TName>, 'control'>, 'defaultValue'>
+> = Omit<UseControllerProps<TFieldValues, TName>, 'defaultValue'>
   & Omit<ComponentPropsWithoutRef<'input'>, 'defaultValue' | 'value' | 'defaultChecked' | 'checked' | 'size'>
   & {
+    control: UseControllerProps<TFieldValues, TName>['control']
+    name: TName
     label?: string
     labelWidth?: CSSProperties['width']
     orientation?: 'vertical' | 'horizontal'
@@ -18,7 +20,7 @@ type Props<
 /** 단순 텍스트 입력 */
 export function FormInput<T extends FieldValues>(props: Props<T>) {
   const {
-    name, control, disabled,
+    name, disabled, control,
     label, labelWidth = 'auto', orientation = 'horizontal',
     showError = false, required = false,
     ...inputProps

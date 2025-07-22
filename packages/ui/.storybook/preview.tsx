@@ -33,12 +33,16 @@ const decorators: Decorator[] = [
 const preview: Preview = {
   decorators,
   parameters: {
+    actions: { argTypesRegex: '^on.*' },
     layout: 'fullscreen',
     controls: {
       matchers: {
         color: /(background|color)$/i,
         date: /Date$/i,
       },
+    },
+    docs: {
+      codePanel: true,
     },
   },
   tags: ['autodocs'],

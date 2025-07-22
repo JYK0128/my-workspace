@@ -1,42 +1,34 @@
 import { useEventUtils } from '#customs/hooks/index.ts';
 import { Button, FormControl, FormField, FormItem, FormLabel, FormMessage } from '#shadcn/components/ui/index.ts';
 import { cn } from '#shadcn/lib/utils.ts';
-import { cva, VariantProps } from 'class-variance-authority';
 import { X } from 'lucide-react';
 import { ComponentPropsWithoutRef, CSSProperties, useEffect, useRef, useState } from 'react';
 import { FieldPath, FieldValues, UseControllerProps, useWatch } from 'react-hook-form';
 
-const styles = cva('', {
-  variants: {
-    size: {
-      full: 'tw:size-full',
-    },
-  },
-});
-
 type Props<
   TFieldValues extends FieldValues = FieldValues,
   TName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>,
-> = Omit<Mandatory<UseControllerProps<TFieldValues, TName>, 'control'>, 'defaultValue'>
+> = Omit<UseControllerProps<TFieldValues, TName>, 'defaultValue'>
   & Omit<ComponentPropsWithoutRef<'p'>, 'defaultValue' | 'value' | 'defaultChecked' | 'checked'>
   & {
+    control: UseControllerProps<TFieldValues, TName>['control']
+    name: TName
     label?: string
     labelWidth?: CSSProperties['width']
     orientation?: 'vertical' | 'horizontal'
     showError?: boolean
+    placeholder?: string
   }
   & {
     required?: boolean
-  }
-  & VariantProps<typeof styles>;
-
+  };
 
 /** 리치 텍스트 입력 */
 export function FormRicharea<T extends FieldValues>(props: Props<T>) {
   const {
-    name, control, disabled,
+    name, disabled, control,
     label, labelWidth = 'auto', orientation = 'horizontal',
-    showError = false, required = false, size,
+    showError = false, required = false,
     ...inputProps
   } = props;
   const { prevent, stop } = useEventUtils();
@@ -86,7 +78,7 @@ export function FormRicharea<T extends FieldValues>(props: Props<T>) {
       render={({ field }) => (
         <FormItem
           className={cn(
-            styles({ size }),
+            'tw:size-full',
             'tw:min-h-auto tw:min-w-auto',
             'tw:flex tw:flex-wrap',
             orientation === 'horizontal'
@@ -94,6 +86,7 @@ export function FormRicharea<T extends FieldValues>(props: Props<T>) {
               : 'tw:flex-col',
           )}
         >
+          {/* TODO: Focus 처리 */}
           {label && (
             <div
               style={{ width: labelWidth }}
@@ -157,10 +150,13 @@ export function FormRicharea<T extends FieldValues>(props: Props<T>) {
                   addFiles([...e.dataTransfer.files]);
                 }
               }}
+              style={{ backgroundColor: 'transparent' }}
               className={cn(
                 'tw:cursor-default',
                 'tw:size-full tw:overflow-auto tw:w-full tw:rounded-md tw:border tw:border-input tw:bg-transparent tw:px-3 tw:py-2 tw:text-base tw:shadow-sm tw:placeholder:text-muted-foreground tw:focus-visible:outline-hidden tw:focus-visible:ring-1 tw:focus-visible:ring-ring tw:disabled:cursor-not-allowed tw:disabled:opacity-50 tw:md:text-sm',
                 'tw:break-words',
+                'tw:empty:before:content-[attr(placeholder)]',
+                'tw:empty:before:text-gray-500',
                 inputProps.className,
               )}
             />

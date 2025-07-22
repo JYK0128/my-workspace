@@ -21,7 +21,12 @@ export const FormController = forwardRef(
 
     return (
       <Form {...form}>
-        <form {...rest} ref={ref} onSubmit={form.handleSubmit(onSubmit, onError)}>
+        <form
+          {...rest}
+          ref={ref}
+          onReset={() => form.reset()}
+          onSubmit={form.handleSubmit(onSubmit, onError)}
+        >
           {children}
         </form>
       </Form>

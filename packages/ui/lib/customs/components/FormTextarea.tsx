@@ -1,37 +1,28 @@
 import { FormControl, FormField, FormItem, FormLabel, FormMessage, Textarea } from '#shadcn/components/ui/index.ts';
 import { cn } from '#shadcn/lib/utils.ts';
-import { cva, VariantProps } from 'class-variance-authority';
 import { ComponentPropsWithoutRef, CSSProperties } from 'react';
 import { FieldPath, FieldValues, UseControllerProps } from 'react-hook-form';
 
 type Props<
   TFieldValues extends FieldValues = FieldValues,
   TName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>,
-> = Omit<Mandatory<UseControllerProps<TFieldValues, TName>, 'control'>, 'defaultValue'>
+> = Omit<UseControllerProps<TFieldValues, TName>, 'defaultValue'>
   & Omit<ComponentPropsWithoutRef<'textarea'>, 'defaultValue' | 'value' | 'defaultChecked' | 'checked'>
   & {
+    control: UseControllerProps<TFieldValues, TName>['control']
+    name: TName
     label?: string
     labelWidth?: CSSProperties['width']
     orientation?: 'vertical' | 'horizontal'
     showError?: boolean
-  }
-  & VariantProps<typeof styles>;
-
-const styles = cva('', {
-  variants: {
-    size: {
-      full: 'tw:size-full',
-    },
-  },
-});
-
+  };
 
 /** 텍스트 입력 */
 export function FormTextarea<T extends FieldValues>(props: Props<T>) {
   const {
-    name, control, disabled,
+    name, disabled, control,
     label, labelWidth = 'auto', orientation = 'horizontal',
-    showError = false, required = false, size,
+    showError = false, required = false,
     ...inputProps
   } = props;
 
@@ -43,7 +34,6 @@ export function FormTextarea<T extends FieldValues>(props: Props<T>) {
       render={({ field }) => (
         <FormItem
           className={cn(
-            styles({ size }),
             'tw:min-h-auto tw:min-w-auto',
             'tw:flex tw:flex-wrap',
             orientation === 'horizontal'
