@@ -108,11 +108,11 @@ export function FormPage() {
         />
         <FormRadioGroup
           control={form.control}
-          orientation="horizontal"
-          showError
           name="picked"
           label="선택 - 라디오"
           labelWidth="150px"
+          showError
+          orientation="horizontal"
           items={[
             { label: '1번 아이템', value: ITEM['01'] },
             { label: '2번 아이템', value: ITEM['02'] },
@@ -121,11 +121,11 @@ export function FormPage() {
         />
         <FormCheckGroup
           control={form.control}
-          orientation="horizontal"
-          showError
           name="checkList"
           label="선택 - 체크박스"
           labelWidth="150px"
+          showError
+          orientation="horizontal"
           items={[
             { label: '1번 아이템', value: ITEM['01'] },
             { label: '2번 아이템', value: ITEM['02'] },

@@ -6,16 +6,18 @@ import { FieldPath, FieldValues, UseControllerProps } from 'react-hook-form';
 type Props<
   TFieldValues extends FieldValues = FieldValues,
   TName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>,
-> = Omit<Mandatory<UseControllerProps<TFieldValues, TName>, 'control'>, 'defaultValue'>
+> = Omit<UseControllerProps<TFieldValues, TName>, 'defaultValue'>
   & Omit<ComponentPropsWithoutRef<'input'>, 'defaultValue' | 'value' | 'defaultChecked' | 'checked'>
   & {
+    control: UseControllerProps<TFieldValues, TName>['control']
+    name: TName
+    required?: boolean
     label?: string
     labelWidth?: CSSProperties['width']
     orientation?: 'vertical' | 'horizontal'
     showError?: boolean
   }
   & {
-    optional?: boolean
     falsely?: Nullish<false>
   };
 
@@ -23,9 +25,9 @@ type Props<
 /** 체크박스(단일) */
 export function FormCheckbox<T extends FieldValues>(props: Props<T>) {
   const {
-    name, control, disabled,
+    control, name, disabled,
     label, labelWidth = 'auto', orientation = 'horizontal',
-    showError = false, required = false, optional, falsely,
+    showError = false, required = false, falsely = false,
   } = props;
 
   return (
@@ -47,7 +49,7 @@ export function FormCheckbox<T extends FieldValues>(props: Props<T>) {
             <FormControl>
               <Checkbox
                 checked={field.value}
-                onCheckedChange={(v) => field.onChange(v || ((required || optional) ? falsely : false))}
+                onCheckedChange={(v) => field.onChange(v || falsely)}
               />
             </FormControl>
           </div>

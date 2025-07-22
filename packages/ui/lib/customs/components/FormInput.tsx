@@ -11,6 +11,7 @@ type Props<
   & {
     control: UseControllerProps<TFieldValues, TName>['control']
     name: TName
+    required?: boolean
     label?: string
     labelWidth?: CSSProperties['width']
     orientation?: 'vertical' | 'horizontal'
@@ -20,7 +21,7 @@ type Props<
 /** 단순 텍스트 입력 */
 export function FormInput<T extends FieldValues>(props: Props<T>) {
   const {
-    name, disabled, control,
+    control, name, disabled,
     label, labelWidth = 'auto', orientation = 'horizontal',
     showError = false, required = false,
     ...inputProps

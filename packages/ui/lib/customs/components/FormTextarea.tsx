@@ -20,7 +20,7 @@ type Props<
 /** 텍스트 입력 */
 export function FormTextarea<T extends FieldValues>(props: Props<T>) {
   const {
-    name, disabled, control,
+    control, name, disabled,
     label, labelWidth = 'auto', orientation = 'horizontal',
     showError = false, required = false,
     ...inputProps

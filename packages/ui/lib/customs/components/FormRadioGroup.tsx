@@ -4,6 +4,17 @@ import { safeParse } from '@packages/utils';
 import { ComponentPropsWithoutRef, CSSProperties, ReactNode } from 'react';
 import { FieldPath, FieldPathValue, FieldValues, UseControllerProps } from 'react-hook-form';
 
+type RadioItem<
+  TFieldValues extends FieldValues = FieldValues,
+  TName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>,
+> = {
+  label: ReactNode
+  value: TName extends keyof TFieldValues
+    ? FieldPathValue<TFieldValues, TName>
+    : never
+  disabled?: boolean
+};
+
 type Props<
   TFieldValues extends FieldValues = FieldValues,
   TName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>,
@@ -16,12 +27,7 @@ type Props<
     showError?: boolean
   }
   & {
-    items: {
-      label: ReactNode
-      value: TName extends keyof TFieldValues
-        ? FieldPathValue<TFieldValues, TName>
-        : never
-    }[]
+    items: RadioItem[]
   };
 
 
@@ -31,7 +37,7 @@ export function FormRadioGroup<
   TName extends FieldPath<TFieldValues>,
 >(props: Props<TFieldValues, TName>) {
   const {
-    name, control, disabled,
+    control, name, disabled,
     label, labelWidth = 'auto', orientation = 'horizontal',
     showError = false, required = false,
     items,
@@ -86,7 +92,14 @@ export function FormRadioGroup<
                       )}
                     >
                       <FormControl>
-                        <RadioGroupItem value={`${item.value}`} />
+                        <RadioGroupItem
+                          className={cn(
+                            'tw:[&_svg]:min-size-auto',
+                            'tw:[&_svg]:max-size-none',
+                          )}
+                          value={`${item.value}`}
+                          disabled={item.disabled}
+                        />
                       </FormControl>
                       <FormLabel>
                         {item.label}

@@ -149,6 +149,17 @@
   }
 }
 
+/* 커스텀 설정(2) */
+@utility min-size-auto {
+  @apply 
+    tw:min-w-auto tw:min-h-auto;
+}
+
+@utility max-size-none {
+  @apply 
+    tw:max-w-none tw:max-h-none;
+}
+
 @layer base {
   * {
     min-width: 0;

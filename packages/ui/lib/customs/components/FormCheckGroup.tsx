@@ -3,24 +3,33 @@ import { cn } from '#shadcn/lib/utils.ts';
 import { ComponentPropsWithoutRef, CSSProperties, ReactNode } from 'react';
 import { FieldPath, FieldPathValue, FieldValues, UseControllerProps } from 'react-hook-form';
 
+type CheckItem<
+  TFieldValues extends FieldValues = FieldValues,
+  TName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>,
+> = {
+  label: ReactNode
+  value: TName extends keyof TFieldValues
+    ? FieldPathValue<TFieldValues, TName>
+    : never
+  disabled?: boolean
+};
+
 type Props<
   TFieldValues extends FieldValues = FieldValues,
   TName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>,
-> = Omit<Mandatory<UseControllerProps<TFieldValues, TName>, 'control'>, 'defaultValue'>
+> = Omit<UseControllerProps<TFieldValues, TName>, 'defaultValue'>
   & Omit<ComponentPropsWithoutRef<'input'>, 'defaultValue' | 'value' | 'defaultChecked' | 'checked'>
   & {
+    control: UseControllerProps<TFieldValues, TName>['control']
+    name: TName
+    required?: boolean
     label?: string
     labelWidth?: CSSProperties['width']
     orientation?: 'vertical' | 'horizontal'
     showError?: boolean
   }
   & {
-    items: {
-      label: ReactNode
-      value: TName extends keyof TFieldValues
-        ? FieldPathValue<TFieldValues, TName>
-        : never
-    }[]
+    items: CheckItem[]
   };
 
 
@@ -30,7 +39,7 @@ export function FormCheckGroup<
   TName extends FieldPath<TFieldValues>,
 >(props: Props<TFieldValues, TName>) {
   const {
-    name, control, disabled,
+    control, name, disabled,
     label, labelWidth = 'auto', orientation = 'horizontal',
     showError = false, required = false,
     items,
@@ -83,6 +92,7 @@ export function FormCheckGroup<
                   >
                     <FormControl>
                       <Checkbox
+                        disabled={item.disabled}
                         checked={field.value.includes(item.value)}
                         onCheckedChange={(checked) => {
                           return checked
