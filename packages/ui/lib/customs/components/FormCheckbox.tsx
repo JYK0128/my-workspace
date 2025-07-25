@@ -48,7 +48,7 @@ export function FormCheckbox<T extends FieldValues>(props: Props<T>) {
           <div className="tw:shrink-0">
             <FormControl>
               <Checkbox
-                checked={field.value}
+                checked={!!field.value}
                 onCheckedChange={(v) => field.onChange(v || falsely.type)}
               />
             </FormControl>
