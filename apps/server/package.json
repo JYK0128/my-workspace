@@ -34,7 +34,6 @@
     "@types/node": "^22.15.34",
     "@types/ws": "^8.18.1",
     "concurrently": "^9.2.0",
-    "cross-env": "^7.0.3",
     "dotenv-flow": "^4.1.0",
     "esbuild": "^0.25.5",
     "esbuild-plugin-node-externals": "^1.0.1",
