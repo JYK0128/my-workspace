@@ -26,8 +26,8 @@ const options = {
   define: {
     ...env,
   },
-  external: ['trpc-ui'],
   logLevel: 'info',
+  external: ['trpc-ui'],  // @packages/trpc에서 의존 중
   plugins: [
     nodeExternals({
       packagePaths: './package.json',
