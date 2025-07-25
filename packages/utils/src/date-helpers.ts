@@ -1,17 +1,17 @@
-import { addYears, formatDate, getDecade, subYears } from 'date-fns';
+import { formatDate } from 'date-fns';
 
 export const DATE = {
-  DECADE: 0,
-  YEAR: 1,
-  MONTH: 2,
-  DAY: 3,
-  HOUR: 4,
-  MINUTE: 5,
-  SECOND: 6,
-  MILLISECOND: 7,
-  TIMEZONE: 8,
+  decade: 0,
+  year: 1,
+  month: 2,
+  day: 3,
+  hour: 4,
+  minute: 5,
+  second: 6,
+  ms: 7,
+  timezone: 8,
 } as const;
-type DATE = typeof DATE[keyof typeof DATE];
+type DATE = keyof typeof DATE;
 
 export const RANGE = {
   STRICT: '()',
@@ -66,17 +66,17 @@ declare global {
 /* helper */
 const createDate = (arr: number[], utc?: boolean) => {
   return utc
-    ? new Date(Date.UTC(...(arr.slice(DATE.YEAR, DATE.TIMEZONE) as [number, number, number, number, number, number, number])))
-    : new Date(...(arr.slice(DATE.YEAR, DATE.TIMEZONE) as [number, number, number, number, number, number, number]));
+    ? new Date(Date.UTC(...(arr.slice(DATE.year, DATE.timezone) as [number, number, number, number, number, number, number])))
+    : new Date(...(arr.slice(DATE.year, DATE.timezone) as [number, number, number, number, number, number, number]));
 };
 
 const handleAdjustMonth = (arr: number[], date: Date, utc?: boolean) => {
   const modDate = utc ? date.getUTCDate() : date.getDate();
-  const originalDate = arr[DATE.DAY];
+  const originalDate = arr[DATE.day];
 
   if (originalDate !== modDate) {
-    arr[DATE.MONTH] = arr[DATE.MONTH] + 1;
-    arr[DATE.DAY] = 0;
+    arr[DATE.month] = arr[DATE.month] + 1;
+    arr[DATE.day] = 0;
     return createDate(arr, utc);
   }
 
@@ -125,15 +125,16 @@ Date.prototype.add = function (this, unit, value, options) {
   const { adjust, utc } = options ?? {};
   const toArray = utc ? 'toUtcArray' : 'toArray';
   const thisArray = this[toArray]();
+  const scale = DATE[unit];
 
-  if (unit === DATE.DECADE) {
-    thisArray[DATE.YEAR] = (Math.floor(thisArray[DATE.YEAR] / 10) + value) * 10;
+  if (scale === DATE.decade) {
+    thisArray[DATE.year] = (Math.floor(thisArray[DATE.year] / 10) + value) * 10;
     return createDate(thisArray, utc);
   }
   else {
-    thisArray[unit] += value;
+    thisArray[scale] += value;
     const date = createDate(thisArray, utc);
-    return unit === DATE.MONTH && adjust ? handleAdjustMonth(thisArray, date, utc) : date;
+    return scale === DATE.month && adjust ? handleAdjustMonth(thisArray, date, utc) : date;
   }
 };
 
@@ -141,15 +142,16 @@ Date.prototype.sub = function (this, unit, value, options) {
   const { adjust, utc } = options ?? {};
   const toArray = utc ? 'toUtcArray' : 'toArray';
   const thisArray = this[toArray]();
-  thisArray[unit] -= value;
+  const scale = DATE[unit];
 
-  if (unit === DATE.DECADE) {
-    thisArray[DATE.YEAR] = (Math.floor(thisArray[DATE.YEAR] / 10) - value) * 10;
+  thisArray[scale] -= value;
+  if (scale === DATE.decade) {
+    thisArray[DATE.year] = (Math.floor(thisArray[DATE.year] / 10) - value) * 10;
     return createDate(thisArray, utc);
   }
   else {
     const date = createDate(thisArray, utc);
-    return unit === DATE.MONTH && adjust ? handleAdjustMonth(thisArray, date, utc) : date;
+    return scale === DATE.month && adjust ? handleAdjustMonth(thisArray, date, utc) : date;
   }
 };
 
@@ -157,15 +159,16 @@ Date.prototype.set = function (this, unit, value, options) {
   const { adjust, utc } = options ?? {};
   const toArray = utc ? 'toUtcArray' : 'toArray';
   const thisArray = this[toArray]();
-  thisArray[unit] = value;
+  const scale = DATE[unit];
 
-  if (unit === DATE.DECADE) {
-    thisArray[DATE.YEAR] = (Math.floor(thisArray[DATE.YEAR] / 10) + value) * 10;
+  thisArray[scale] = value;
+  if (scale === DATE.decade) {
+    thisArray[DATE.year] = (Math.floor(thisArray[DATE.year] / 10) + value) * 10;
     return createDate(thisArray, utc);
   }
   else {
     const date = createDate(thisArray, utc);
-    return unit === DATE.MONTH && adjust ? handleAdjustMonth(thisArray, date, utc) : date;
+    return scale === DATE.month && adjust ? handleAdjustMonth(thisArray, date, utc) : date;
   }
 };
 
@@ -173,7 +176,9 @@ Date.prototype.get = function (this, unit, options) {
   const { utc } = options ?? {};
   const toArray = utc ? 'toUtcArray' : 'toArray';
   const thisArray = this[toArray]();
-  return thisArray[unit];
+  const scale = DATE[unit];
+
+  return thisArray[scale];
 };
 
 Date.prototype.isSame = function (this, date, unit, options) {
@@ -181,10 +186,12 @@ Date.prototype.isSame = function (this, date, unit, options) {
   const toArray = utc ? 'toUtcArray' : 'toArray';
   const thisArray = this[toArray]();
   const dateArray = date[toArray]();
+  const scale = DATE[unit];
 
   if (granularity !== undefined) {
-    const start = Math.min(unit, granularity);
-    const end = Math.max(unit, granularity);
+    const base = DATE[granularity];
+    const start = Math.min(scale, base);
+    const end = Math.max(scale, base);
 
     for (let i = start; i <= end; i++) {
       if (thisArray[i] !== dateArray[i]) {
@@ -194,20 +201,23 @@ Date.prototype.isSame = function (this, date, unit, options) {
     return true;
   }
   else {
-    return thisArray[unit] === dateArray[unit];
+    return thisArray[scale] === dateArray[scale];
   }
 };
 
 Date.prototype.isSameOrBefore = function (this, date, unit, options) {
   const { granularity, utc, offset = 0 } = options ?? {};
   const toArray = utc ? 'toUtcArray' : 'toArray';
+  const scale = DATE[unit];
+
   const offsetDate = date.add(unit, offset, options);
   const thisArray = this[toArray]();
   const dateArray = offsetDate[toArray]();
 
   if (granularity !== undefined) {
-    const start = Math.min(unit, granularity);
-    const end = Math.max(unit, granularity);
+    const base = DATE[granularity];
+    const start = Math.min(scale, base);
+    const end = Math.max(scale, base);
 
     for (let i = start; i <= end; i++) {
       if (thisArray[i] < dateArray[i]) return true;
@@ -216,20 +226,23 @@ Date.prototype.isSameOrBefore = function (this, date, unit, options) {
     return true;
   }
   else {
-    return thisArray[unit] <= dateArray[unit];
+    return thisArray[scale] <= dateArray[scale];
   }
 };
 
 Date.prototype.isSameOrAfter = function (this, date, unit, options) {
   const { granularity, utc, offset = 0 } = options ?? {};
   const toArray = utc ? 'toUtcArray' : 'toArray';
+  const scale = DATE[unit];
+
   const offsetDate = date.sub(unit, offset, options);
   const thisArray = this[toArray]();
   const dateArray = offsetDate[toArray]();
 
   if (granularity !== undefined) {
-    const start = Math.min(unit, granularity);
-    const end = Math.max(unit, granularity);
+    const base = DATE[granularity];
+    const start = Math.min(scale, base);
+    const end = Math.max(scale, base);
 
     for (let i = start; i <= end; i++) {
       if (thisArray[i] > dateArray[i]) return true;
@@ -238,20 +251,23 @@ Date.prototype.isSameOrAfter = function (this, date, unit, options) {
     return true;
   }
   else {
-    return thisArray[unit] >= dateArray[unit];
+    return thisArray[scale] >= dateArray[scale];
   }
 };
 
 Date.prototype.isBefore = function (this, date, unit, options) {
   const { granularity, utc, offset = 0 } = options ?? {};
   const toArray = utc ? 'toUtcArray' : 'toArray';
+  const scale = DATE[unit];
+
   const offsetDate = date.sub(unit, offset, options);
   const thisArray = this[toArray]();
   const dateArray = offsetDate[toArray]();
 
   if (granularity !== undefined) {
-    const start = Math.min(unit, granularity);
-    const end = Math.max(unit, granularity);
+    const base = DATE[granularity];
+    const start = Math.min(scale, base);
+    const end = Math.max(scale, base);
 
     for (let i = start; i <= end; i++) {
       if (thisArray[i] < dateArray[i]) return true;
@@ -260,20 +276,23 @@ Date.prototype.isBefore = function (this, date, unit, options) {
     return false;
   }
   else {
-    return thisArray[unit] < dateArray[unit];
+    return thisArray[scale] < dateArray[scale];
   }
 };
 
 Date.prototype.isAfter = function (this, date, unit, options) {
   const { granularity, utc, offset = 0 } = options ?? {};
   const toArray = utc ? 'toUtcArray' : 'toArray';
+  const scale = DATE[unit];
+
   const offsetDate = date.add(unit, offset, options);
   const thisArray = this[toArray]();
   const dateArray = offsetDate[toArray]();
 
   if (granularity !== undefined) {
-    const start = Math.min(unit, granularity);
-    const end = Math.max(unit, granularity);
+    const base = DATE[granularity];
+    const start = Math.min(scale, base);
+    const end = Math.max(scale, base);
 
     for (let i = start; i <= end; i++) {
       if (thisArray[i] > dateArray[i]) return true;
@@ -282,7 +301,7 @@ Date.prototype.isAfter = function (this, date, unit, options) {
     return false;
   }
   else {
-    return thisArray[unit] > dateArray[unit];
+    return thisArray[scale] > dateArray[scale];
   }
 };
 
@@ -302,58 +321,3 @@ Date.prototype.isBetween = function (this, date1, date2, unit, options): boolean
       return this.isSameOrAfter(start, unit, options) && this.isSameOrBefore(end, unit, options);
   }
 };
-
-/** @deprecated */
-export const addDecades
-= (date: Date, amount: number) => addYears(new Date(getDecade(date), 0), amount * 10);
-/** @deprecated */
-export const subDecades
-= (date: Date, amount: number) => subYears(new Date(getDecade(date), 0), amount * 10);
-
-/** @deprecated */
-export const isSameDecade
-= (from: Date, to: Date) => getDecade(from) === getDecade(to);
-/** @deprecated */
-export const isBeforeDecade
-= (from: Date, to: Date) => getDecade(from) < getDecade(to);
-/** @deprecated */
-export const isAfterDecade
-= (from: Date, to: Date) => getDecade(from) > getDecade(to);
-/** @deprecated */
-export const isSameOrBeforeDecade
-= (from: Date, to: Date) => getDecade(from) <= getDecade(to);
-/** @deprecated */
-export const isSameOrAfterDecade
-= (from: Date, to: Date) => getDecade(from) >= getDecade(to);
-
-/** @deprecated */
-export const isSameYear
-= (from: Date, to: Date) => from.getFullYear() === to.getFullYear();
-/** @deprecated */
-export const isBeforeYear
-= (from: Date, to: Date) => from.getFullYear() < to.getFullYear();
-/** @deprecated */
-export const isAfterYear
-= (from: Date, to: Date) => from.getFullYear() > to.getFullYear();
-/** @deprecated */
-export const isSameOrBeforeYear
-= (from: Date, to: Date) => from.getFullYear() <= to.getFullYear();
-/** @deprecated */
-export const isSameOrAfterYear
-= (from: Date, to: Date) => from.getFullYear() >= to.getFullYear();
-
-/** @deprecated */
-export const isSameMonth
-= (from: Date, to: Date) => from.getMonth() === to.getMonth();
-/** @deprecated */
-export const isBeforeMonth
-= (from: Date, to: Date) => from.getMonth() < to.getMonth();
-/** @deprecated */
-export const isAfterMonth
-= (from: Date, to: Date) => from.getMonth() > to.getMonth();
-/** @deprecated */
-export const isSameOrBeforeMonth
-= (from: Date, to: Date) => from.getMonth() <= to.getMonth();
-/** @deprecated */
-export const isSameOrAfterMonth
-= (from: Date, to: Date) => from.getMonth() >= to.getMonth();

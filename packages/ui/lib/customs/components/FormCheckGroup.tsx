@@ -29,7 +29,7 @@ type Props<
     showError?: boolean
   }
   & {
-    items: CheckItem[]
+    items: CheckItem<TFieldValues, TName>[]
   };
 
 

@@ -25,6 +25,10 @@ const meta = {
       description: '입력 필드의 이름',
       control: { disable: true },
     },
+    required: {
+      description: 'required 속성',
+      control: { type: 'boolean' },
+    },
     label: {
       description: '필드의 라벨',
       control: { type: 'text' },
@@ -99,6 +103,7 @@ export const Default: Story = {
   args: {
     control: {} as never,
     name: 'input',
+    required: true,
     label: '라벨',
     labelWidth: '180px',
     showError: true,
@@ -114,6 +119,7 @@ export const Default: Story = {
       <FormTextarea
         control={form.control}
         name={name}
+        required={true}
         label={label}
         labelWidth={labelWidth}
         showError={showError}

@@ -1,5 +1,5 @@
 import { FormController } from '#customs/components/FormController.tsx';
-import { FormInput } from '#customs/components/FormInput.tsx';
+import { FormSelectMulti } from '#customs/components/FormSelectMulti.tsx';
 import { Button } from '#shadcn/components/ui/button.tsx';
 import { zodResolver } from '@hookform/resolvers/zod';
 import type { Meta, StoryObj } from '@storybook/react-vite';
@@ -9,13 +9,13 @@ import { z } from 'zod';
 
 // 1. Meta
 /**
- * FormController 전용 Input 컴포넌트입니다.
- * 기본적인 input 속성과 함께 다음 속성을 지원합니다.
+ * FormController 전용 복수 Select 컴포넌트입니다.
+ * 기본적인 Select 속성과 함께 다음 속성을 지원합니다.
  */
 const meta = {
   tags: ['!dev'],
-  title: 'Design/Form/Input',
-  component: FormInput,
+  title: 'Design/Form/SelectMulti',
+  component: FormSelectMulti,
   argTypes: {
     control: {
       description: 'react-hook-form의 control 객체',
@@ -46,29 +46,24 @@ const meta = {
       control: { type: 'radio' },
       options: ['horizontal', 'vertical'],
     },
-  },
-  parameters: {
-    docs: {
-      source: {
-        code:
-        `<FormInput
-          control={form.control}
-          name={name}
-          required={required}
-          label={label}
-          labelWidth={labelWidth}
-          showError={showError}
-          orientation={orientation}
-          placeholder={placeholder}
-        />`,
-      },
+    items: {
+      description: 'Select 아이템 목록',
+      control: { type: 'object' },
+    },
+    min: {
+      description: '최소 선택',
+      control: { type: 'number' },
+    },
+    max: {
+      description: '최대 선택',
+      control: { type: 'number' },
     },
   },
   decorators: [(Story) => {
     const schema = z.object({
-      input: z.string().min(1, '최소 1자 이상 입력해주세요.'),
+      input: z.enum(['item01', 'item02', 'item03']).array(),
     }).default({
-      input: '',
+      input: [],
     });
 
     const form = useForm({
@@ -93,7 +88,26 @@ const meta = {
       </FormController>
     );
   }],
-} satisfies Meta<typeof FormInput>;
+  parameters: {
+    docs: {
+      source: {
+        code:
+        `<FormSelectMulti
+          control={form.control}
+          name={name}
+          required={required}
+          label={label}
+          labelWidth={labelWidth}
+          showError={showError}
+          orientation={orientation}
+          items={items}
+          min={min}
+          max={max}
+        />`,
+      },
+    },
+  },
+} satisfies Meta<typeof FormSelectMulti>;
 
 // 2. Settings
 export default meta;
@@ -110,14 +124,22 @@ export const Default: Story = {
     showError: true,
     orientation: 'horizontal',
     placeholder: '입력해주세요.',
+    items: [
+      { label: '선택안함', value: null },
+      { label: '1번 아이템', value: 'item01' },
+      { label: '2번 아이템', value: 'item02', disabled: true },
+      { label: '3번 아이템', value: 'item03' },
+    ],
+    min: 1,
+    max: 3,
   },
   render: (args) => {
-    const { name, required, label, labelWidth, showError, orientation, placeholder } = args;
+    const { name, required, label, labelWidth, showError, orientation, items, min, max } = args;
     // eslint-disable-next-line react-hooks/rules-of-hooks
     const form = useFormContext();
 
     return (
-      <FormInput
+      <FormSelectMulti
         control={form.control}
         name={name}
         required={required}
@@ -125,7 +147,9 @@ export const Default: Story = {
         labelWidth={labelWidth}
         showError={showError}
         orientation={orientation}
-        placeholder={placeholder}
+        items={items}
+        min={min}
+        max={max}
       />
     );
   },

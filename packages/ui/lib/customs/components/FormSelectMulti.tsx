@@ -4,26 +4,33 @@ import { Check, ChevronsUpDown, RotateCcw, Search } from 'lucide-react';
 import { ComponentPropsWithoutRef, CSSProperties, ReactNode, useEffect, useState } from 'react';
 import { FieldPath, FieldPathValue, FieldValues, UseControllerProps, useWatch } from 'react-hook-form';
 
+type SelectItem<
+  TFieldValues extends FieldValues = FieldValues,
+  TName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>,
+> = {
+  label: ReactNode
+  value: TName extends keyof TFieldValues
+    ? FieldPathValue<TFieldValues, TName>
+    : never
+  disabled?: boolean
+};
+
 type Props<
   TFieldValues extends FieldValues = FieldValues,
   TName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>,
-> = Omit<Mandatory<UseControllerProps<TFieldValues, TName>, 'control'>, 'defaultValue'>
-  & Omit<ComponentPropsWithoutRef<'input'>, 'defaultValue' | 'value' | 'defaultChecked' | 'checked' | 'placeholder'>
+> = Omit<UseControllerProps<TFieldValues, TName>, 'defaultValue'>
+  & Omit<ComponentPropsWithoutRef<'input'>, 'defaultValue' | 'value' | 'defaultChecked' | 'checked'>
   & {
+    control: UseControllerProps<TFieldValues, TName>['control']
+    name: TName
+    required?: boolean
     label?: string
     labelWidth?: CSSProperties['width']
     orientation?: 'vertical' | 'horizontal'
     showError?: boolean
   }
   & {
-    items: {
-      label: ReactNode
-      value: TName extends keyof TFieldValues
-        ? FieldPathValue<TFieldValues, TName>
-        : never
-    }[]
-  }
-  & {
+    items: SelectItem<TFieldValues, TName>[]
     min?: number
     max?: number
   };

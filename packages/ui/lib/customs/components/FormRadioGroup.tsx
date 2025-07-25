@@ -27,7 +27,7 @@ type Props<
     showError?: boolean
   }
   & {
-    items: RadioItem[]
+    items: RadioItem<TFieldValues, TName>[]
   };
 
 

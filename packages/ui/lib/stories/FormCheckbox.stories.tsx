@@ -13,7 +13,7 @@ import { z } from 'zod';
  * 기본적인 input[type=checkbox] 속성과 함께 다음 속성을 지원합니다.
  */
 const meta = {
-  // tags: ['!dev'],
+  tags: ['!dev'],
   title: 'Design/Form/Checkbox',
   component: FormCheckbox,
   argTypes: {
@@ -94,9 +94,9 @@ const meta = {
       source: {
         code:
         `<FormCheckbox
-          required={required}
           control={form.control}
           name={name}
+          required={required}
           label={label}
           labelWidth={labelWidth}
           showError={showError}

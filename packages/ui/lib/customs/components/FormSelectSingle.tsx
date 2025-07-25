@@ -4,25 +4,34 @@ import { safeParse } from '@packages/utils';
 import { ComponentPropsWithoutRef, CSSProperties, ReactNode } from 'react';
 import { FieldPath, FieldPathValue, FieldValues, UseControllerProps } from 'react-hook-form';
 
+type SelectItem<
+  TFieldValues extends FieldValues = FieldValues,
+  TName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>,
+> = {
+  label: ReactNode
+  value: Nullable<TName extends keyof TFieldValues
+    ? FieldPathValue<TFieldValues, TName>
+    : never
+  >
+  disabled?: boolean
+};
+
 type Props<
   TFieldValues extends FieldValues = FieldValues,
   TName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>,
-> = Omit<Mandatory<UseControllerProps<TFieldValues, TName>, 'control'>, 'defaultValue'>
+> = Omit<UseControllerProps<TFieldValues, TName>, 'defaultValue'>
   & Omit<ComponentPropsWithoutRef<'input'>, 'defaultValue' | 'value' | 'defaultChecked' | 'checked'>
   & {
+    control: UseControllerProps<TFieldValues, TName>['control']
+    name: TName
+    required?: boolean
     label?: string
     labelWidth?: CSSProperties['width']
     orientation?: 'vertical' | 'horizontal'
     showError?: boolean
   }
   & {
-    items: {
-      label: ReactNode
-      value: Nullable<TName extends keyof TFieldValues
-        ? FieldPathValue<TFieldValues, TName>
-        : never
-      >
-    }[]
+    items: SelectItem<TFieldValues, TName>[]
   };
 
 
@@ -77,8 +86,8 @@ export function FormSelectSingle<
                 </SelectTrigger>
               </FormControl>
               <SelectContent>
-                {items.map(({ value, label }) => (
-                  <SelectItem key={`${value}`} value={`${value}`}>
+                {items.map(({ value, label, disabled }) => (
+                  <SelectItem key={`${value}`} value={`${value}`} disabled={disabled}>
                     {label}
                   </SelectItem>
                 ))}

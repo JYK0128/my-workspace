@@ -96,7 +96,6 @@ export function FormPage() {
           label="입력 - richarea"
           labelWidth="150px"
         />
-
         <FormCheckbox
           control={form.control}
           orientation="horizontal"
@@ -146,6 +145,7 @@ export function FormPage() {
             { label: '3번 아이템', value: ITEM['03'] },
           ]}
         />
+
         <FormSelectMulti
           control={form.control}
           orientation="horizontal"

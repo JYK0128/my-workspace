@@ -117,37 +117,37 @@ export function FormMonthRange<T extends FieldValues>(props: Props<T>) {
                     onKeyDownCapture={() => {}}
                   >
                     <CarouselContent>
-                      {Array.from({ length: 5 }, (_, i) => selectYear.add(DATE.YEAR, Math.floor(i - 5 / 2))).map((current) => (
+                      {Array.from({ length: 5 }, (_, i) => selectYear.add(DATE.year, Math.floor(i - 5 / 2))).map((current) => (
                         <CarouselItem
-                          key={current.get(DATE.YEAR)}
+                          key={current.get(DATE.year)}
                           className="!tw:basis-1/3 tw:flex tw:justify-center"
                         >
                           <Button
                             disabled={
-                              (fromDate && fromDate.isAfter(current, DATE.YEAR))
-                              || (toDate && toDate.isBefore(current, DATE.YEAR))
+                              (fromDate && fromDate.isAfter(current, DATE.year))
+                              || (toDate && toDate.isBefore(current, DATE.year))
                             }
-                            variant={selectYear.isSame(current, DATE.YEAR) ? 'default' : 'ghost'}
+                            variant={selectYear.isSame(current, DATE.year) ? 'default' : 'ghost'}
                             onClick={() => {
                               setSelectYear(current);
                             }}
                           >
-                            {`${current.get(DATE.YEAR)}년`}
+                            {`${current.get(DATE.year)}년`}
                           </Button>
                         </CarouselItem>
                       ))}
                     </CarouselContent>
                     <CarouselPrevious
-                      disabled={fromDate && fromDate.isSameOrAfter(selectYear, DATE.YEAR)}
+                      disabled={fromDate && fromDate.isSameOrAfter(selectYear, DATE.year)}
                       onClick={() => {
-                        const prevYear = selectYear.sub(DATE.YEAR, 1);
+                        const prevYear = selectYear.sub(DATE.year, 1);
                         setSelectYear(prevYear);
                       }}
                     />
                     <CarouselNext
-                      disabled={toDate && toDate.isSameOrBefore(selectYear, DATE.YEAR)}
+                      disabled={toDate && toDate.isSameOrBefore(selectYear, DATE.year)}
                       onClick={() => {
-                        const nextYear = selectYear.add(DATE.YEAR, 1);
+                        const nextYear = selectYear.add(DATE.year, 1);
                         setSelectYear(nextYear);
                       }}
                     />
@@ -158,19 +158,19 @@ export function FormMonthRange<T extends FieldValues>(props: Props<T>) {
                     <Button
                       key={idx}
                       disabled={
-                        (fromDate && fromDate.isAfter(selectYear.add(DATE.MONTH, idx), DATE.MONTH, { granularity: DATE.YEAR }))
-                        || (toDate && toDate.isBefore(selectYear.add(DATE.MONTH, idx), DATE.MONTH, { granularity: DATE.YEAR }))
+                        (fromDate && fromDate.isAfter(selectYear.add(DATE.month, idx), DATE.month, { granularity: DATE.year }))
+                        || (toDate && toDate.isBefore(selectYear.add(DATE.month, idx), DATE.month, { granularity: DATE.year }))
                       }
-                      variant={selection.find((select) => select && selectYear.add(DATE.MONTH, idx).isSame(select, DATE.MONTH, { granularity: DATE.YEAR })) ? 'default' : 'ghost'}
+                      variant={selection.find((select) => select && selectYear.add(DATE.month, idx).isSame(select, DATE.month, { granularity: DATE.year })) ? 'default' : 'ghost'}
                       onClick={() => setSelection((selection) => {
                         const [from, to] = selection ?? [];
-                        const select = selectYear.add(DATE.MONTH, idx);
+                        const select = selectYear.add(DATE.month, idx);
 
                         if (!from) {
                           return [select, to];
                         }
                         else {
-                          if (select.isSame(from, DATE.MONTH, { granularity: DATE.YEAR })) {
+                          if (select.isSame(from, DATE.month, { granularity: DATE.year })) {
                             if (to) {
                               return [undefined, undefined];
                             }
@@ -178,7 +178,7 @@ export function FormMonthRange<T extends FieldValues>(props: Props<T>) {
                               return [from, select];
                             }
                           }
-                          else if (select.isBefore(from, DATE.MONTH, { granularity: DATE.YEAR })) {
+                          else if (select.isBefore(from, DATE.month, { granularity: DATE.year })) {
                             return [select, to ?? from];
                           }
                         }
@@ -186,10 +186,10 @@ export function FormMonthRange<T extends FieldValues>(props: Props<T>) {
                           return [from, select];
                         }
                         else {
-                          if (select.isSame(to, DATE.MONTH, { granularity: DATE.YEAR })) {
+                          if (select.isSame(to, DATE.month, { granularity: DATE.year })) {
                             return [select, undefined];
                           }
-                          else if (select.isAfter(from, DATE.MONTH, { granularity: DATE.YEAR })) {
+                          else if (select.isAfter(from, DATE.month, { granularity: DATE.year })) {
                             return [from, select];
                           }
                           else {

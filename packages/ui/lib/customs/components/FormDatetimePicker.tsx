@@ -133,13 +133,13 @@ export function FormDatetimePicker<T extends FieldValues>(props: Props<T>) {
                           if ((+prev < 0 || 2 < +prev) || (+prev === 2 && +cur > 3)) {
                             prev = '0';
                           }
-                          setSelection(selection?.set(DATE.HOUR, +[prev, cur].join('')));
+                          setSelection(selection?.set(DATE.hour, +[prev, cur].join('')));
                           setPrevIntKey(cur);
                         }
                       }}
                       onInput={(e) => {
                         const value = e.currentTarget.valueAsNumber;
-                        setSelection(selection?.set(DATE.HOUR, value));
+                        setSelection(selection?.set(DATE.hour, value));
                         setPrevIntKey('0');
                       }}
                     />
@@ -162,13 +162,13 @@ export function FormDatetimePicker<T extends FieldValues>(props: Props<T>) {
                           if (+prev < 0 || 5 < +prev) {
                             prev = '0';
                           }
-                          setSelection(selection?.set(DATE.MINUTE, +[prev, cur].join('')));
+                          setSelection(selection?.set(DATE.minute, +[prev, cur].join('')));
                           setPrevIntKey(cur);
                         }
                       }}
                       onInput={(e) => {
                         const value = e.currentTarget.valueAsNumber;
-                        setSelection(selection?.set(DATE.MINUTE, value));
+                        setSelection(selection?.set(DATE.minute, value));
                         setPrevIntKey('0');
                       }}
                     />
@@ -191,13 +191,13 @@ export function FormDatetimePicker<T extends FieldValues>(props: Props<T>) {
                           if (+prev < 0 || 5 < +prev) {
                             prev = '0';
                           }
-                          setSelection(selection?.set(DATE.SECOND, +[prev, cur].join('')));
+                          setSelection(selection?.set(DATE.second, +[prev, cur].join('')));
                           setPrevIntKey(cur);
                         }
                       }}
                       onInput={(e) => {
                         const value = e.currentTarget.valueAsNumber;
-                        setSelection(selection?.set(DATE.SECOND, value));
+                        setSelection(selection?.set(DATE.second, value));
                         setPrevIntKey('0');
                       }}
                     />

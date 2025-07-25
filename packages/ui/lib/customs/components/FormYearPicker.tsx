@@ -117,46 +117,46 @@ export function FormYearPicker<T extends FieldValues>(props: Props<T>) {
                     onKeyDownCapture={() => {}}
                   >
                     <CarouselContent>
-                      {Array.from({ length: 3 }, (_, i) => selectDecade.add(DATE.DECADE, Math.floor(i - 1 / 2))).map((current) => (
+                      {Array.from({ length: 3 }, (_, i) => selectDecade.add(DATE.decade, Math.floor(i - 1 / 2))).map((current) => (
                         <CarouselItem
-                          key={current.get(DATE.DECADE)}
+                          key={current.get(DATE.decade)}
                           className="tw:flex tw:justify-center"
                         >
                           <Button
                             disabled={
-                              (fromDate && fromDate.isAfter(current, DATE.DECADE))
-                              || (toDate && toDate.isBefore(current, DATE.DECADE))
+                              (fromDate && fromDate.isAfter(current, DATE.decade))
+                              || (toDate && toDate.isBefore(current, DATE.decade))
                             }
-                            variant={selectDecade.isSame(current, DATE.DECADE) ? 'default' : 'ghost'}
+                            variant={selectDecade.isSame(current, DATE.decade) ? 'default' : 'ghost'}
                             onClick={() => {
                               setSelectDecade(current);
-                              if ((fromDate && fromDate.isSameOrAfter(defaults(selection), DATE.YEAR))
-                                || (toDate && toDate.isSameOrBefore(defaults(selection), DATE.YEAR))) {
+                              if ((fromDate && fromDate.isSameOrAfter(defaults(selection), DATE.year))
+                                || (toDate && toDate.isSameOrBefore(defaults(selection), DATE.year))) {
                                 setSelection(undefined);
                               }
                             }}
                           >
-                            {`${current.get(DATE.DECADE)} ~ ${current.get(DATE.DECADE) + 10}년`}
+                            {`${current.get(DATE.decade)} ~ ${current.get(DATE.decade) + 10}년`}
                           </Button>
                         </CarouselItem>
                       ))}
                     </CarouselContent>
                     <CarouselPrevious
-                      disabled={fromDate && fromDate.isSameOrAfter(selectDecade, DATE.DECADE)}
+                      disabled={fromDate && fromDate.isSameOrAfter(selectDecade, DATE.decade)}
                       onClick={() => {
-                        const prevDecade = selectDecade.sub(DATE.DECADE, 1);
+                        const prevDecade = selectDecade.sub(DATE.decade, 1);
                         setSelectDecade(prevDecade);
-                        if (fromDate && fromDate.isSameOrBefore(defaults(selection), DATE.DECADE)) {
+                        if (fromDate && fromDate.isSameOrBefore(defaults(selection), DATE.decade)) {
                           setSelection(undefined);
                         }
                       }}
                     />
                     <CarouselNext
-                      disabled={toDate && toDate.isSameOrBefore(selectDecade, DATE.DECADE)}
+                      disabled={toDate && toDate.isSameOrBefore(selectDecade, DATE.decade)}
                       onClick={() => {
-                        const nextDecade = selectDecade.add(DATE.DECADE, 1);
+                        const nextDecade = selectDecade.add(DATE.decade, 1);
                         setSelectDecade(nextDecade);
-                        if (toDate && toDate.isSameOrBefore(defaults(selection), DATE.DECADE)) {
+                        if (toDate && toDate.isSameOrBefore(defaults(selection), DATE.decade)) {
                           setSelection(undefined);
                         }
                       }}
@@ -168,17 +168,17 @@ export function FormYearPicker<T extends FieldValues>(props: Props<T>) {
                     <Button
                       key={idx}
                       disabled={
-                        (fromDate && fromDate.isAfter(selectDecade.add(DATE.YEAR, idx), DATE.YEAR))
-                        || (toDate && toDate.isBefore(selectDecade.add(DATE.YEAR, idx), DATE.YEAR))
+                        (fromDate && fromDate.isAfter(selectDecade.add(DATE.year, idx), DATE.year))
+                        || (toDate && toDate.isBefore(selectDecade.add(DATE.year, idx), DATE.year))
                       }
-                      variant={selection && selection.isSame(selectDecade.add(DATE.YEAR, idx), DATE.YEAR) ? 'default' : 'ghost'}
+                      variant={selection && selection.isSame(selectDecade.add(DATE.year, idx), DATE.year) ? 'default' : 'ghost'}
                       onClick={() => setSelection(
                         defaults(selection).set(
-                          DATE.YEAR,
-                          selectDecade.add(DATE.YEAR, idx).get(DATE.YEAR)),
+                          DATE.year,
+                          selectDecade.add(DATE.year, idx).get(DATE.year)),
                       )}
                     >
-                      {`${selectDecade.add(DATE.YEAR, idx).get(DATE.YEAR)}년`}
+                      {`${selectDecade.add(DATE.year, idx).get(DATE.year)}년`}
                     </Button>
                   ))}
                 </div>
