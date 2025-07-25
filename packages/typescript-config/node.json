@@ -3,10 +3,8 @@
   "extends": "./base.json",
   "compilerOptions": {
     "target": "ES2022",
-    "module": "ESNext",
-    "moduleResolution": "bundler",
-    "lib": [
-      "ES2023"
-    ]
+    "module": "nodenext",
+    "moduleResolution": "nodenext",
+    "lib": ["ES2022"]
   }
 }
