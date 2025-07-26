@@ -1,6 +1,5 @@
 import { Button, Calendar, FormControl, FormField, FormItem, FormLabel, FormMessage, Input, Popover, PopoverContent, PopoverTrigger, Separator } from '#shadcn/components/ui/index.ts';
 import { cn } from '#shadcn/lib/utils.ts';
-import { DATE } from '@packages/utils';
 import { format } from 'date-fns';
 import { CalendarClockIcon } from 'lucide-react';
 import { ComponentPropsWithoutRef, CSSProperties, useEffect, useState } from 'react';
@@ -9,9 +8,12 @@ import { FieldPath, FieldValues, UseControllerProps, useWatch } from 'react-hook
 type Props<
   TFieldValues extends FieldValues = FieldValues,
   TName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>,
-> = Omit<Mandatory<UseControllerProps<TFieldValues, TName>, 'control'>, 'defaultValue'>
+> = Omit<UseControllerProps<TFieldValues, TName>, 'defaultValue'>
   & Omit<ComponentPropsWithoutRef<'input'>, 'defaultValue' | 'value'>
   & {
+    control: UseControllerProps<TFieldValues, TName>['control']
+    name: TName
+    required?: boolean
     label?: string
     labelWidth?: CSSProperties['width']
     orientation?: 'vertical' | 'horizontal'
@@ -106,11 +108,13 @@ export function FormDatetimePicker<T extends FieldValues>(props: Props<T>) {
                   <Calendar
                     mode="single"
                     selected={selection}
+                    defaultMonth={selection}
                     onSelect={
                       (dt) => setSelection(dt)
                     }
-                    fromDate={fromDate}
-                    toDate={toDate}
+                    startMonth={fromDate}
+                    endMonth={toDate}
+                    disabled={[{ before: fromDate!, after: toDate! }]}
                   />
 
                   <Separator />
@@ -133,13 +137,13 @@ export function FormDatetimePicker<T extends FieldValues>(props: Props<T>) {
                           if ((+prev < 0 || 2 < +prev) || (+prev === 2 && +cur > 3)) {
                             prev = '0';
                           }
-                          setSelection(selection?.set(DATE.hour, +[prev, cur].join('')));
+                          setSelection(selection?.set('hour', +[prev, cur].join('')));
                           setPrevIntKey(cur);
                         }
                       }}
                       onInput={(e) => {
                         const value = e.currentTarget.valueAsNumber;
-                        setSelection(selection?.set(DATE.hour, value));
+                        setSelection(selection?.set('hour', value));
                         setPrevIntKey('0');
                       }}
                     />
@@ -162,13 +166,13 @@ export function FormDatetimePicker<T extends FieldValues>(props: Props<T>) {
                           if (+prev < 0 || 5 < +prev) {
                             prev = '0';
                           }
-                          setSelection(selection?.set(DATE.minute, +[prev, cur].join('')));
+                          setSelection(selection?.set('minute', +[prev, cur].join('')));
                           setPrevIntKey(cur);
                         }
                       }}
                       onInput={(e) => {
                         const value = e.currentTarget.valueAsNumber;
-                        setSelection(selection?.set(DATE.minute, value));
+                        setSelection(selection?.set('minute', value));
                         setPrevIntKey('0');
                       }}
                     />
@@ -191,13 +195,13 @@ export function FormDatetimePicker<T extends FieldValues>(props: Props<T>) {
                           if (+prev < 0 || 5 < +prev) {
                             prev = '0';
                           }
-                          setSelection(selection?.set(DATE.second, +[prev, cur].join('')));
+                          setSelection(selection?.set('second', +[prev, cur].join('')));
                           setPrevIntKey(cur);
                         }
                       }}
                       onInput={(e) => {
                         const value = e.currentTarget.valueAsNumber;
-                        setSelection(selection?.set(DATE.second, value));
+                        setSelection(selection?.set('second', value));
                         setPrevIntKey('0');
                       }}
                     />

@@ -1,5 +1,5 @@
 import { FormController } from '#customs/components/FormController.tsx';
-import { FormSelectSingle } from '#customs/components/FormSelectSingle.tsx';
+import { FormDateRange } from '#customs/components/FormDateRange.tsx';
 import { Button } from '#shadcn/components/ui/button.tsx';
 import { zodResolver } from '@hookform/resolvers/zod';
 import type { Meta, StoryObj } from '@storybook/react-vite';
@@ -9,13 +9,13 @@ import { z } from 'zod';
 
 // 1. Meta
 /**
- * FormController 전용 단일 Select 컴포넌트입니다.
- * 기본적인 Select 속성과 함께 다음 속성을 지원합니다.
+ * FormController 전용 Textarea 컴포넌트입니다.
+ * 기본적인 Textarea 속성과 함께 다음 속성을 지원합니다.
  */
 const meta = {
   tags: ['!dev'],
-  title: 'Design/Form/SelectSingle',
-  component: FormSelectSingle,
+  title: 'Design/Form/DateRange',
+  component: FormDateRange,
   argTypes: {
     control: {
       description: 'react-hook-form의 control 객체',
@@ -46,16 +46,24 @@ const meta = {
       control: { type: 'radio' },
       options: ['horizontal', 'vertical'],
     },
-    items: {
-      description: 'Select 아이템 목록',
-      control: { type: 'object' },
+    fromDate: {
+      description: '시작 범위',
+      control: { type: 'date' },
+    },
+    toDate: {
+      description: '종료 범위',
+      control: { type: 'date' },
+    },
+    dateFormat: {
+      description: '날짜 포맷',
+      control: { type: 'text' },
     },
   },
   decorators: [(Story) => {
     const schema = z.object({
-      input: z.enum(['item01', 'item02', 'item03']).nullable(),
+      input: z.tuple([z.date(), z.date()]),
     }).default({
-      input: null,
+      input: [] as never,
     });
 
     const form = useForm({
@@ -84,7 +92,7 @@ const meta = {
     docs: {
       source: {
         code:
-        `<FormSelectSingle
+        `<FormDateRange
           control={form.control}
           name={name}
           required={required}
@@ -92,12 +100,14 @@ const meta = {
           labelWidth={labelWidth}
           showError={showError}
           orientation={orientation}
-          items={items}
+          fromDate={fromDate}
+          toDate={toDate}
+          dateFormat={dateFormat}
         />`,
       },
     },
   },
-} satisfies Meta<typeof FormSelectSingle>;
+} satisfies Meta<typeof FormDateRange>;
 
 // 2. Settings
 export default meta;
@@ -113,21 +123,17 @@ export const Default: Story = {
     labelWidth: '180px',
     showError: true,
     orientation: 'horizontal',
-    placeholder: '입력해주세요.',
-    items: [
-      { label: '선택안함', value: null },
-      { label: '1번 아이템', value: 'item01' },
-      { label: '2번 아이템', value: 'item02', disabled: true },
-      { label: '3번 아이템', value: 'item03' },
-    ],
+    fromDate: new Date().sub('year', 1),
+    toDate: new Date().add('year', 1),
+    dateFormat: 'yyyy-MM-dd',
   },
   render: (args) => {
-    const { name, required, label, labelWidth, showError, orientation, items } = args;
+    const { name, required, label, labelWidth, showError, orientation, fromDate, toDate, dateFormat } = args;
     // eslint-disable-next-line react-hooks/rules-of-hooks
     const form = useFormContext();
 
     return (
-      <FormSelectSingle
+      <FormDateRange
         control={form.control}
         name={name}
         required={required}
@@ -135,7 +141,9 @@ export const Default: Story = {
         labelWidth={labelWidth}
         showError={showError}
         orientation={orientation}
-        items={items}
+        fromDate={fromDate}
+        toDate={toDate}
+        dateFormat={dateFormat}
       />
     );
   },

@@ -8,9 +8,12 @@ import { FieldPath, FieldValues, UseControllerProps, useWatch } from 'react-hook
 type Props<
   TFieldValues extends FieldValues = FieldValues,
   TName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>,
-> = Omit<Mandatory<UseControllerProps<TFieldValues, TName>, 'control'>, 'defaultValue'>
+> = Omit<UseControllerProps<TFieldValues, TName>, 'defaultValue'>
   & Omit<ComponentPropsWithoutRef<'input'>, 'defaultValue' | 'value'>
   & {
+    control: UseControllerProps<TFieldValues, TName>['control']
+    name: TName
+    required?: boolean
     label?: string
     labelWidth?: CSSProperties['width']
     orientation?: 'vertical' | 'horizontal'
@@ -107,8 +110,9 @@ export function FormDateRange<T extends FieldValues>(props: Props<T>) {
                       range?.from && startOfDay(range.from),
                       range?.to && endOfDay(range.to),
                     ])}
-                    fromDate={fromDate}
-                    toDate={toDate}
+                    startMonth={fromDate}
+                    endMonth={toDate}
+                    disabled={[{ before: fromDate!, after: toDate! }]}
                     numberOfMonths={2}
                   />
                 </div>

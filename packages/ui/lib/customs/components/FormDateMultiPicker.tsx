@@ -9,9 +9,12 @@ import { FieldPath, FieldValues, UseControllerProps, useWatch } from 'react-hook
 type Props<
   TFieldValues extends FieldValues = FieldValues,
   TName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>,
-> = Omit<Mandatory<UseControllerProps<TFieldValues, TName>, 'control'>, 'defaultValue'>
+> = Omit<UseControllerProps<TFieldValues, TName>, 'defaultValue'>
   & Omit<ComponentPropsWithoutRef<'input'>, 'defaultValue' | 'value'>
   & {
+    control: UseControllerProps<TFieldValues, TName>['control']
+    name: TName
+    required?: boolean
     label?: string
     labelWidth?: CSSProperties['width']
     orientation?: 'vertical' | 'horizontal'
@@ -114,8 +117,9 @@ export function FormDateMultiPicker<T extends FieldValues>(props: Props<T>) {
                     }
                     min={(min && +min) || undefined}
                     max={(max && +max) || undefined}
-                    fromDate={fromDate}
-                    toDate={toDate}
+                    startMonth={fromDate}
+                    endMonth={toDate}
+                    disabled={[{ before: fromDate!, after: toDate! }]}
                   />
                 </div>
                 <div className="tw:flex tw:justify-start">

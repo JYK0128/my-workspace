@@ -2,7 +2,7 @@ import { ChevronDownIcon, ChevronLeftIcon, ChevronRightIcon } from 'lucide-react
 import * as React from 'react';
 import { DayButton, DayPicker, getDefaultClassNames } from 'react-day-picker';
 
-import { Button, buttonVariants } from '#shadcn/components/ui/index.ts';
+import { Button, buttonVariants } from '#shadcn/components/ui/button.tsx';
 import { cn } from '#shadcn/lib/utils.ts';
 
 function Calendar({
@@ -67,7 +67,10 @@ function Calendar({
           'tw:relative tw:has-focus:border-ring tw:border tw:border-input tw:shadow-xs tw:has-focus:ring-ring/50 tw:has-focus:ring-[3px] tw:rounded-md',
           defaultClassNames.dropdown_root,
         ),
-        dropdown: cn('tw:absolute tw:inset-0 tw:opacity-0', defaultClassNames.dropdown),
+        dropdown: cn(
+          'tw:absolute tw:bg-popover tw:inset-0 tw:opacity-0',
+          defaultClassNames.dropdown,
+        ),
         caption_label: cn(
           'tw:select-none tw:font-medium',
           captionLayout === 'label'
@@ -202,4 +205,3 @@ function CalendarDayButton({
 }
 
 export { Calendar, CalendarDayButton };
-

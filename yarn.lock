@@ -38,7 +38,6 @@ __metadata:
     concurrently: "npm:^9.2.0"
     cookie-parser: "npm:^1.4.7"
     cors: "npm:^2.8.5"
-    cross-env: "npm:^7.0.3"
     dotenv-flow: "npm:^4.1.0"
     esbuild: "npm:^0.25.5"
     esbuild-plugin-node-externals: "npm:^1.0.1"
@@ -1790,7 +1789,7 @@ __metadata:
     next-themes: "npm:^0.4.6"
     postcss: "npm:^8.5.6"
     react: "npm:^19.1.0"
-    react-day-picker: "npm:^9.7.0"
+    react-day-picker: "npm:^9.8.0"
     react-dom: "npm:^19.1.0"
     react-resizable-panels: "npm:^3.0.3"
     recharts: "npm:^2.15.4"
@@ -6163,19 +6162,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"cross-env@npm:^7.0.3":
-  version: 7.0.3
-  resolution: "cross-env@npm:7.0.3"
-  dependencies:
-    cross-spawn: "npm:^7.0.1"
-  bin:
-    cross-env: src/bin/cross-env.js
-    cross-env-shell: src/bin/cross-env-shell.js
-  checksum: 10c0/f3765c25746c69fcca369655c442c6c886e54ccf3ab8c16847d5ad0e91e2f337d36eedc6599c1227904bf2a228d721e690324446876115bc8e7b32a866735ecf
-  languageName: node
-  linkType: hard
-
-"cross-spawn@npm:^7.0.0, cross-spawn@npm:^7.0.1, cross-spawn@npm:^7.0.3, cross-spawn@npm:^7.0.6":
+"cross-spawn@npm:^7.0.0, cross-spawn@npm:^7.0.3, cross-spawn@npm:^7.0.6":
   version: 7.0.6
   resolution: "cross-spawn@npm:7.0.6"
   dependencies:
@@ -10673,16 +10660,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-day-picker@npm:^9.7.0":
-  version: 9.7.0
-  resolution: "react-day-picker@npm:9.7.0"
+"react-day-picker@npm:^9.8.0":
+  version: 9.8.0
+  resolution: "react-day-picker@npm:9.8.0"
   dependencies:
     "@date-fns/tz": "npm:1.2.0"
     date-fns: "npm:4.1.0"
     date-fns-jalali: "npm:4.1.0-0"
   peerDependencies:
     react: ">=16.8.0"
-  checksum: 10c0/c08c45a53aebceda1c938d2e4c95eb1702dcf149715e3457739f8930dce19a3be5780e5bad12dcc9d244d50b7e0efb226c336d81c1c062f616cf422e6a3804a6
+  checksum: 10c0/910dfbc59e9fece7f5365a2a23ed497e07f227a733289e8141b858b6ce482087df6b01f2ba4f9f7e452ebc3465af0e227f192708a673396221865df07e5ab2ac
   languageName: node
   linkType: hard
 
