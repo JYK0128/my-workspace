@@ -9,11 +9,10 @@ import { z } from 'zod';
 
 // 1. Meta
 /**
- * FormController 전용 단일 Select 컴포넌트입니다.
- * 기본적인 Select 속성과 함께 다음 속성을 지원합니다.
+ * FormController 전용 Select(단수) 컴포넌트입니다.
+ * 기본적인 select 속성과 함께 다음 속성을 지원합니다.
  */
 const meta = {
-  tags: ['!dev'],
   title: 'Design/Form/SelectSingle',
   component: FormSelectSingle,
   argTypes: {

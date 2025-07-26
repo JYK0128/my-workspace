@@ -13,7 +13,6 @@ import { z } from 'zod';
  * 기본적인 input[type=checkbox] 속성과 함께 다음 속성을 지원합니다.
  */
 const meta = {
-  tags: ['!dev'],
   title: 'Design/Form/CheckGroup',
   component: FormCheckGroup,
   argTypes: {
@@ -114,8 +113,8 @@ export const Default: Story = {
     showError: true,
     orientation: 'horizontal',
     items: [
-      { label: '아이템 01', value: 'item01', disabled: true },
-      { label: '아이템 02', value: 'item02' },
+      { label: '아이템 01', value: 'item01' },
+      { label: '아이템 02', value: 'item02', disabled: true },
       { label: '아이템 03', value: 'item03' },
     ],
   },

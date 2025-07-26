@@ -10,10 +10,9 @@ import { z } from 'zod';
 // 1. Meta
 /**
  * FormController 전용 Textarea 컴포넌트입니다.
- * 기본적인 Textarea 속성과 함께 다음 속성을 지원합니다.
+ * 기본적인 textarea 속성과 함께 다음 속성을 지원합니다.
  */
 const meta = {
-  tags: ['!dev'],
   title: 'Design/Form/Textarea',
   component: FormTextarea,
   argTypes: {

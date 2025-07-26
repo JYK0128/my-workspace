@@ -1,6 +1,5 @@
 import { FormController } from '#customs/components/FormController.tsx';
 import { FormRicharea } from '#customs/components/FormRicharea.tsx';
-import { FormTextarea } from '#customs/components/FormTextarea.tsx';
 import { Button } from '#shadcn/components/ui/button.tsx';
 import { zodResolver } from '@hookform/resolvers/zod';
 import type { Meta, StoryObj } from '@storybook/react-vite';
@@ -11,12 +10,11 @@ import { z } from 'zod';
 // 1. Meta
 /**
  * FormController 전용 Richarea 컴포넌트입니다.
- * 기본적인 파일 첨부를 지원합니다.
+ * 파일 첨부를 지원합니다.
  */
 const meta = {
-  tags: ['!dev'],
   title: 'Design/Form/Richarea',
-  component: FormTextarea,
+  component: FormRicharea,
   argTypes: {
     control: {
       description: 'react-hook-form의 control 객체',
@@ -98,7 +96,7 @@ const meta = {
       },
     },
   },
-} satisfies Meta<typeof FormTextarea>;
+} satisfies Meta<typeof FormRicharea>;
 
 // 2. Settings
 export default meta;

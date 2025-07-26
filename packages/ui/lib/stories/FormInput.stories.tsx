@@ -13,7 +13,6 @@ import { z } from 'zod';
  * 기본적인 input 속성과 함께 다음 속성을 지원합니다.
  */
 const meta = {
-  tags: ['!dev'],
   title: 'Design/Form/Input',
   component: FormInput,
   argTypes: {

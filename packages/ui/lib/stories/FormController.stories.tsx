@@ -10,7 +10,7 @@ import { z } from 'zod';
 // 1. Meta
 /**
  * react-hook-form으로 form을 관리합니다.
- * FormController 전용 Input 컴포넌트를 이용합니다.
+ * FormController 전용 컴포넌트를 이용합니다.
  */
 const meta = {
   title: 'Design/Form/Controller',
@@ -31,7 +31,6 @@ const meta = {
       description: 'Error 핸들러',
     },
   },
-  tags: ['!dev'],
 } satisfies Meta<typeof FormController>;
 
 // 2. Settings

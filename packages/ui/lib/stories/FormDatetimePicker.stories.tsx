@@ -10,10 +10,9 @@ import { z } from 'zod';
 // 1. Meta
 /**
  * FormController 전용 DatetimePicker 컴포넌트입니다.
- * 기본적인 DatetimePicker 속성과 함께 다음 속성을 지원합니다.
+ * react-day-picker 속성 일부와 다음 속성을 지원합니다.
  */
 const meta = {
-  tags: ['!dev'],
   title: 'Design/Form/DatetimePicker',
   component: FormDatetimePicker,
   argTypes: {
