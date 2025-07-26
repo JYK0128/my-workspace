@@ -34,7 +34,6 @@ const preview: Preview = {
   decorators,
   parameters: {
     actions: { argTypesRegex: '^on.*' },
-    layout: 'fullscreen',
     controls: {
       matchers: {
         color: /(background|color)$/i,
@@ -43,9 +42,12 @@ const preview: Preview = {
     },
     docs: {
       codePanel: true,
+      story: {
+        height: '100px',
+      },
     },
   },
-  tags: ['autodocs'],
+  tags: ['autodocs', 'dev'],
 };
 
 export default preview;
