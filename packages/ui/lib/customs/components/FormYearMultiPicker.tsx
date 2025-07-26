@@ -1,7 +1,6 @@
 import { Button, Carousel, CarouselApi, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious, FormControl, FormField, FormItem, FormLabel, FormMessage, Popover, PopoverContent, PopoverTrigger } from '#shadcn/components/ui/index.ts';
 import { cn } from '#shadcn/lib/utils.ts';
-import { DATE } from '@packages/utils';
-import { format, getDecade } from 'date-fns';
+import { format } from 'date-fns';
 import { sortBy } from 'lodash-es';
 import { CalendarIcon, RotateCcw } from 'lucide-react';
 import { ComponentPropsWithoutRef, CSSProperties, useEffect, useState } from 'react';
@@ -10,20 +9,23 @@ import { FieldPath, FieldValues, UseControllerProps, useWatch } from 'react-hook
 type Props<
   TFieldValues extends FieldValues = FieldValues,
   TName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>,
-> = Omit<Mandatory<UseControllerProps<TFieldValues, TName>, 'control'>, 'defaultValue'>
+> = Omit<UseControllerProps<TFieldValues, TName>, 'defaultValue'>
   & Omit<ComponentPropsWithoutRef<'input'>, 'defaultValue' | 'value'>
   & {
+    control: UseControllerProps<TFieldValues, TName>['control']
+    name: TName
+    required?: boolean
     label?: string
     labelWidth?: CSSProperties['width']
     orientation?: 'vertical' | 'horizontal'
     showError?: boolean
   }
   & {
-    min?: number
-    max?: number
     fromDate?: Date
     toDate?: Date
     dateFormat?: string
+    min?: number
+    max?: number
   };
 
 
@@ -46,7 +48,7 @@ export function FormYearMultiPicker<T extends FieldValues>(props: Props<T>) {
   const [selection, setSelection] = useState<Date[]>([]);
   const value = useWatch({ name });
 
-  const [selectDecade, setSelectDecade] = useState(new Date(getDecade(new Date()), 0));
+  const [selectDecade, setSelectDecade] = useState(new Date(new Date().get('decade'), 0));
 
   useEffect(() => {
     setSelection(value);
@@ -58,7 +60,7 @@ export function FormYearMultiPicker<T extends FieldValues>(props: Props<T>) {
       const slidesInView = 1;
       const targetIndex = Math.floor(slideCount / 2 - slidesInView / 2);
 
-      api.scrollTo(targetIndex);
+      api.scrollTo(targetIndex, true);
     }
   }, [api, open]);
 
@@ -104,7 +106,6 @@ export function FormYearMultiPicker<T extends FieldValues>(props: Props<T>) {
                 </PopoverTrigger>
               </FormControl>
               <PopoverContent
-                className="tw:w-96"
                 align="start"
                 onCloseAutoFocus={(evt) => {
                   if ((!min || +min <= selection.length)
@@ -112,49 +113,50 @@ export function FormYearMultiPicker<T extends FieldValues>(props: Props<T>) {
                     field.onChange(selection);
                   }
                   else {
-                    setSelection([]);
                     field.onChange([]);
                   }
                   onBlur?.(evt as never);
                 }}
               >
-                <div className="[&>*]:tw:py-2">
+                <div>
                   <Carousel
                     setApi={setApi}
                     onKeyDownCapture={() => {}}
                   >
                     <CarouselContent>
-                      {Array.from({ length: 3 }, (_, i) => selectDecade.add(DATE.decade, Math.floor(i - 1 / 2))).map((current) => (
+                      {Array.from({ length: 3 }, (_, i) => selectDecade.add('decade', Math.floor(i - 1 / 2))).map((current) => (
                         <CarouselItem
-                          key={current.get(DATE.decade)}
-                          className="tw:flex tw:justify-center"
+                          key={current.get('decade')}
+                          className="tw:pl-8 tw:flex tw:justify-center"
                         >
                           <Button
                             disabled={
-                              (fromDate && fromDate.isAfter(current, DATE.decade))
-                              || (toDate && toDate.isBefore(current, DATE.decade))
+                              (fromDate && fromDate.isAfter(current, 'decade'))
+                              || (toDate && toDate.isBefore(current, 'decade'))
                             }
-                            variant={selectDecade.isSame(current, DATE.decade) ? 'default' : 'ghost'}
+                            variant={selectDecade.isSame(current, 'decade') ? 'default' : 'ghost'}
                             onClick={() => {
                               setSelectDecade(current);
                             }}
                           >
-                            {`${current.get(DATE.decade)} ~ ${current.get(DATE.decade) + 10}년`}
+                            {`${current.get('decade')} ~ ${current.get('decade') + 9}년`}
                           </Button>
                         </CarouselItem>
                       ))}
                     </CarouselContent>
                     <CarouselPrevious
-                      disabled={fromDate && fromDate.isSameOrAfter(selectDecade, DATE.decade)}
+                      className="tw:left-4"
+                      disabled={fromDate && fromDate.isSameOrAfter(selectDecade, 'decade')}
                       onClick={() => {
-                        const prevDecade = selectDecade.sub(DATE.decade, 1);
+                        const prevDecade = selectDecade.sub('decade', 1);
                         setSelectDecade(prevDecade);
                       }}
                     />
                     <CarouselNext
-                      disabled={toDate && toDate.isSameOrBefore(selectDecade, DATE.decade)}
+                      className="tw:right-4"
+                      disabled={toDate && toDate.isSameOrBefore(selectDecade, 'decade')}
                       onClick={() => {
-                        const nextDecade = selectDecade.add(DATE.decade, 1);
+                        const nextDecade = selectDecade.add('decade', 1);
                         setSelectDecade(nextDecade);
                       }}
                     />
@@ -165,22 +167,27 @@ export function FormYearMultiPicker<T extends FieldValues>(props: Props<T>) {
                     <Button
                       key={idx}
                       disabled={
-                        (fromDate && fromDate.isAfter(selectDecade.add(DATE.year, idx), DATE.year))
-                        || (toDate && toDate.isBefore(selectDecade.add(DATE.year, idx), DATE.year))
+                        (fromDate && fromDate.isAfter(selectDecade.add('year', idx), 'year', { granularity: 'decade' }))
+                        || (toDate && toDate.isBefore(selectDecade.add('year', idx), 'year', { granularity: 'decade' }))
                       }
-                      variant={selection.find((select) => selectDecade.add(DATE.year, idx).isSame(select, DATE.year)) ? 'default' : 'ghost'}
-                      onClick={() => setSelection((selection) => {
-                        if (selection.find((select) => selectDecade.add(DATE.year, idx).isSame(select, DATE.year))) {
-                          return selection.filter((select) => !selectDecade.add(DATE.year, idx).isSame(select, DATE.year));
-                        }
-                        else {
-                          return (!max || selection.length < max)
-                            ? [...selection, selectDecade.add(DATE.year, idx)]
-                            : selection;
-                        }
-                      })}
+                      variant={selection.find((select) => selectDecade.add('year', idx).isSame(select, 'year', { granularity: 'decade' })) ? 'default' : 'ghost'}
+                      onClick={() => {
+                        setSelection((selection) => {
+                          const picked = selectDecade.set('year', idx);
+                          const pickIdx = selection.findIndex((select) => picked.isSame(select, 'year', { granularity: 'decade' }));
+
+                          if (pickIdx > -1) {
+                            return selection.toSpliced(pickIdx, 1);
+                          }
+                          else {
+                            return (!max || selection.length < max)
+                              ? [...selection, picked]
+                              : selection;
+                          }
+                        });
+                      }}
                     >
-                      {`${selectDecade.add(DATE.year, idx).get(DATE.year)}년`}
+                      {`${selectDecade.add('year', idx).get('year')}년`}
                     </Button>
                   ))}
                 </div>
@@ -189,12 +196,11 @@ export function FormYearMultiPicker<T extends FieldValues>(props: Props<T>) {
                     variant="ghost"
                     className="tw:font-bold"
                     onClick={() => {
-                      setSelection([]);
                       field.onChange([]);
                     }}
                   >
-                    {reset}
                     <RotateCcw />
+                    {reset}
                   </Button>
                 </div>
               </PopoverContent>

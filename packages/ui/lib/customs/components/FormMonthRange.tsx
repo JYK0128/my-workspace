@@ -1,6 +1,5 @@
 import { Button, Carousel, CarouselApi, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious, FormControl, FormField, FormItem, FormLabel, FormMessage, Popover, PopoverContent, PopoverTrigger } from '#shadcn/components/ui/index.ts';
 import { cn } from '#shadcn/lib/utils.ts';
-import { DATE } from '@packages/utils';
 import { format } from 'date-fns';
 import { CalendarIcon, RotateCcw } from 'lucide-react';
 import { ComponentPropsWithoutRef, CSSProperties, useEffect, useState } from 'react';
@@ -9,9 +8,12 @@ import { FieldPath, FieldValues, UseControllerProps, useWatch } from 'react-hook
 type Props<
   TFieldValues extends FieldValues = FieldValues,
   TName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>,
-> = Omit<Mandatory<UseControllerProps<TFieldValues, TName>, 'control'>, 'defaultValue'>
+> = Omit<UseControllerProps<TFieldValues, TName>, 'defaultValue'>
   & Omit<ComponentPropsWithoutRef<'input'>, 'defaultValue' | 'value'>
   & {
+    control: UseControllerProps<TFieldValues, TName>['control']
+    name: TName
+    required?: boolean
     label?: string
     labelWidth?: CSSProperties['width']
     orientation?: 'vertical' | 'horizontal'
@@ -40,10 +42,10 @@ export function FormMonthRange<T extends FieldValues>(props: Props<T>) {
 
   const [api, setApi] = useState<CarouselApi>();
   const [open, setOpen] = useState(false);
-  const [selection, setSelection] = useState<[Optional<Date>, Optional<Date>]>([undefined, undefined]);
+  const [selection, setSelection] = useState<[Nullish<Date>, Nullish<Date>]>([null, null]);
   const value = useWatch({ name });
 
-  const [selectYear, setSelectYear] = useState(new Date());
+  const [selectYear, setSelectYear] = useState(new Date(new Date().get('year'), 0));
 
   useEffect(() => {
     setSelection(value);
@@ -52,10 +54,10 @@ export function FormMonthRange<T extends FieldValues>(props: Props<T>) {
   useEffect(() => {
     if (open && api) {
       const slideCount = api.slideNodes().length;
-      const slidesInView = 3;
+      const slidesInView = 1;
       const targetIndex = Math.floor(slideCount / 2 - slidesInView / 2);
 
-      api.scrollTo(targetIndex);
+      api.scrollTo(targetIndex, true);
     }
   }, [api, open]);
 
@@ -94,60 +96,61 @@ export function FormMonthRange<T extends FieldValues>(props: Props<T>) {
                   <Button variant="outline" className="tw:w-60">
                     <CalendarIcon />
                     <span className="tw:flex-1">
-                      {selection?.[0] && `${format(selection[0], dateFormat)}`}
+                      {selection[0] && `${format(selection[0], dateFormat)}`}
                       {` ~ `}
-                      {selection?.[1] && `${format(selection[1], dateFormat)}`}
+                      {selection[1] && `${format(selection[1], dateFormat)}`}
                     </span>
                   </Button>
                 </PopoverTrigger>
               </FormControl>
               <PopoverContent
-                className="tw:w-96"
                 align="start"
                 onCloseAutoFocus={(evt) => {
-                  if (selection?.length === 2) {
+                  if (selection.length === 2) {
                     field.onChange(selection);
                   }
                   onBlur?.(evt as never);
                 }}
               >
-                <div className="[&>*]:tw:py-2">
+                <div>
                   <Carousel
                     setApi={setApi}
                     onKeyDownCapture={() => {}}
                   >
                     <CarouselContent>
-                      {Array.from({ length: 5 }, (_, i) => selectYear.add(DATE.year, Math.floor(i - 5 / 2))).map((current) => (
+                      {Array.from({ length: 3 }, (_, i) => selectYear.add('year', Math.floor(i - 1 / 2))).map((current) => (
                         <CarouselItem
-                          key={current.get(DATE.year)}
-                          className="!tw:basis-1/3 tw:flex tw:justify-center"
+                          key={current.get('year')}
+                          className="tw:pl-8 tw:flex tw:justify-center"
                         >
                           <Button
                             disabled={
-                              (fromDate && fromDate.isAfter(current, DATE.year))
-                              || (toDate && toDate.isBefore(current, DATE.year))
+                              (fromDate && fromDate.isAfter(current, 'year'))
+                              || (toDate && toDate.isBefore(current, 'year'))
                             }
-                            variant={selectYear.isSame(current, DATE.year) ? 'default' : 'ghost'}
+                            variant={selectYear.isSame(current, 'year') ? 'default' : 'ghost'}
                             onClick={() => {
                               setSelectYear(current);
                             }}
                           >
-                            {`${current.get(DATE.year)}년`}
+                            {`${current.get('year')}년`}
                           </Button>
                         </CarouselItem>
                       ))}
                     </CarouselContent>
                     <CarouselPrevious
-                      disabled={fromDate && fromDate.isSameOrAfter(selectYear, DATE.year)}
+                      className="tw:left-4"
+                      disabled={fromDate && fromDate.isSameOrAfter(selectYear, 'year')}
                       onClick={() => {
-                        const prevYear = selectYear.sub(DATE.year, 1);
+                        const prevYear = selectYear.sub('year', 1);
                         setSelectYear(prevYear);
                       }}
                     />
                     <CarouselNext
-                      disabled={toDate && toDate.isSameOrBefore(selectYear, DATE.year)}
+                      className="tw:right-4"
+                      disabled={toDate && toDate.isSameOrBefore(selectYear, 'year')}
                       onClick={() => {
-                        const nextYear = selectYear.add(DATE.year, 1);
+                        const nextYear = selectYear.add('year', 1);
                         setSelectYear(nextYear);
                       }}
                     />
@@ -158,19 +161,19 @@ export function FormMonthRange<T extends FieldValues>(props: Props<T>) {
                     <Button
                       key={idx}
                       disabled={
-                        (fromDate && fromDate.isAfter(selectYear.add(DATE.month, idx), DATE.month, { granularity: DATE.year }))
-                        || (toDate && toDate.isBefore(selectYear.add(DATE.month, idx), DATE.month, { granularity: DATE.year }))
+                        (fromDate && fromDate.isAfter(selectYear.add('month', idx), 'month', { granularity: 'year' }))
+                        || (toDate && toDate.isBefore(selectYear.add('month', idx), 'month', { granularity: 'year' }))
                       }
-                      variant={selection.find((select) => select && selectYear.add(DATE.month, idx).isSame(select, DATE.month, { granularity: DATE.year })) ? 'default' : 'ghost'}
+                      variant={selection.find((select) => select && selectYear.add('month', idx).isSame(select, 'month', { granularity: 'year' })) ? 'default' : 'ghost'}
                       onClick={() => setSelection((selection) => {
                         const [from, to] = selection ?? [];
-                        const select = selectYear.add(DATE.month, idx);
+                        const select = selectYear.set('month', idx);
 
                         if (!from) {
                           return [select, to];
                         }
                         else {
-                          if (select.isSame(from, DATE.month, { granularity: DATE.year })) {
+                          if (select.isSame(from, 'month', { granularity: 'year' })) {
                             if (to) {
                               return [undefined, undefined];
                             }
@@ -178,7 +181,7 @@ export function FormMonthRange<T extends FieldValues>(props: Props<T>) {
                               return [from, select];
                             }
                           }
-                          else if (select.isBefore(from, DATE.month, { granularity: DATE.year })) {
+                          else if (select.isBefore(from, 'month', { granularity: 'year' })) {
                             return [select, to ?? from];
                           }
                         }
@@ -186,10 +189,10 @@ export function FormMonthRange<T extends FieldValues>(props: Props<T>) {
                           return [from, select];
                         }
                         else {
-                          if (select.isSame(to, DATE.month, { granularity: DATE.year })) {
+                          if (select.isSame(to, 'month', { granularity: 'year' })) {
                             return [select, undefined];
                           }
-                          else if (select.isAfter(from, DATE.month, { granularity: DATE.year })) {
+                          else if (select.isAfter(from, 'month', { granularity: 'year' })) {
                             return [from, select];
                           }
                           else {
@@ -198,7 +201,7 @@ export function FormMonthRange<T extends FieldValues>(props: Props<T>) {
                         }
                       })}
                     >
-                      {`${idx + 1}월`}
+                      {`${selectYear.add('month', idx).get('month') + 1}월`}
                     </Button>
                   ))}
                 </div>
@@ -207,8 +210,7 @@ export function FormMonthRange<T extends FieldValues>(props: Props<T>) {
                     variant="ghost"
                     className="tw:font-bold"
                     onClick={() => {
-                      setSelection([undefined, undefined]);
-                      field.onChange([undefined, undefined]);
+                      field.onChange([null, null]);
                     }}
                   >
                     <RotateCcw />
