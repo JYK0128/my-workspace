@@ -22,6 +22,8 @@ export * from './FormRadioGroup';
 export * from './FormRicharea';
 export * from './FormSelectMulti';
 export * from './FormSelectSingle';
+export * from './FormSliderMulti';
+export * from './FormSliderSingle';
 export * from './FormTextarea';
 export * from './FormYearMultiPicker';
 export * from './FormYearPicker';
