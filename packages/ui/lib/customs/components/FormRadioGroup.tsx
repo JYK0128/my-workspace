@@ -97,8 +97,8 @@ export function FormRadioGroup<
                       <FormControl>
                         <RadioGroupItem
                           className={cn(
-                            'tw:[&_svg]:min-size-auto',
-                            'tw:[&_svg]:max-size-none',
+                            'tw:[&_*]:min-size-auto',
+                            'tw:[&_*]:max-size-none',
                           )}
                           value={`${item.value}`}
                           disabled={item.disabled}

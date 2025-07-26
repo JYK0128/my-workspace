@@ -7,7 +7,7 @@ type Props<
   TFieldValues extends FieldValues = FieldValues,
   TName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>,
 > = Omit<UseControllerProps<TFieldValues, TName>, 'defaultValue'>
-  & Omit<ComponentPropsWithoutRef<'input'>, 'defaultValue' | 'value' | 'defaultChecked' | 'checked' | 'size'>
+  & Omit<ComponentPropsWithoutRef<'input'>, 'defaultValue' | 'value' | 'defaultChecked' | 'checked'>
   & {
     control: UseControllerProps<TFieldValues, TName>['control']
     name: TName
