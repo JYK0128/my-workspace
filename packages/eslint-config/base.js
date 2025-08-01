@@ -2,6 +2,7 @@ import js from '@eslint/js';
 import stylistic from '@stylistic/eslint-plugin';
 import sonarjs from 'eslint-plugin-sonarjs';
 import tseslint from 'typescript-eslint';
+import simpleImportSort from "eslint-plugin-simple-import-sort";
 
 /** @type {import("eslint").Linter.Config[]} */
 export default [
@@ -9,6 +10,15 @@ export default [
   ...tseslint.configs['recommended'],
   stylistic.configs['recommended'],
   sonarjs.configs['recommended'],
+  {
+    plugins: {
+      "simple-import-sort": simpleImportSort,
+    },
+    rules: {
+      "simple-import-sort/imports": "error",
+      "simple-import-sort/exports": "error",
+    },
+  },
   {
     rules: {
       /* sonarjs */
