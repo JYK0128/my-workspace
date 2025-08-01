@@ -31,19 +31,12 @@ type BaseProps<TData extends RowData> = TableCore<TData> & {
   renderTools?: (props: { table: ReactTable<TData> }) => ReactElement
   renderPagination?: (props: { table: ReactTable<TData> }) => ReactElement
 };
-type ServerProps<T> = BaseProps<T>
-  & {
-    client?: false
-    rowCount: number
-    pageIndex?: number
-  };
 
-type ClientProps<T> = BaseProps<T>
-  & {
-    client: true
-  };
-
-type Props<T> = ServerProps<T> | ClientProps<T>;
+type Props<T> = BaseProps<T> & {
+  client?: boolean
+  rowCount?: number
+  pageIndex?: number
+};
 
 
 // TODO: Virtualization

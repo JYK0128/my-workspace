@@ -34,17 +34,9 @@ const preview: Preview = {
   decorators,
   parameters: {
     actions: { argTypesRegex: '^on.*' },
-    controls: {
-      matchers: {
-        color: /(background|color)$/i,
-        date: /Date$/i,
-      },
-    },
     docs: {
       codePanel: true,
-      story: {
-        height: '100px',
-      },
+      story: { height: '100px' },
     },
   },
   tags: ['autodocs', 'dev'],

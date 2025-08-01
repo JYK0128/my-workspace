@@ -40,6 +40,8 @@ declare global {
   }[Extract<keyof T, string>];
   type Mandatory<T, K extends keyof T = keyof T>
   = Required<Pick<T, K>> & Omit<T, K>;
+  type PartialRequired<T, K extends keyof T> = Required<Pick<T, K>> &
+    Partial<Omit<T, K>>;
 
   /* Object 변형 타입 */
   type Entry<T> = {
