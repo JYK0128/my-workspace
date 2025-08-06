@@ -55,3 +55,7 @@ yarn workspace @packages/ui build-storybook
 dotenvx encrypt -f .env*
 dotenvx set HELLO "production (encrypted)" -f .env.production
 ```
+
+## 진행사항
+
+Next.js로 재구성 중!
