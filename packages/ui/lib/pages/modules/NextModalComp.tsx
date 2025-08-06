@@ -1,6 +1,7 @@
+import { PropsWithChildren } from 'react';
+
 import { useStepModal } from '#customs/hooks/index.ts';
 import { Button, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '#shadcn/components/ui/index.ts';
-import { PropsWithChildren } from 'react';
 
 export function NextModalComp(props: PropsWithChildren) {
   const modal = useStepModal();

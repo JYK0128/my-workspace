@@ -1,8 +1,9 @@
+import * as trpcWs from '@trpc/server/adapters/ws';
+import { ServerOptions } from 'ws';
+
 import { createWSServer } from '#core/socket.ts';
 import { createContextInner } from '#core/trpc.ts';
 import { MainRouter } from '#router/index.ts';
-import * as trpcWs from '@trpc/server/adapters/ws';
-import { ServerOptions } from 'ws';
 
 const createContext = ({ req, res, info }: trpcWs.CreateWSSContextFnOptions) => {
   const userAgent = req.headers['user-agent'];

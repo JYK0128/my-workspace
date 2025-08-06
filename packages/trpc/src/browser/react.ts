@@ -1,4 +1,3 @@
-import { MainRouter } from '#router/index.ts';
 import { QueryClient, QueryClientConfig } from '@tanstack/react-query';
 import { createTRPCClient, createWSClient, httpBatchLink, httpBatchStreamLink, httpLink, httpSubscriptionLink, isNonJsonSerializable, loggerLink, splitLink } from '@trpc/client';
 import { defaultTransformer } from '@trpc/server/unstable-core-do-not-import';
@@ -6,12 +5,15 @@ import { createTRPCContext } from '@trpc/tanstack-react-query';
 import { EventSourcePolyfill } from 'event-source-polyfill';
 import SuperJSON from 'superjson';
 
+import { MainRouter } from '#router/index.ts';
 
+/* trpc 인증 구성요소 */
 export let token: string | undefined;
 export function setToken(newToken?: string) {
   token = newToken;
 }
 
+/* trpc 소켓 구성요소 */
 const socket = createWSClient({
   url: import.meta.env.VITE_WS_URL,
   connectionParams: () => ({
@@ -23,6 +25,7 @@ const socket = createWSClient({
   },
 });
 
+/* TRPC 구성요소 */
 const baseURL = import.meta.env.VITE_API_URL;
 export const getTRPCClient = () => createTRPCClient<MainRouter>({
   links: [

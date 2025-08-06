@@ -1,6 +1,7 @@
+import type { Meta, StoryObj } from '@storybook/react-vite';
+
 import { EventPage } from '#pages/EventPage.tsx';
 import { TestPage } from '#pages/index.ts';
-import type { Meta, StoryObj } from '@storybook/react-vite';
 
 
 const meta = {

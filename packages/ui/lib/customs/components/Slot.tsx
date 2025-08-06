@@ -1,4 +1,4 @@
-import React, { HTMLAttributes, ReactElement, type ComponentPropsWithRef, type ElementType } from 'react';
+import React, { type ComponentPropsWithRef, type ElementType, HTMLAttributes, ReactElement } from 'react';
 
 export type SlotProps<T extends ElementType = 'div'> = {
   asChild?: boolean

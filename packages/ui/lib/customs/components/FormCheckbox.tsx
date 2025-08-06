@@ -1,7 +1,8 @@
-import { Checkbox, FormControl, FormField, FormItem, FormLabel, FormMessage } from '#shadcn/components/ui/index.ts';
-import { cn } from '#shadcn/lib/utils.ts';
 import { ComponentPropsWithoutRef, CSSProperties } from 'react';
 import { FieldPath, FieldValues, UseControllerProps } from 'react-hook-form';
+
+import { Checkbox, FormControl, FormField, FormItem, FormLabel, FormMessage } from '#shadcn/components/ui/index.ts';
+import { cn } from '#shadcn/lib/utils.ts';
 
 type Props<
   TFieldValues extends FieldValues = FieldValues,

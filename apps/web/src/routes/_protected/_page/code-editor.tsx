@@ -1,9 +1,10 @@
-import { withMenu } from '#/routes/_protected/-layout/with-menu';
 import Editor, { OnMount } from '@monaco-editor/react';
 import { Button } from '@packages/ui';
 import { createFileRoute } from '@tanstack/react-router';
 import { uniqueId } from 'lodash-es';
 import { useEffect, useState } from 'react';
+
+import { withMenu } from '#/routes/_protected/-layout/with-menu';
 
 export const Route = createFileRoute('/_protected/_page/code-editor')({
   component: withMenu(RouteComponent),

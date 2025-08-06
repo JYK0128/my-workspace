@@ -1,16 +1,17 @@
-import { withMenu } from '#/routes/_protected/-layout/with-menu';
-import { ChannelParticipant } from '#/routes/_protected/-modal/channel-participant';
-import { ChannelSetting } from '#/routes/_protected/-modal/channel-setting';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useMutation, useQuery, useTRPC } from '@packages/trpc';
 import { Button, Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle, cn, FormController, FormRicharea, Skeleton, StepModal, useCallbackRef } from '@packages/ui';
 import { createFileRoute, notFound, useRouter } from '@tanstack/react-router';
 import { uniqueId } from 'lodash-es';
 import { CornerDownRight, Heart, MoveLeft, Send, Settings, UserSearch } from 'lucide-react';
-import { useEffect, useState, type Ref } from 'react';
-import { useForm, type SubmitHandler } from 'react-hook-form';
+import { type Ref, useEffect, useState } from 'react';
+import { type SubmitHandler, useForm } from 'react-hook-form';
 import { useAuth } from 'react-oidc-context';
 import { z } from 'zod';
+
+import { withMenu } from '#/routes/_protected/-layout/with-menu';
+import { ChannelParticipant } from '#/routes/_protected/-modal/channel-participant';
+import { ChannelSetting } from '#/routes/_protected/-modal/channel-setting';
 
 export const Route = createFileRoute('/_protected/_page/channel/$id')({
   beforeLoad: async ({ context: { trpc, queryClient }, params }) => {

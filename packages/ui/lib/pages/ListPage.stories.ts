@@ -1,5 +1,6 @@
-import { ListPage } from '#pages/ListPage.tsx';
 import type { Meta, StoryObj } from '@storybook/react-vite';
+
+import { ListPage } from '#pages/ListPage.tsx';
 
 
 const meta = {

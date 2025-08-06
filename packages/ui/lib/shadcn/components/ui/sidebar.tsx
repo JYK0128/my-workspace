@@ -683,8 +683,7 @@ function SidebarMenuSubButton({
   );
 }
 
-export {
-  Sidebar,
+export { Sidebar,
   SidebarContent,
   SidebarFooter,
   SidebarGroup,
@@ -707,6 +706,5 @@ export {
   SidebarRail,
   SidebarSeparator,
   SidebarTrigger,
-  useSidebar
-};
+  useSidebar };
 

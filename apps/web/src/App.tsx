@@ -1,12 +1,13 @@
 import '#/App.css';
+
 import { ReactTrpcProvider, setToken, useMutation, useQueryClient, useTRPC } from '@packages/trpc';
 import { Message } from '@packages/ui';
 import { has } from '@packages/utils';
-import { RouterProvider, type RegisteredRouter } from '@tanstack/react-router';
+import { type RegisteredRouter, RouterProvider } from '@tanstack/react-router';
 import { TanStackRouterDevtools } from '@tanstack/react-router-devtools';
 import type { User } from 'oidc-client-ts';
-import { Suspense, useEffect, type PropsWithChildren } from 'react';
-import { AuthProvider, useAuth, type AuthProviderProps } from 'react-oidc-context';
+import { type PropsWithChildren, Suspense, useEffect } from 'react';
+import { AuthProvider, type AuthProviderProps, useAuth } from 'react-oidc-context';
 
 
 function InnerApp({ router }: Pick<AppProps, 'router'>) {

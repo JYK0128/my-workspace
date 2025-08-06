@@ -1,6 +1,7 @@
+import { useState } from 'react';
+
 import { SidebarLayout } from '#customs/components/SidebarLayout.tsx';
 import { Button } from '#shadcn/components/ui/button.tsx';
-import { useState } from 'react';
 
 export function ErrorPage() {
   const [show, setShow] = useState(false);

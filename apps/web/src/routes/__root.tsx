@@ -1,8 +1,9 @@
-import { ErrorPage } from '#/routes/_public/-error';
-import { NotFoundPage } from '#/routes/_public/-not-found';
 import { getQueryClient, useTRPC } from '@packages/trpc';
 import { createRootRouteWithContext } from '@tanstack/react-router';
 import { AuthContextProps } from 'react-oidc-context';
+
+import { ErrorPage } from '#/routes/_public/-error';
+import { NotFoundPage } from '#/routes/_public/-not-found';
 
 type AppContext = {
   auth: AuthContextProps

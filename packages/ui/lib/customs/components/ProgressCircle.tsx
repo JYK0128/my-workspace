@@ -1,5 +1,6 @@
-import { cn } from '#shadcn/lib/utils.ts';
 import { ComponentPropsWithoutRef } from 'react';
+
+import { cn } from '#shadcn/lib/utils.ts';
 
 type Props = {
   pct: number

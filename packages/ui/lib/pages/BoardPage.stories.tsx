@@ -1,5 +1,6 @@
-import { BoardPage } from '#pages/index.ts';
 import type { Meta, StoryObj } from '@storybook/react-vite';
+
+import { BoardPage } from '#pages/index.ts';
 
 
 const meta = {

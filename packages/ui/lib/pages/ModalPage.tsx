@@ -1,10 +1,11 @@
+import { useState } from 'react';
+
 import { SidebarLayout } from '#customs/components/SidebarLayout.tsx';
 import { StepModal } from '#customs/components/StepModal.tsx';
 import { useMessage } from '#customs/hooks/use-message.ts';
 import { FirstModalComp } from '#pages/modules/FirstModalComp.tsx';
 import { NextModalComp } from '#pages/modules/NextModalComp.tsx';
 import { Button } from '#shadcn/components/ui/button.tsx';
-import { useState } from 'react';
 
 export function ModalPage() {
   const { message } = useMessage();

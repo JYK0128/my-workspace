@@ -1,6 +1,7 @@
-import { DB } from '#core/db.js';
 import { Kysely, PostgresDialect } from 'kysely';
 import * as pg from 'pg';
+
+import { DB } from '#core/db.js';
 export * from './kysely.audit.helpers';
 export * from './kysely.query.helpers';
 

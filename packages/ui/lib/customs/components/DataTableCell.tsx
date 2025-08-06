@@ -1,11 +1,12 @@
-import { TableCell } from '#shadcn/components/ui/index.ts';
-import { cn } from '#shadcn/lib/utils.ts';
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import { Cell, flexRender } from '@tanstack/react-table';
 import { cva } from 'class-variance-authority';
 import { defaultTo } from 'lodash-es';
 import { CSSProperties, useMemo } from 'react';
+
+import { TableCell } from '#shadcn/components/ui/index.ts';
+import { cn } from '#shadcn/lib/utils.ts';
 
 type Props<T> = {
   cell: Cell<T, unknown>

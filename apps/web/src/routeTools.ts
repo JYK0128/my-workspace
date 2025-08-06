@@ -1,8 +1,10 @@
-import { FileRoutesById } from '#/routeTree.gen';
 import { AnyRoute, createRoute } from '@tanstack/react-router';
 import { trimStart } from 'lodash-es';
 import { lazy } from 'react';
 import { z } from 'zod';
+
+import { FileRoutesById } from '#/routeTree.gen';
+
 import { Route as ProtectedImport } from './routes/_protected';
 import { Route as PublicImport } from './routes/_public';
 

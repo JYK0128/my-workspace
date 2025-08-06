@@ -1,5 +1,6 @@
-import { FlowPage } from '#pages/FlowPage.tsx';
 import type { Meta, StoryObj } from '@storybook/react-vite';
+
+import { FlowPage } from '#pages/FlowPage.tsx';
 
 
 const meta = {

@@ -1,9 +1,10 @@
-import { FormController, FormInput, MuteLayout } from '#customs/components/index.ts';
-import { Button, Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle, Carousel, CarouselApi, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from '#shadcn/components/ui/index.ts';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { PropsWithAction, useId, useState } from 'react';
 import { SubmitErrorHandler, SubmitHandler, useForm } from 'react-hook-form';
 import { z } from 'zod';
+
+import { FormController, FormInput, MuteLayout } from '#customs/components/index.ts';
+import { Button, Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle, Carousel, CarouselApi, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from '#shadcn/components/ui/index.ts';
 
 const fields = z.object({
   username: z.string()

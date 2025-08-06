@@ -1,5 +1,6 @@
-import { SlotPage } from '#pages/SlotPage.tsx';
 import type { Meta, StoryObj } from '@storybook/react-vite';
+
+import { SlotPage } from '#pages/SlotPage.tsx';
 
 
 const meta = {

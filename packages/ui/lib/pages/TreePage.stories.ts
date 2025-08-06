@@ -1,5 +1,6 @@
-import { TreePage } from '#pages/index.ts';
 import type { Meta, StoryObj } from '@storybook/react-vite';
+
+import { TreePage } from '#pages/index.ts';
 
 
 const meta = {

@@ -1,6 +1,7 @@
-import { useCallbackRef } from '#customs/hooks/use-callback-ref.ts';
 import { debounce } from 'lodash-es';
-import { useCallback, useEffect, useRef, useState, type SetStateAction } from 'react';
+import { type SetStateAction, useCallback, useEffect, useRef, useState } from 'react';
+
+import { useCallbackRef } from '#customs/hooks/use-callback-ref.ts';
 
 export function useHistory<T, K extends HTMLElement = HTMLElement>(initialState: T, options?: { skipFirst?: boolean, shortcut?: boolean }) {
   const [ref, setRef] = useCallbackRef<K>();

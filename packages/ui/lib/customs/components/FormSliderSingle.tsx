@@ -1,8 +1,9 @@
-import { FormControl, FormField, FormItem, FormLabel, FormMessage, Input, Slider } from '#shadcn/components/ui/index.ts';
-import { cn } from '#shadcn/lib/utils.ts';
 import { omit } from 'lodash-es';
 import { ComponentPropsWithoutRef, CSSProperties } from 'react';
 import { FieldPath, FieldValues, UseControllerProps } from 'react-hook-form';
+
+import { FormControl, FormField, FormItem, FormLabel, FormMessage, Input, Slider } from '#shadcn/components/ui/index.ts';
+import { cn } from '#shadcn/lib/utils.ts';
 
 type Props<
   TFieldValues extends FieldValues = FieldValues,

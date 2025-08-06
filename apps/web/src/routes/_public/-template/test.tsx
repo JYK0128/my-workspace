@@ -1,10 +1,9 @@
 'use client';
 
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle, ChartConfig, ChartContainer, ChartTooltip, ChartTooltipContent } from '@packages/ui';
 import { TrendingUp } from 'lucide-react';
 import * as React from 'react';
 import { Label, Pie, PieChart, Sector } from 'recharts';
-
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle, ChartConfig, ChartContainer, ChartTooltip, ChartTooltipContent } from '@packages/ui';
 import { PieSectorDataItem } from 'recharts/types/polar/Pie';
 
 export const description = 'A donut chart with text';

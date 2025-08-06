@@ -1,12 +1,13 @@
+import { createRouter } from '@tanstack/react-router';
+import { StrictMode } from 'react';
+import { createRoot } from 'react-dom/client';
+import { AuthProviderProps } from 'react-oidc-context';
+
 import App from '#/App';
 import { Route as ProtectedRoute } from '#/routes/_protected';
 import { Route as PublicRoute } from '#/routes/_public';
 import { appendRoute, createRouteByData } from '#/routeTools';
 import { routeTree } from '#/routeTree.gen.ts';
-import { createRouter } from '@tanstack/react-router';
-import { StrictMode } from 'react';
-import { createRoot } from 'react-dom/client';
-import { AuthProviderProps } from 'react-oidc-context';
 
 declare module '@tanstack/react-router' {
   interface Register {

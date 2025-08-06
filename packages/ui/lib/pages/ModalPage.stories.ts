@@ -1,5 +1,6 @@
-import { ModalPage } from '#pages/ModalPage.tsx';
 import type { Meta, StoryObj } from '@storybook/react-vite';
+
+import { ModalPage } from '#pages/ModalPage.tsx';
 
 
 const meta = {

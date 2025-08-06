@@ -1,6 +1,7 @@
+import type { Meta, StoryObj } from '@storybook/react-vite';
+
 import { WelcomePage } from '#pages/index.ts';
 import { buildArgs } from '#utils.ts';
-import type { Meta, StoryObj } from '@storybook/react-vite';
 
 
 const meta = {

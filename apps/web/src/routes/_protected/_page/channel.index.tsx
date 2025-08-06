@@ -1,6 +1,3 @@
-import { withMenu } from '#/routes/_protected/-layout/with-menu';
-import { ChannelCreate } from '#/routes/_protected/-modal/channel-create';
-import { ChannelJoin } from '#/routes/_protected/-modal/channel-join';
 import { Output, useInfiniteQuery, useMutation, useTRPC } from '@packages/trpc';
 import { Button, DataTable, DataTools, HoverCard, HoverCardContent, HoverCardTrigger, Slot, StepModal, ToolOptions } from '@packages/ui';
 import { createFileRoute, useNavigate } from '@tanstack/react-router';
@@ -9,6 +6,10 @@ import { endOfDay, startOfDay, subMonths } from 'date-fns';
 import { useMemo, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useAuth } from 'react-oidc-context';
+
+import { withMenu } from '#/routes/_protected/-layout/with-menu';
+import { ChannelCreate } from '#/routes/_protected/-modal/channel-create';
+import { ChannelJoin } from '#/routes/_protected/-modal/channel-join';
 
 export const Route = createFileRoute('/_protected/_page/channel/')({
   component: withMenu(RouteComponent),

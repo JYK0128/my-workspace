@@ -1,5 +1,6 @@
-import { LoginPage } from '#pages/index.ts';
 import type { Meta, StoryObj } from '@storybook/react-vite';
+
+import { LoginPage } from '#pages/index.ts';
 
 
 const meta = {

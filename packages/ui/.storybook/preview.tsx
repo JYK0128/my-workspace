@@ -1,10 +1,12 @@
-import { ErrorBoundary, Message, Toaster } from '#index.ts';
-import { ErrorRenderPage } from '#pages/index.ts';
+import './preview.css';
+
 import { withThemeByClassName } from '@storybook/addon-themes';
 import type { Decorator, Preview, ReactRenderer } from '@storybook/react-vite';
 import { Fragment } from 'react/jsx-runtime';
 import { toast } from 'sonner';
-import './preview.css';
+
+import { ErrorBoundary, Message, Toaster } from '#index.ts';
+import { ErrorRenderPage } from '#pages/index.ts';
 
 const decorators: Decorator[] = [
   withThemeByClassName<ReactRenderer>({

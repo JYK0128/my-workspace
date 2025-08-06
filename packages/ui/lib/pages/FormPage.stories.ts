@@ -1,5 +1,6 @@
-import { FormPage } from '#pages/index.ts';
 import type { Meta, StoryObj } from '@storybook/react-vite';
+
+import { FormPage } from '#pages/index.ts';
 
 
 const meta = {

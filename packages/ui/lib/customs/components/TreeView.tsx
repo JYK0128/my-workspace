@@ -1,8 +1,9 @@
-import { TreeItem } from '#customs/components/index.ts';
-import { useCallbackRef } from '#customs/hooks/index.ts';
 import { Active, closestCenter, DndContext, MeasuringStrategy, Modifier, Over, PointerSensor, useSensor, useSensors } from '@dnd-kit/core';
 import { isNumber } from 'lodash-es';
 import { ComponentPropsWithoutRef, MutableRefObject, useEffect, useMemo, useState } from 'react';
+
+import { TreeItem } from '#customs/components/index.ts';
+import { useCallbackRef } from '#customs/hooks/index.ts';
 
 export type TreeNode = {
   id: string
@@ -13,7 +14,7 @@ export type TreeNode = {
 };
 
 type TreeViewProps
-  = Omit<ComponentPropsWithoutRef<'div'>, 'defaultValue' | 'value' | 'onChange' >
+  = Omit<ComponentPropsWithoutRef<'div'>, 'defaultValue' | 'value' | 'onChange'>
     & {
       value?: TreeNode[]
       defaultValue?: TreeNode[]

@@ -1,6 +1,7 @@
-import type { MainRouter } from '#router/index.ts';
 import { inferProcedureInput, inferProcedureOutput } from '@trpc/server';
 import type { ColumnType } from 'kysely';
+
+import type { MainRouter } from '#router/index.ts';
 
 export * from './db';
 export type Table<T> = {

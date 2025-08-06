@@ -1,7 +1,8 @@
-import { getQueryClient, getTRPCClient, TRPCProvider } from '#browser/react.ts';
 import { keepPreviousData, QueryClientProvider } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import { PropsWithChildren, useState } from 'react';
+
+import { getQueryClient, getTRPCClient, TRPCProvider } from '#browser/react.ts';
 
 
 export function ReactTrpcProvider({ children }: PropsWithChildren) {

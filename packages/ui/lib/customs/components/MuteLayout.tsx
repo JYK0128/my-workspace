@@ -1,5 +1,6 @@
-import { cn } from '#shadcn/lib/utils.ts';
 import { HTMLAttributes, PropsWithChildren } from 'react';
+
+import { cn } from '#shadcn/lib/utils.ts';
 
 type Props = PropsWithChildren<HTMLAttributes<HTMLDivElement>>;
 

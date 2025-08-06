@@ -1,7 +1,8 @@
+import { Kysely } from 'kysely';
+
 import { DB, JsonValue } from '#core/db.js';
 import { db } from '#core/kysely.ts';
 import { Context } from '#core/trpc.ts';
-import { Kysely } from 'kysely';
 
 export const loggingWith = <T>(
   user: Context['user'],

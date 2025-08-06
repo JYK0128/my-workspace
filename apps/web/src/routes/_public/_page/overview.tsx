@@ -1,8 +1,9 @@
-import { Github, Storybook } from '#/assets';
-import Overview01 from '#/assets/overview_01.png';
 import { cn, useIntersections, useRefs } from '@packages/ui';
 import { createFileRoute, useLocation } from '@tanstack/react-router';
 import { useEffect } from 'react';
+
+import { Github, Storybook } from '#/assets';
+import Overview01 from '#/assets/overview_01.png';
 
 export const Route = createFileRoute('/_public/_page/overview')({
   component: RouteComponent,

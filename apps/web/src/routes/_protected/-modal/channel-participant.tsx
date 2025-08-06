@@ -1,8 +1,8 @@
-import { useInfiniteQuery, useTRPC, type Output } from '@packages/trpc';
+import { type Output, useInfiniteQuery, useTRPC } from '@packages/trpc';
 import { Button, DataTable, DataTools, DialogContent, DialogDescription, DialogHeader, DialogTitle, type ToolOptions } from '@packages/ui';
 import type { ColumnDef, ColumnFiltersState } from '@tanstack/react-table';
 import { Ban, GraduationCap, MicOff } from 'lucide-react';
-import { useMemo, useState, type PropsWithChildren } from 'react';
+import { type PropsWithChildren, useMemo, useState } from 'react';
 import { useForm } from 'react-hook-form';
 
 const columns: ColumnDef<Output<'getParticipantCursor'>>[] = [

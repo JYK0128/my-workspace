@@ -1,11 +1,12 @@
-import { Logo } from '#/assets';
-import { getRouteChildren } from '#/routeTools';
 import { Button, cn, Label, useCallbackRef } from '@packages/ui';
 import { AnyRoute, Link, useRouter } from '@tanstack/react-router';
 import { get } from 'lodash-es';
 import { Menu } from 'lucide-react';
 import { RefObject, useEffect, useRef } from 'react';
 import { useAuth } from 'react-oidc-context';
+
+import { Logo } from '#/assets';
+import { getRouteChildren } from '#/routeTools';
 
 export const withBrand = <T extends object>(Component: React.ComponentType<T>) => {
   function LoginButton() {

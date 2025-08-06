@@ -1,5 +1,6 @@
-import { Slot as RawSlot } from '#customs/components/Slot.tsx';
 import { Children, ComponentProps, Fragment, isValidElement, ReactNode } from 'react';
+
+import { Slot as RawSlot } from '#customs/components/Slot.tsx';
 
 type Props<T extends string> = {
   name: T

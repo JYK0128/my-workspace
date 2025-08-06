@@ -1,5 +1,6 @@
-import { withMenu } from '#/routes/_protected/-layout/with-menu';
 import { createFileRoute } from '@tanstack/react-router';
+
+import { withMenu } from '#/routes/_protected/-layout/with-menu';
 
 
 export const Route = createFileRoute('/_protected/_page/doodle')({
