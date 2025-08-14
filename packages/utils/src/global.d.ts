@@ -47,7 +47,7 @@ declare global {
   type Entry<T> = {
     [K in keyof T]: [K, T[K]]
   }[keyof T];
-  type Pair<T, U = 'id', V = undefined> = {
+  type Pair<T, U extends PropertyKey = 'id', V = undefined> = {
     [K in keyof T]: { [key in U]: K } &
       (V extends undefined
         ? { value: Nullable<ValueOf<T, K>> }
