@@ -54,7 +54,7 @@ export function FormCheckGroup<
       render={({ field }) => (
         <FormItem
           className={cn(
-            'tw:min-h-auto tw:min-w-auto',
+            'tw:min-h-fit tw:min-w-fit',
             'tw:flex tw:flex-wrap',
             orientation === 'horizontal'
               ? 'tw:flex-row'

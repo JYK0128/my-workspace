@@ -10,5 +10,58 @@
     ".test.",
     ".spec.",
     ".stories.ts"
-  ]
+  ],
+  "remote.SSH.remotePlatform": {
+    "210.105.33.153": "linux"
+  },
+  // db
+  "pgsql.serverGroups": [
+    {
+      "name": "Servers",
+      "id": "7D7991FA-2912-4B9F-A40B-F284DBC4E598",
+      "isDefault": true
+    }
+  ],
+  "pgsql.connections": [
+    {
+      "id": "CA39B1A3-9526-4941-BDD1-1740CACDB2F7",
+      "groupId": "7D7991FA-2912-4B9F-A40B-F284DBC4E598",
+      "authenticationType": "SqlLogin",
+      "connectTimeout": 15,
+      "applicationName": "vscode-pgsql",
+      "clientEncoding": "utf8",
+      "sslmode": "require",
+      "server": "aws-0-ap-northeast-2.pooler.supabase.com",
+      "password": "",
+      "user": "postgres.ytxmuetzhthetjrzryth",
+      "database": "postgres",
+      "profileName": "supabase",
+      "port": "6543",
+      "expiresOn": 0,
+      "profileSource": 0,
+      "emptyPasswordInput": false,
+      "displayName": "supabase",
+      "savePassword": true
+    },
+    {
+      "id": "51DA6264-C8B7-490A-9BF2-2A6B93BC9372",
+      "groupId": "7D7991FA-2912-4B9F-A40B-F284DBC4E598",
+      "authenticationType": "SqlLogin",
+      "connectTimeout": 15,
+      "applicationName": "vscode-pgsql",
+      "clientEncoding": "utf8",
+      "sslmode": "prefer",
+      "server": "localhost",
+      "user": "postgres",
+      "password": "",
+      "database": "",
+      "profileName": "localhost, <default> (postgres)",
+      "savePassword": true,
+      "port": "5432",
+      "expiresOn": 0,
+      "profileSource": 0,
+      "displayName": "localhost, <default> (postgres)"
+    }
+  ],
+  "pgsql.enableQueryHistoryCapture": false,
 }

@@ -57,7 +57,7 @@ export function FormDatePicker<T extends FieldValues>(props: Props<T>) {
       render={({ field }) => (
         <FormItem
           className={cn(
-            'tw:min-h-auto tw:min-w-auto',
+            'tw:min-h-fit tw:min-w-fit',
             'tw:flex tw:flex-wrap',
             orientation === 'horizontal'
               ? 'tw:flex-row'

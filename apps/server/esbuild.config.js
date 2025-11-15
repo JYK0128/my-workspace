@@ -1,11 +1,10 @@
-import dotenvFlow from 'dotenv-flow';
 import esbuild from 'esbuild';
 import { nodeExternals } from 'esbuild-plugin-node-externals';
 
 // env
-dotenvFlow.config();
 const env = Object.entries(process.env).reduce((acc, [k, v]) => {
   if (k.startsWith('APP_') || k.startsWith('NODE_') || k.startsWith('DATABASE_')) {
+    console.log(k, v);
     acc[`process.env.${k}`] = JSON.stringify(v);
   }
   return acc;

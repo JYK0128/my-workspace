@@ -10,7 +10,7 @@
     "build:prd": "dotenvx run -f .env.production -- node ./esbuild.config.js",
     "dev": "yarn build:dev && dotenvx run -f .env.development -- concurrently \"node ./esbuild.config.js --watch\" \"nodemon --inspect --watch ./dist ./dist/index.cjs\"",
     "stg": "yarn build:stg && dotenvx run -f .env.staging -- concurrently \"node ./esbuild.config.js --watch\" \"nodemon --inspect --watch ./dist ./dist/index.cjs\"",
-    "prd": "yarn build:prd && dotenvx run -f .env.production -- concurrently \"node ./esbuild.config.js --watch\" \"nodemon --watch ./dist ./dist/index.cjs\""
+    "prd": "yarn build:prd && dotenvx run -f .env.production -- concurrently \"node ./esbuild.config.js --watch\" \"nodemon ./dist/index.cjs --watch ./dist\""
   },
   "dependencies": {
     "@packages/trpc": "workspace:^",

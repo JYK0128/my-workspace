@@ -2,8 +2,6 @@
 @import '@xyflow/react/dist/style.css';
 .sun-editor {
   height: 100%;
-  display: flex;
-  flex-direction: column;
 }
 .sun-editor .se-container {
   flex: 1;

@@ -56,6 +56,21 @@ dotenvx encrypt -f .env*
 dotenvx set HELLO "production (encrypted)" -f .env.production
 ```
 
+## 환경변수 암복호화
+
+```bash
+dotenvx encrypt -f .env.production
+dotenvx decrypt -f .env.production
+```
+
 ## 진행사항
 
 Next.js로 재구성 중!
+
+## BASH 명령어
+
+```bash
+sudo ln -s "$NVM_DIR/versions/node/v22.18.0/bin/pm2" "/usr/local/bin/pm2"
+sudo ln -s "$NVM_DIR/versions/node/v22.18.0/bin/pnpm" "/usr/local/bin/pnpm"
+sudo ln -s "$NVM_DIR/versions/node/v22.18.0/bin/node" "/usr/local/bin/pnode"
+```
